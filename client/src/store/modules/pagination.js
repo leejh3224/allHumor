@@ -2,6 +2,7 @@ import { fromJS } from 'immutable'
 import { handleActions } from 'redux-actions'
 import api from 'api'
 import { normalize, schema } from 'normalizr'
+import range from 'lodash/range'
 import types from 'store/actionTypes'
 
 // pagination settings
@@ -33,12 +34,26 @@ export const selectors = {
     return Math.floor((page - 1) / lengthPageButton) * lengthPageButton + 1
   },
   getMaxPage: ({ pagination }) => {
-    const firstIndex = selectors.getMinPage({ pagination })
-    return firstIndex + lengthPageButton
+    const minPage = selectors.getMinPage({ pagination })
+    const lastPage = selectors.getLastPage({ pagination })
+
+    if (minPage + 5 < lastPage) {
+      return minPage + lengthPageButton
+    }
+    return lastPage
   },
   getLastPage: ({ pagination }) => {
     const where = pagination.get('where')
     return pagination.getIn(['pages', where, 'last'])
+  },
+  getRangeMinMax: ({ pagination }) => {
+    const minPage = selectors.getMinPage({ pagination })
+    const maxPage = selectors.getMaxPage({ pagination })
+
+    if (minPage === maxPage) {
+      return [maxPage]
+    }
+    return range(minPage, maxPage)
   },
 }
 
@@ -62,7 +77,7 @@ export const actions = {
           meta: { page, where },
         })
 
-        dispatch({ type: types.pagination.SET_LAST_PAGE, payload: { where, total } })
+        dispatch({ type: types.pagination.SET_LAST_PAGE, meta: { where, total } })
       }
     } catch (err) {
       console.log(err)
@@ -72,23 +87,24 @@ export const actions = {
   loadPage: page => (dispatch, getState) => {
     const { pagination } = getState()
     const where = pagination.get('where')
-    dispatch({ type: types.pagination.SET_PAGE, payload: { page } })
+
+    dispatch({ type: types.pagination.SET_PAGE, meta: { page } })
     actions.loadArticles(where)(dispatch, getState)
   },
   loadNextMinPage: () => (dispatch, getState) => {
     const { pagination } = getState()
-    const minPage = selectors.getMinPage({ pagination })
     const maxPage = selectors.getMaxPage({ pagination })
     const where = pagination.get('where')
     const lastPage = pagination.getIn(['pages', where, 'last'])
 
     if (maxPage < lastPage) {
-      actions.loadPage(minPage + 5)(dispatch, getState)
+      actions.loadPage(maxPage)(dispatch, getState)
     }
   },
   loadPrevMinPage: () => (dispatch, getState) => {
     const { pagination } = getState()
     const minPage = selectors.getMinPage({ pagination })
+
     if (minPage > 1) {
       actions.loadPage(minPage - 5)(dispatch, getState)
     }
@@ -100,12 +116,12 @@ export default handleActions(
     [types.article.SUCCESS]: (state, { meta }) => {
       return state.setIn(['pages', meta.where, 'current'], meta.page)
     },
-    [types.pagination.SET_PAGE]: (state, { payload }) => {
+    [types.pagination.SET_PAGE]: (state, { meta }) => {
       const where = state.get('where')
-      return state.setIn(['pages', where, 'current'], payload.page)
+      return state.setIn(['pages', where, 'current'], meta.page)
     },
-    [types.pagination.SET_LAST_PAGE]: (state, { payload }) =>
-      state.setIn(['pages', payload.where, 'last'], payload.total / perPage),
+    [types.pagination.SET_LAST_PAGE]: (state, { meta }) =>
+      state.setIn(['pages', meta.where, 'last'], Math.round(meta.total / perPage)),
   },
   initialState,
 )

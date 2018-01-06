@@ -1,20 +1,17 @@
 import React, { Component } from 'react'
-import { number, func } from 'prop-types'
+import { number, func, arrayOf } from 'prop-types'
 import { connect } from 'react-redux'
 import { Pagination } from 'components'
 import * as paginationDucks from 'store/modules/pagination'
 
-const {
-  getCurrentPage, getMinPage, getMaxPage, getLastPage,
-} = paginationDucks.selectors
+const { getCurrentPage, getLastPage, getRangeMinMax } = paginationDucks.selectors
 
 class PaginationContainer extends Component {
   static propTypes = {
     currentPage: number.isRequired,
     loadPage: func.isRequired,
-    minPage: number.isRequired,
-    maxPage: number.isRequired,
     lastPage: number.isRequired,
+    rangeMinMax: arrayOf(number).isRequired,
     loadNextMinPage: func.isRequired,
     loadPrevMinPage: func.isRequired,
   }
@@ -22,9 +19,8 @@ class PaginationContainer extends Component {
     const {
       currentPage,
       loadPage,
-      minPage,
-      maxPage,
       lastPage,
+      rangeMinMax,
       loadNextMinPage,
       loadPrevMinPage,
     } = this.props
@@ -32,9 +28,8 @@ class PaginationContainer extends Component {
       <Pagination
         currentPage={currentPage}
         loadPage={loadPage}
-        minPage={minPage}
-        maxPage={maxPage}
         lastPage={lastPage}
+        rangeMinMax={rangeMinMax}
         loadNextMinPage={loadNextMinPage}
         loadPrevMinPage={loadPrevMinPage}
       />
@@ -45,9 +40,8 @@ class PaginationContainer extends Component {
 export default connect(
   state => ({
     currentPage: getCurrentPage(state),
-    minPage: getMinPage(state),
-    maxPage: getMaxPage(state),
     lastPage: getLastPage(state),
+    rangeMinMax: getRangeMinMax(state),
   }),
   {
     loadPage: paginationDucks.actions.loadPage,
