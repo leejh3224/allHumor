@@ -7,10 +7,12 @@ import styles from './Header.sass'
 const Header = () => (
   <header className={styles.header}>
     <div className={styles.wrapper}>
-      <div className={styles.brand}>ALL유머</div>
-      <a href="/" className={styles.loginButton}>
+      <Link className={styles.brand} to="/">
+        ALL유머
+      </Link>
+      <Link to="/" className={styles.loginButton}>
         로그인
-      </a>
+      </Link>
     </div>
     {/* eslint-disable jsx-a11y/anchor-is-valid */}
     <nav className={styles.tabLinks}>

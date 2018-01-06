@@ -1,6 +1,11 @@
 @import utils/variables
 @import utils/mixins
 
+.link
+  +base-style-link
+
+  font-size: 1rem
+
 .article
   +divider
   +flex
@@ -8,6 +13,9 @@
   background-color: $lighter-grey
   height: 200px
   padding: 1rem
+
+  &:hover
+    background-color: $light-grey
 
 .thumbnail
   +full-height
@@ -32,7 +40,8 @@
   flex-wrap: wrap
 
 .title
-  +base-style-link
+  font-size: 1.3rem
+  font-weight: 600
 
 .author
   +flex

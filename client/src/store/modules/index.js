@@ -1,8 +1,14 @@
 import { combineReducers } from 'redux'
-import article from './article'
+import entity from './entity'
+import fetching from './fetching'
+import error from './error'
+import pagination from './pagination'
 
 const rootReducer = combineReducers({
-  article,
+  entity,
+  fetching,
+  error,
+  pagination,
 })
 
 export default rootReducer

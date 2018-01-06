@@ -8,7 +8,7 @@ export default {
 
     // lean option -> to js object
     try {
-      let articles = await Article.find()
+      let articles = await Article.find({ type: 'dogdrip' })
         .skip(perPage * (page - 1))
         .limit(perPage)
         .sort({ uploadDate: -1 })

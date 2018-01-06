@@ -2,10 +2,13 @@ import React, { Component } from 'react'
 import { func, bool, objectOf, object } from 'prop-types'
 import { connect } from 'react-redux'
 import { ArticleList } from 'components'
-import { actions, selectors } from 'store/modules/article'
+import * as entityDucks from 'store/modules/entity'
+import * as fetchingDucks from 'store/modules/fetching'
+import * as paginationDucks from 'store/modules/pagination'
 import orderBy from 'lodash/orderBy'
 
-const { getArticles, getFetching } = selectors
+const { getArticles } = entityDucks.selectors
+const { getFetchingArticle } = fetchingDucks.selectors
 
 class ArticleListContainer extends Component {
   static propTypes = {
@@ -14,7 +17,7 @@ class ArticleListContainer extends Component {
     articles: objectOf(object).isRequired,
   }
   componentWillMount() {
-    this.props.loadArticles()
+    this.props.loadArticles('dogdrip')
   }
   render() {
     const { fetching, articles } = this.props
@@ -32,7 +35,9 @@ class ArticleListContainer extends Component {
 export default connect(
   state => ({
     articles: getArticles(state),
-    fetching: getFetching(state),
+    fetching: getFetchingArticle(state),
   }),
-  actions,
+  {
+    loadArticles: paginationDucks.actions.loadArticles,
+  },
 )(ArticleListContainer)
