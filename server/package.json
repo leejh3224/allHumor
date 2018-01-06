@@ -1,0 +1,39 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "NODE_ENV=development NODE_PATH=src nodemon src/ --exec babel-node",
+    "test": "NODE_ENV=test NODE_PATH=src jest",
+    "test-crawler": "NODE_ENV=test NODE_PATH=src jest crawler.test.js",
+    "test-article": "NODE_ENV=test NODE_PATH=src jest article.test.js"
+  },
+  "dependencies": {
+    "axios": "^0.17.1",
+    "cheerio": "^1.0.0-rc.2",
+    "express": "^4.16.2",
+    "htmltojsx": "^0.3.0",
+    "lodash": "^4.17.4",
+    "mongoose": "^5.0.0-rc2",
+    "request": "^2.83.0",
+    "sanitize-html": "^1.16.3"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.1.2",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-stage-3": "^6.24.1",
+    "body-parser": "^1.18.2",
+    "cors": "^2.8.4",
+    "eslint": "^4.14.0",
+    "eslint-cli": "^1.1.1",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.5.1",
+    "jest": "^22.0.4",
+    "superagent": "^3.8.2"
+  }
+}

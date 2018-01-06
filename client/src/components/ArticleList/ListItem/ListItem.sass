@@ -1,0 +1,77 @@
+@import utils/variables
+@import utils/mixins
+
+.article
+  +divider
+  +flex
+
+  background-color: $lighter-grey
+  height: 200px
+  padding: 1rem
+
+.thumbnail
+  +full-height
+
+  margin-right: 1rem
+  width: 180px
+
+.thumbnail > img
+  +full-height
+  +full-width
+
+.content
+  +vflex
+  +full-width
+
+  justify-content: space-between
+  margin-top: 2px
+
+.header
+  +flex
+
+  flex-wrap: wrap
+
+.title
+  +base-style-link
+
+.author
+  +flex
+  +full-width
+
+  align-items: center
+  margin-top: 0.5rem
+
+.siteInfo
+  background-color: $font-color
+  border-radius: 10px
+  color: $white
+  display: inline-block
+  font-size: 0.8rem
+  margin-left: 0.5rem
+  padding: 0.25rem
+
+.timestamp
+  flex: 1
+  text-align: right
+
+.footer
+  +flex
+
+  align-items: flex-end
+
+.meta
+  font-size: 1.5rem
+  margin-right: 1rem
+
+.action
+  +flex
+  +move-right
+
+  align-items: flex-end
+  color: $font-color
+  font-size: 1.5rem
+  text-decoration: none
+
+  &Guide
+    font-size: 1rem
+    margin: 0 0 0.15rem 0.5rem
