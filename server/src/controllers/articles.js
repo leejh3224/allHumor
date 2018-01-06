@@ -8,6 +8,7 @@ export default {
 
     // lean option -> to js object
     try {
+      const total = await Article.find().count()
       let articles = await Article.find({ type: 'dogdrip' })
         .skip(perPage * (page - 1))
         .limit(perPage)
@@ -16,7 +17,7 @@ export default {
 
       articles = articles.map(article => omit(article, ['__v']))
 
-      res.json({ articles, page })
+      res.json({ articles, total })
     } catch (error) {
       res.json({
         error,

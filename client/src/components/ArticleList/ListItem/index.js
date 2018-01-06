@@ -16,9 +16,9 @@ const ListItem = ({
         <div className={styles.content}>
           <div className={styles.header}>
             <h1 className={styles.title}>{title}</h1>
+            <span className={styles.siteInfo}>{type === 'dogdrip' ? '개드립' : ''}</span>
             <h2 className={styles.author}>
               {author}
-              <span className={styles.siteInfo}>{type === 'dogdrip' ? '개드립' : ''}</span>
               <span className={styles.timestamp}>{formatDate(date)}</span>
             </h2>
           </div>
@@ -29,10 +29,10 @@ const ListItem = ({
             <div className={styles.meta}>
               <i className="ion-thumbsup" /> 12
             </div>
-            <a className={styles.action} href="/">
+            <button onClick={e => e.preventDefault()} className={styles.action}>
               <i className="ion-share" />
               <span className={styles.actionGuide}>공유</span>
-            </a>
+            </button>
           </div>
         </div>
       </article>

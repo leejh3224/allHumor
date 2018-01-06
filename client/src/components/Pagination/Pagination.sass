@@ -1,24 +1,21 @@
 @import utils/mixins
 @import utils/variables
 
-// reset button style
-button
-  font-size: 1rem
-  padding: 0
-
 .container
   +flex
   +container-style
   +full-width
 
   justify-content: center
-  margin-top: 1rem
+  margin: 1rem 0
 
 .pageButton
   background-color: $white
   border: 1px solid $light-grey
+  font-size: 1rem
   height: 50px
   margin: 0 0.1rem
+  padding: 0
   width: 50px
 
   &:hover
@@ -28,11 +25,16 @@ button
 .pageButton.large
   width: 80px
 
+.pageButton.active
+  background-color: $primary-color
+  color: $white
+
 @media (max-width: 450px)
   .container
     padding: 0 0.3rem
 
   .pageButton
+    font-size: 0.8rem
     height: 30px
     width: 50px
 
