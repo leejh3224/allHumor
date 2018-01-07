@@ -1,0 +1,26 @@
+@import utils/mixins
+@import utils/variables
+
+.container
+  +container-style
+  +flex
+
+  flex-wrap: wrap
+  margin: 0.5rem 0
+  padding: 1rem 2rem
+  width: 100%
+
+.item
+  +base-style-link
+
+  background-color: $lighter-grey
+  flex: 1
+  font-size: 1rem
+  font-weight: 400
+  min-width: 100px
+  padding: 0.7rem 1.5rem
+  text-align: center
+
+  &:hover
+    background-color: $primary-color
+    color: $white

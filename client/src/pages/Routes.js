@@ -10,7 +10,7 @@ const Routes = () => (
   <Router>
     <Switch>
       <Route path="/article/:id" component={Article} />
-      <Route path="/" exact component={Home} />
+      <Route path="/(all|dogdrip)?/:page?" component={Home} />
     </Switch>
   </Router>
 )

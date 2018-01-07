@@ -1,10 +1,17 @@
 import React, { Component } from 'react'
-import { number, func, arrayOf } from 'prop-types'
+import { number, func, arrayOf, string } from 'prop-types'
 import { connect } from 'react-redux'
 import { Pagination } from 'components'
 import * as paginationDucks from 'store/modules/pagination'
 
-const { getCurrentPage, getLastPage, getRangeMinMax } = paginationDucks.selectors
+const {
+  getCurrentPage,
+  getLastPage,
+  getRangeMinMax,
+  getCategory,
+  getMinPage,
+  getMaxPage,
+} = paginationDucks.selectors
 
 class PaginationContainer extends Component {
   static propTypes = {
@@ -12,8 +19,11 @@ class PaginationContainer extends Component {
     loadPage: func.isRequired,
     lastPage: number.isRequired,
     rangeMinMax: arrayOf(number).isRequired,
-    loadNextMinPage: func.isRequired,
-    loadPrevMinPage: func.isRequired,
+    loadNextPage: func.isRequired,
+    loadPrevPage: func.isRequired,
+    category: string.isRequired,
+    nextPage: number.isRequired,
+    prevPage: number.isRequired,
   }
   render() {
     const {
@@ -21,8 +31,11 @@ class PaginationContainer extends Component {
       loadPage,
       lastPage,
       rangeMinMax,
-      loadNextMinPage,
-      loadPrevMinPage,
+      loadNextPage,
+      loadPrevPage,
+      category,
+      nextPage,
+      prevPage,
     } = this.props
     return (
       <Pagination
@@ -30,8 +43,11 @@ class PaginationContainer extends Component {
         loadPage={loadPage}
         lastPage={lastPage}
         rangeMinMax={rangeMinMax}
-        loadNextMinPage={loadNextMinPage}
-        loadPrevMinPage={loadPrevMinPage}
+        loadNextPage={loadNextPage}
+        loadPrevPage={loadPrevPage}
+        category={category}
+        nextPage={nextPage}
+        prevPage={prevPage}
       />
     )
   }
@@ -42,10 +58,13 @@ export default connect(
     currentPage: getCurrentPage(state),
     lastPage: getLastPage(state),
     rangeMinMax: getRangeMinMax(state),
+    category: getCategory(state),
+    nextPage: getMaxPage(state) + 1,
+    prevPage: getMinPage(state) - 1,
   }),
   {
     loadPage: paginationDucks.actions.loadPage,
-    loadNextMinPage: paginationDucks.actions.loadNextMinPage,
-    loadPrevMinPage: paginationDucks.actions.loadPrevMinPage,
+    loadNextPage: paginationDucks.actions.loadNextPage,
+    loadPrevPage: paginationDucks.actions.loadPrevPage,
   },
 )(PaginationContainer)

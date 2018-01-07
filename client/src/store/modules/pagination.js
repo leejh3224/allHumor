@@ -20,53 +20,50 @@ const initialState = fromJS({
       last: 5,
     },
   },
-  where: 'dogdrip',
+  category: 'dogdrip',
 })
 
 export const selectors = {
   getCurrentPage: ({ pagination }) => {
-    const where = pagination.get('where')
-    return pagination.getIn(['pages', where, 'current'])
+    const category = pagination.get('category')
+    return pagination.getIn(['pages', category, 'current'])
   },
   /* eslint-disable no-mixed-operators */
   getMinPage: ({ pagination }) => {
-    const page = selectors.getCurrentPage({ pagination })
-    return Math.floor((page - 1) / lengthPageButton) * lengthPageButton + 1
+    const curruntPage = selectors.getCurrentPage({ pagination })
+    return Math.floor((curruntPage - 1) / lengthPageButton) * lengthPageButton + 1
   },
-  getMaxPage: ({ pagination }) => {
-    const minPage = selectors.getMinPage({ pagination })
-    const lastPage = selectors.getLastPage({ pagination })
+  getMaxPage: (state) => {
+    const minPage = selectors.getMinPage(state)
+    const lastPage = selectors.getLastPage(state)
 
-    if (minPage + 5 < lastPage) {
-      return minPage + lengthPageButton
+    if (minPage + lengthPageButton + 1 < lastPage) {
+      return minPage + (lengthPageButton - 1)
     }
     return lastPage
   },
   getLastPage: ({ pagination }) => {
-    const where = pagination.get('where')
-    return pagination.getIn(['pages', where, 'last'])
+    const category = pagination.get('category')
+    return pagination.getIn(['pages', category, 'last'])
   },
-  getRangeMinMax: ({ pagination }) => {
-    const minPage = selectors.getMinPage({ pagination })
-    const maxPage = selectors.getMaxPage({ pagination })
+  getRangeMinMax: (state) => {
+    const minPage = selectors.getMinPage(state)
+    const maxPage = selectors.getMaxPage(state)
 
-    if (minPage === maxPage) {
-      return [maxPage]
-    }
-    return range(minPage, maxPage)
+    return range(minPage, maxPage + 1)
   },
+  getCategory: ({ pagination }) => pagination.get('category'),
 }
 
 // thunks
 export const actions = {
-  loadArticles: where => async (dispatch, getState) => {
-    const { pagination } = getState()
-    const page = pagination.getIn(['pages', where, 'current'])
+  loadArticles: category => async (dispatch, getState) => {
+    const currentPage = selectors.getCurrentPage(getState())
 
     dispatch({ type: types.article.REQUEST })
     try {
       /* eslint-disable */
-      const { data: { articles, total } } = await api.get(`/articles/${where}/${page}`)
+      const { data: { articles, total } } = await api.get(`/articles/${category}/${currentPage}`)
       const articleSchema = new schema.Entity('articles', {}, { idAttribute: '_id' })
       const articleListSchema = [articleSchema]
 
@@ -74,10 +71,10 @@ export const actions = {
         dispatch({
           type: types.article.SUCCESS,
           payload: normalize(articles, articleListSchema),
-          meta: { page, where },
+          meta: { page: currentPage, category },
         })
 
-        dispatch({ type: types.pagination.SET_LAST_PAGE, meta: { where, total } })
+        dispatch({ type: types.pagination.SET_LAST_PAGE, meta: { category, total } })
       }
     } catch (err) {
       console.log(err)
@@ -85,43 +82,52 @@ export const actions = {
     }
   },
   loadPage: page => (dispatch, getState) => {
-    const { pagination } = getState()
-    const where = pagination.get('where')
+    const category = selectors.getCategory(getState())
 
     dispatch({ type: types.pagination.SET_PAGE, meta: { page } })
-    actions.loadArticles(where)(dispatch, getState)
+    actions.loadArticles(category)(dispatch, getState)
   },
-  loadNextMinPage: () => (dispatch, getState) => {
-    const { pagination } = getState()
-    const maxPage = selectors.getMaxPage({ pagination })
-    const where = pagination.get('where')
-    const lastPage = pagination.getIn(['pages', where, 'last'])
+  loadNextPage: () => (dispatch, getState) => {
+    const maxPage = selectors.getMaxPage(getState())
+    const lastPage = selectors.getLastPage(getState())
+    const nextPage = maxPage + 1
 
     if (maxPage < lastPage) {
-      actions.loadPage(maxPage)(dispatch, getState)
+      actions.loadPage(nextPage)(dispatch, getState)
     }
   },
-  loadPrevMinPage: () => (dispatch, getState) => {
-    const { pagination } = getState()
-    const minPage = selectors.getMinPage({ pagination })
+  loadPrevPage: () => (dispatch, getState) => {
+    const minPage = selectors.getMinPage(getState())
+    const currentPage = selectors.getCurrentPage(getState())
 
     if (minPage > 1) {
-      actions.loadPage(minPage - 5)(dispatch, getState)
+      actions.loadPage(minPage - 1)(dispatch, getState)
     }
+
+    if (minPage === 1 && currentPage !== 1) {
+      actions.loadPage(minPage)(dispatch, getState)
+    }
+  },
+  setCategory: category => dispatch => {
+    dispatch({ type: types.pagination.SET_CATEGORY, meta: { category } })
+
+    // go to first page of category
+    dispatch({ type: types.pagination.SET_PAGE, meta: { page: 1 } })
   },
 }
 
 export default handleActions(
   {
     [types.article.SUCCESS]: (state, { meta }) => {
-      return state.setIn(['pages', meta.where, 'current'], meta.page)
+      return state.setIn(['pages', meta.category, 'current'], meta.page)
     },
     [types.pagination.SET_PAGE]: (state, { meta }) => {
-      const where = state.get('where')
-      return state.setIn(['pages', where, 'current'], meta.page)
+      const category = state.get('category')
+      return state.setIn(['pages', category, 'current'], meta.page)
     },
     [types.pagination.SET_LAST_PAGE]: (state, { meta }) =>
-      state.setIn(['pages', meta.where, 'last'], Math.round(meta.total / perPage)),
+      state.setIn(['pages', meta.category, 'last'], Math.round(meta.total / perPage)),
+    [types.pagination.SET_CATEGORY]: (state, { meta }) => state.set('category', meta.category),
   },
   initialState,
 )

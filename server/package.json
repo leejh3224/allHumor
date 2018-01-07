@@ -18,7 +18,8 @@
     "lodash": "^4.17.4",
     "mongoose": "^5.0.0-rc2",
     "request": "^2.83.0",
-    "sanitize-html": "^1.16.3"
+    "sanitize-html": "^1.16.3",
+    "uuid": "^3.1.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

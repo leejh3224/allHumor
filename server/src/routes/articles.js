@@ -3,6 +3,6 @@ import articlesController from 'controllers/articles'
 
 const routes = Router()
 
-routes.get('/articles/dogdrip/:page', articlesController.getArticlesDogdrip)
+routes.get('/articles/:category/:page', articlesController.getArticlesByCategory)
 
 export default routes

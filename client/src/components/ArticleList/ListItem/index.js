@@ -2,6 +2,7 @@ import React from 'react'
 import { string } from 'prop-types'
 import { Link } from 'react-router-dom'
 import formatDate from 'utils/formatDate'
+import { ShareButton } from 'components'
 import styles from './ListItem.sass'
 
 const ListItem = ({
@@ -29,10 +30,7 @@ const ListItem = ({
             <div className={styles.meta}>
               <i className="ion-thumbsup" /> 12
             </div>
-            <button onClick={e => e.preventDefault()} className={styles.action}>
-              <i className="ion-share" />
-              <span className={styles.actionGuide}>공유</span>
-            </button>
+            <ShareButton />
           </div>
         </div>
       </article>

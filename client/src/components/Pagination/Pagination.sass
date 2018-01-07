@@ -10,10 +10,15 @@
   margin: 1rem 0
 
 .pageButton
+  +base-style-link
+  +flex
+
+  align-items: center
   background-color: $white
   border: 1px solid $light-grey
   font-size: 1rem
   height: 50px
+  justify-content: center
   margin: 0 0.1rem
   padding: 0
   width: 50px
@@ -23,20 +28,21 @@
     color: $white
 
 .pageButton.large
-  width: 80px
+  flex: 1
+  max-width: 100px
 
 .pageButton.active
   background-color: $primary-color
   color: $white
 
-@media (max-width: 450px)
+@media (max-width: 550px)
   .container
     padding: 0 0.3rem
 
   .pageButton
     font-size: 0.8rem
-    height: 30px
-    width: 50px
+    height: 35px
+    width: 35px
 
   .pageButton.large
     width: 80px

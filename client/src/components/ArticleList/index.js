@@ -16,7 +16,7 @@ const ArticleList = ({ articles }) => (
           author={author}
           date={uploadDate}
           title={title}
-          thumbnail={`${process.env.PUBLIC_URL}${thumbnail || 'images/noimage.jpg'}`}
+          thumbnail={`../../../${thumbnail || 'images/noimage.jpg'}`}
           type={type}
         />
       )

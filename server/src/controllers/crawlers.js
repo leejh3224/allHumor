@@ -5,11 +5,11 @@ import Article from 'models/Article'
 
 export default {
   crawlDogdrip: async (req, res) => {
-    const { page = 1 } = req.params
-    const dogdripMainUrl = `http://www.dogdrip.net/index.php?mid=dogdrip&page=${page}`
+    const { boardName = 'dogdrip', page = 1 } = req.params
+    const dogdripUrl = `http://www.dogdrip.net/index.php?mid=${boardName}&page=${page}`
 
     try {
-      const { data } = await axios.get(dogdripMainUrl)
+      const { data } = await axios.get(dogdripUrl)
 
       // decodeEntities option 을 false로 설정해야 html() 실행 시 한국어가 제대로 나옴
       // 아래의 옵션은 한국어를 유니코드로 디코딩하기 때문에 생기는 현상

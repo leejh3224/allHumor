@@ -1,11 +1,13 @@
 import React, { Component } from 'react'
-import { func, bool, objectOf, object } from 'prop-types'
+import { func, bool, objectOf, object, array, shape } from 'prop-types'
 import { connect } from 'react-redux'
 import { ArticleList } from 'components'
 import * as entityDucks from 'store/modules/entity'
 import * as fetchingDucks from 'store/modules/fetching'
 import * as paginationDucks from 'store/modules/pagination'
 import orderBy from 'lodash/orderBy'
+import { compose } from 'recompose'
+import { withRouter } from 'react-router-dom'
 
 const { getArticles } = entityDucks.selectors
 const { getFetchingArticle } = fetchingDucks.selectors
@@ -15,9 +17,22 @@ class ArticleListContainer extends Component {
     loadArticles: func.isRequired,
     fetching: bool.isRequired,
     articles: objectOf(object).isRequired,
+    match: shape({ params: array }.isRequired).isRequired,
   }
   componentWillMount() {
-    this.props.loadArticles('dogdrip')
+    const { loadArticles, match: { params } } = this.props
+    const category = params[0] || 'all'
+
+    loadArticles(category)
+  }
+  componentWillReceiveProps(nextProps) {
+    const { loadArticles, match: { params } } = nextProps
+    const oldCategory = this.props.match.params[0]
+    const newCategory = params[0]
+
+    if (newCategory !== oldCategory) {
+      loadArticles(params[0])
+    }
   }
   render() {
     const { fetching, articles } = this.props
@@ -32,12 +47,15 @@ class ArticleListContainer extends Component {
 }
 
 /* eslint-disable max-len */
-export default connect(
-  state => ({
-    articles: getArticles(state),
-    fetching: getFetchingArticle(state),
-  }),
-  {
-    loadArticles: paginationDucks.actions.loadArticles,
-  },
+export default compose(
+  withRouter,
+  connect(
+    state => ({
+      articles: getArticles(state),
+      fetching: getFetchingArticle(state),
+    }),
+    {
+      loadArticles: paginationDucks.actions.loadArticles,
+    },
+  ),
 )(ArticleListContainer)

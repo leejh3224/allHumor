@@ -5,6 +5,7 @@ export default {
     ERROR: 'article/ARTICLE_ERROR',
   },
   pagination: {
+    SET_CATEGORY: 'pagination/SET_CATEGORY',
     SET_PAGE: 'pagination/SET_PAGE',
     SET_LAST_PAGE: 'pagination/SET_LAST_PAGE',
   },

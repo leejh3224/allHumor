@@ -2,14 +2,17 @@ import Article from 'models/Article'
 import omit from 'lodash/omit'
 
 export default {
-  getArticlesDogdrip: async (req, res) => {
-    const { page } = req.params
+  getArticlesByCategory: async (req, res) => {
+    const { category, page } = req.params
     const perPage = 10
+
+    // find all for category all
+    const findQuery = category === 'all' ? {} : { type: category }
 
     // lean option -> to js object
     try {
       const total = await Article.find().count()
-      let articles = await Article.find({ type: 'dogdrip' })
+      let articles = await Article.find(findQuery)
         .skip(perPage * (page - 1))
         .limit(perPage)
         .sort({ uploadDate: -1 })
