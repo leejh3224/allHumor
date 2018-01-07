@@ -21,7 +21,8 @@ class ArticleCategoriesContainer extends Component {
     }
   }
   render() {
-    return <ArticleCategories />
+    const selected = this.props.match.params[0]
+    return <ArticleCategories selected={selected} />
   }
 }
 

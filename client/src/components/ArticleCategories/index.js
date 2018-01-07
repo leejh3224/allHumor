@@ -1,31 +1,32 @@
 import React from 'react'
-// import PropTypes from 'prop-types'
+import { string } from 'prop-types'
 import { Link } from 'react-router-dom'
 import styles from './ArticleCategories.sass'
 
-const ArticleCategories = () => (
+const categories = {
+  전체: 'all',
+  개드립: 'dogdrip',
+  오유: 'all',
+  디씨: 'all',
+  네이트판: 'all',
+  인스티즈: 'all',
+}
+
+const ArticleCategories = ({ selected }) => (
   <nav className={styles.container}>
-    <Link to="/all/1" className={styles.item}>
-      전체
-    </Link>
-    <Link to="/dogdrip/1" className={styles.item}>
-      개드립
-    </Link>
-    <Link to="/all/1" className={styles.item}>
-      오유
-    </Link>
-    <Link to="/all/1" className={styles.item}>
-      디씨
-    </Link>
-    <Link to="/all/1" className={styles.item}>
-      네이트판
-    </Link>
-    <Link to="/all/1" className={styles.item}>
-      인스티즈
-    </Link>
+    {Object.keys(categories).map(name => (
+      <Link
+        to={`/${categories[name]}/1`}
+        className={`${styles.item} ${selected === categories[name] && styles.active}`}
+      >
+        {name}
+      </Link>
+    ))}
   </nav>
 )
 
-ArticleCategories.propTypes = {}
+ArticleCategories.propTypes = {
+  selected: string.isRequired,
+}
 
 export default ArticleCategories
