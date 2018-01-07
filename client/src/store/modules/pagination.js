@@ -20,7 +20,7 @@ const initialState = fromJS({
       last: 5,
     },
   },
-  category: 'dogdrip',
+  category: 'all',
 })
 
 export const selectors = {
@@ -37,7 +37,7 @@ export const selectors = {
     const minPage = selectors.getMinPage(state)
     const lastPage = selectors.getLastPage(state)
 
-    if (minPage + lengthPageButton + 1 < lastPage) {
+    if (minPage + lengthPageButton <= lastPage) {
       return minPage + (lengthPageButton - 1)
     }
     return lastPage
@@ -57,13 +57,12 @@ export const selectors = {
 
 // thunks
 export const actions = {
-  loadArticles: category => async (dispatch, getState) => {
-    const currentPage = selectors.getCurrentPage(getState())
-
+  loadArticles: (category, page) => async (dispatch) => {
     dispatch({ type: types.article.REQUEST })
+
     try {
       /* eslint-disable */
-      const { data: { articles, total } } = await api.get(`/articles/${category}/${currentPage}`)
+      const { data: { articles, total } } = await api.get(`/articles/${category}/${page}`)
       const articleSchema = new schema.Entity('articles', {}, { idAttribute: '_id' })
       const articleListSchema = [articleSchema]
 
@@ -71,9 +70,10 @@ export const actions = {
         dispatch({
           type: types.article.SUCCESS,
           payload: normalize(articles, articleListSchema),
-          meta: { page: currentPage, category },
+          meta: { page, category },
         })
 
+        dispatch({ type: types.pagination.SET_PAGE, meta: { page } })
         dispatch({ type: types.pagination.SET_LAST_PAGE, meta: { category, total } })
       }
     } catch (err) {
@@ -85,7 +85,7 @@ export const actions = {
     const category = selectors.getCategory(getState())
 
     dispatch({ type: types.pagination.SET_PAGE, meta: { page } })
-    actions.loadArticles(category)(dispatch, getState)
+    actions.loadArticles(category, page)(dispatch, getState)
   },
   loadNextPage: () => (dispatch, getState) => {
     const maxPage = selectors.getMaxPage(getState())

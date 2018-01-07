@@ -35,20 +35,13 @@ export default async (url, domain) => {
     // matches img src tag
     // and convert it to url
     const sources = htmlContent
-      .match(/<img src="(http:|https:){1,}[/\w.]{0,}/g)
+      .match(/<img src="[http:|https:]{1,}[/\w?.=:]{0,}/g)
       .map(matched => matched.replace(/<img src="/, ''))
 
     if (sources && sources.length) {
-      try {
-        await saveArticleImagesById(sources, id)
-      } catch (error) {
-        console.log(error)
-      }
-
+      saveArticleImagesById(sources, id)
       htmlContent = adjustImageSrc(htmlContent, domainShortNames[domain], id)
     }
-
-    console.log(htmlContent)
 
     return {
       _id: id,
@@ -63,7 +56,7 @@ export default async (url, domain) => {
       type: domainShortNames[domain],
     }
   } catch (error) {
-    console.log(error)
+    console.log(12111, error)
 
     return null
   }

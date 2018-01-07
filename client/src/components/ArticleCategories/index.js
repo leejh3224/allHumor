@@ -16,6 +16,7 @@ const ArticleCategories = ({ selected }) => (
   <nav className={styles.container}>
     {Object.keys(categories).map(name => (
       <Link
+        key={name}
         to={`/${categories[name]}/1`}
         className={`${styles.item} ${selected === categories[name] && styles.active}`}
       >

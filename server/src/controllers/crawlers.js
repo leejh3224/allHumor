@@ -29,15 +29,17 @@ export default {
 
       const articlesData = await Promise.all(urls.map(url => getArticleData(url, 'http://www.dogdrip.net')))
 
-      await Promise.all(articlesData.map(async (article) => {
-        if (article) {
-          try {
-            await new Article(article).save()
-          } catch (error) {
-            console.log(error)
+      if (articlesData) {
+        await Promise.all(articlesData.map(async (article) => {
+          if (article) {
+            try {
+              await new Article(article).save()
+            } catch (error) {
+              console.log(error)
+            }
           }
-        }
-      }))
+        }))
+      }
 
       res.json({
         articles: articlesData,

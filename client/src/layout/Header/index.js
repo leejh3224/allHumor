@@ -7,7 +7,7 @@ import styles from './Header.sass'
 const Header = () => (
   <header className={styles.header}>
     <div className={styles.wrapper}>
-      <Link className={styles.brand} to="/">
+      <Link className={styles.brand} to="/all/1">
         ALL유머
       </Link>
       <Link to="/" className={styles.loginButton}>
@@ -16,7 +16,7 @@ const Header = () => (
     </div>
     {/* eslint-disable jsx-a11y/anchor-is-valid */}
     <nav className={styles.tabLinks}>
-      <Link className={styles.tabLink} to="/">
+      <Link className={styles.tabLink} to="/all/1">
         새 글
       </Link>
       <Link className={styles.tabLink} to="/">

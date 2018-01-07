@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { func, bool, objectOf, object, array, shape } from 'prop-types'
+import { func, bool, objectOf, object, shape, string } from 'prop-types'
 import { connect } from 'react-redux'
 import { ArticleList } from 'components'
 import * as entityDucks from 'store/modules/entity'
@@ -17,21 +17,26 @@ class ArticleListContainer extends Component {
     loadArticles: func.isRequired,
     fetching: bool.isRequired,
     articles: objectOf(object).isRequired,
-    match: shape({ params: array }.isRequired).isRequired,
+    match: shape({ params: { page: string.isRequired }.isRequired }.isRequired).isRequired,
   }
   componentWillMount() {
     const { loadArticles, match: { params } } = this.props
     const category = params[0] || 'all'
+    const page = this.props.match.params.page || 1
 
-    loadArticles(category)
+    loadArticles(category, parseInt(page, 10))
   }
   componentWillReceiveProps(nextProps) {
     const { loadArticles, match: { params } } = nextProps
-    const oldCategory = this.props.match.params[0]
-    const newCategory = params[0]
+    const oldCategory = this.props.match.params[0] || 'all'
+    const newCategory = params[0] || 'all'
+    const oldPage = this.props.match.params.page || 1
+    const nextPage = params.page || 1
+    const changingCategory = newCategory !== oldCategory
+    const changingPage = !changingCategory && oldPage !== nextPage
 
-    if (newCategory !== oldCategory) {
-      loadArticles(params[0])
+    if (changingCategory || changingPage) {
+      loadArticles(newCategory, parseInt(nextPage, 10))
     }
   }
   render() {

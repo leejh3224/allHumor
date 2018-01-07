@@ -1,7 +1,7 @@
 import fs from 'fs'
 import request from 'superagent'
 import getImageName from 'utils/getImageName'
-import uuid from 'uuid/v1'
+import uuidv1 from 'uuid/v1'
 
 const imagePath = '/Users/leejunhyung/allhumor/client/public/images'
 
@@ -20,7 +20,7 @@ export default async function (sources, id) {
         .reduce((acc, fileName) => acc && fileName.includes(id), false)
 
       if (!duplicate) {
-        fs.writeFileSync(`${imagePath}/dogdrip/${id}_${imageName || uuid}`, body, 'binary')
+        fs.writeFileSync(`${imagePath}/dogdrip/${id}_${imageName || uuidv1()}`, body, 'binary')
       }
     } catch (error) {
       console.log('error occured while saving images ...', error)
