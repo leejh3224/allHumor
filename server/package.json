@@ -7,7 +7,8 @@
     "start": "NODE_ENV=development NODE_PATH=src nodemon src/ --exec babel-node",
     "test": "NODE_ENV=test NODE_PATH=src jest",
     "test-crawler": "NODE_ENV=test NODE_PATH=src jest crawler.test.js",
-    "test-article": "NODE_ENV=test NODE_PATH=src jest article.test.js"
+    "test-article": "NODE_ENV=test NODE_PATH=src jest article.test.js",
+    "test-utils": "NODE_ENV=test NODE_PATH=src jest utils.test.js"
   },
   "dependencies": {
     "axios": "^0.17.1",
@@ -27,6 +28,7 @@
     "babel-preset-env": "^1.6.1",
     "babel-preset-stage-3": "^6.24.1",
     "body-parser": "^1.18.2",
+    "chalk": "^2.3.0",
     "cors": "^2.8.4",
     "eslint": "^4.14.0",
     "eslint-cli": "^1.1.1",

@@ -23,6 +23,7 @@ const initialState = fromJS({
   category: 'all',
 })
 
+/* eslint-disable */
 export const selectors = {
   getCurrentPage: ({ pagination }) => {
     const category = pagination.get('category')
@@ -33,7 +34,7 @@ export const selectors = {
     const curruntPage = selectors.getCurrentPage({ pagination })
     return Math.floor((curruntPage - 1) / lengthPageButton) * lengthPageButton + 1
   },
-  getMaxPage: (state) => {
+  getMaxPage: state => {
     const minPage = selectors.getMinPage(state)
     const lastPage = selectors.getLastPage(state)
 
@@ -46,7 +47,7 @@ export const selectors = {
     const category = pagination.get('category')
     return pagination.getIn(['pages', category, 'last'])
   },
-  getRangeMinMax: (state) => {
+  getRangeMinMax: state => {
     const minPage = selectors.getMinPage(state)
     const maxPage = selectors.getMaxPage(state)
 
@@ -57,7 +58,7 @@ export const selectors = {
 
 // thunks
 export const actions = {
-  loadArticles: (category, page) => async (dispatch) => {
+  loadArticles: (category, page) => async dispatch => {
     dispatch({ type: types.article.REQUEST })
 
     try {

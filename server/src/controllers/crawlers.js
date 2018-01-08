@@ -1,7 +1,6 @@
 import axios from 'axios'
 import cheerio from 'cheerio'
 import getArticleData from 'utils/getArticleData'
-import Article from 'models/Article'
 
 export default {
   crawlDogdrip: async (req, res) => {
@@ -28,18 +27,6 @@ export default {
       })
 
       const articlesData = await Promise.all(urls.map(url => getArticleData(url, 'http://www.dogdrip.net')))
-
-      if (articlesData) {
-        await Promise.all(articlesData.map(async (article) => {
-          if (article) {
-            try {
-              await new Article(article).save()
-            } catch (error) {
-              console.log(error)
-            }
-          }
-        }))
-      }
 
       res.json({
         articles: articlesData,
