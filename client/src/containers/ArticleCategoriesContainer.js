@@ -14,11 +14,18 @@ class ArticleCategoriesContainer extends Component {
     match: shape({ params: array }.isRequired).isRequired,
     category: string.isRequired,
   }
+  componentWillMount() {
+    const { setCategory, match: { params } } = this.props
+    const category = params[0] || 'all'
+
+    setCategory(category)
+  }
   componentWillReceiveProps(nextProps) {
     const { setCategory, match: { params } } = nextProps
     const oldCategory = this.props.match.params[0] || 'all'
     const newCategory = params[0] || 'all'
 
+    console.log(oldCategory, newCategory)
     if (newCategory !== oldCategory) {
       setCategory(newCategory)
     }

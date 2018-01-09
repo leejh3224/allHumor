@@ -12,6 +12,6 @@ export default {
     date: '2018-01-05 02:30:32',
     title: '샘플 제목',
     thumbnail: 'images/ducks.jpeg',
-    type: 'dogdrip',
+    site: 'dogdrip',
   },
 }

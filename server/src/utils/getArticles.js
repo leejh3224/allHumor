@@ -15,7 +15,7 @@ export default async (url, domain) => {
 
     // 개선점:
     // 이미지 압축할것
-    content = pipe(
+    content = await pipe(
       c => sanitizeHtml(c),
       (c) => {
         if (site === 'dogdrip') {
@@ -31,7 +31,8 @@ export default async (url, domain) => {
       },
       // converts relative path to absolute path
       c => c.replace(/src="[.]/g, `src="${domain}`),
-      (c) => {
+      c => convertToJsx(c),
+      async (c) => {
         const imgSrcRegex = /(<img src=")([http:|https:]{1,}[/\w?.=:]{0,})/
         const imgSrcRegexGlobal = new RegExp(imgSrcRegex, 'g')
         const urls = []
@@ -42,10 +43,8 @@ export default async (url, domain) => {
         }
 
         if (urls.length) {
-          saveImages(urls, articleId)
-
-          const firstImageName = getImageName(urls[0])
-          thumbnail = `images/${site}/${articleId}_${firstImageName}`
+          const [firstImage] = await saveImages(urls, site, articleId)
+          thumbnail = firstImage
 
           // after saving images
           // adjust image src to match public url
@@ -55,9 +54,9 @@ export default async (url, domain) => {
             matched => `<img src="images/${site}/${articleId}_${getImageName(matched)}`,
           )
         }
+
         return c
       },
-      c => convertToJsx(c),
     )(content)
 
     const article = {

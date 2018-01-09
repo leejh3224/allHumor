@@ -127,7 +127,7 @@ export default handleActions(
       return state.setIn(['pages', category, 'current'], meta.page)
     },
     [types.pagination.SET_LAST_PAGE]: (state, { meta }) =>
-      state.setIn(['pages', meta.category, 'last'], Math.round(meta.total / perPage)),
+      state.setIn(['pages', meta.category, 'last'], Math.ceil(meta.total / perPage)),
     [types.pagination.SET_CATEGORY]: (state, { meta }) => state.set('category', meta.category),
   },
   initialState,

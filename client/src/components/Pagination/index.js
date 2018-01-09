@@ -39,7 +39,11 @@ const Pagination = ({
         {num}
       </Link>
     ))}
-    <Link to={`/${category}/${nextPage}`} className={styles.pageButton} onClick={loadNextPage}>
+    <Link
+      to={`/${category}/${nextPage > lastPage ? lastPage : nextPage}`}
+      className={styles.pageButton}
+      onClick={loadNextPage}
+    >
       <i className="ion-ios-arrow-right" />
     </Link>
     <Link

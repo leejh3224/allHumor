@@ -7,7 +7,7 @@ export default {
     const perPage = 10
 
     // find all for category all
-    const findQuery = category === 'all' ? {} : { type: category }
+    const findQuery = category === 'all' ? {} : { site: category }
 
     // lean option -> to js object
     try {

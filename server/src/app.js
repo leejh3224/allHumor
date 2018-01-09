@@ -16,8 +16,8 @@ app.init = () => {
 
   app.use(bodyParser.json())
   app.use(bodyParser.urlencoded({ extended: false }))
-  app.use(timeout(240000))
-  app.use(haltOnTimeout)
+  // app.use(timeout(500000))
+  // app.use(haltOnTimeout)
   app.use('/api', api)
 }
 
