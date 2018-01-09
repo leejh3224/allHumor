@@ -1,4 +1,4 @@
-export default (string) => {
-  const imageNames = string.match(/[\w]{0,}.(gif|jpe?g|tiff|png)/i)
-  return imageNames ? imageNames.filter(matched => matched.length > 4) : null
-}
+import head from 'lodash/head'
+
+// returns full match
+export default string => head(string.match(/[\w]{0,}.(gif|jpe?g|tiff|png)?$/i))

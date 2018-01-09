@@ -6,7 +6,7 @@ import { ShareButton } from 'components'
 import styles from './ListItem.sass'
 
 const ListItem = ({
-  id, thumbnail, title, author, date, type,
+  id, thumbnail, title, author, date, site,
 }) => (
   <Link className={styles.link} to={`/article/${id}`}>
     <li>
@@ -17,7 +17,7 @@ const ListItem = ({
         <div className={styles.content}>
           <div className={styles.header}>
             <h1 className={styles.title}>{title}</h1>
-            <span className={styles.siteInfo}>{type === 'dogdrip' ? '개드립' : ''}</span>
+            <span className={styles.siteInfo}>{site === 'dogdrip' ? '개드립' : ''}</span>
             <h2 className={styles.author}>
               {author}
               <span className={styles.timestamp}>{formatDate(date)}</span>
@@ -44,7 +44,7 @@ ListItem.propTypes = {
   author: string.isRequired,
   date: string.isRequired,
   id: string.isRequired,
-  type: string.isRequired,
+  site: string.isRequired,
 }
 
 export default ListItem

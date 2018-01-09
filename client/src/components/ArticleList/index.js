@@ -6,7 +6,7 @@ const ArticleList = ({ articles }) => (
   <ul>
     {articles.map((article) => {
       const {
- _id, author, uploadDate, title, thumbnail, type,
+ _id, author, uploadDate, title, thumbnail, site,
 } = article
 
       return (
@@ -17,7 +17,7 @@ const ArticleList = ({ articles }) => (
           date={uploadDate}
           title={title}
           thumbnail={`../../../${thumbnail || 'images/noimage.jpg'}`}
-          type={type}
+          site={site}
         />
       )
     })}

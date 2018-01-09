@@ -1,6 +1,6 @@
 import axios from 'axios'
 import cheerio from 'cheerio'
-import getArticleData from 'utils/getArticleData'
+import getArticles from 'utils/getArticles'
 
 export default {
   crawlDogdrip: async (req, res) => {
@@ -26,10 +26,10 @@ export default {
         urls.push(el.attribs.href)
       })
 
-      const articlesData = await Promise.all(urls.map(url => getArticleData(url, 'http://www.dogdrip.net')))
+      const articles = await Promise.all(urls.map(url => getArticles(url, 'http://www.dogdrip.net')))
 
       res.json({
-        articles: articlesData,
+        articles,
       })
     } catch (error) {
       console.log(88888, error)
