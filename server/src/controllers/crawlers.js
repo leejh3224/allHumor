@@ -21,7 +21,7 @@ export default {
       // 공지 부분은 삭제
       $('tbody .notice').remove()
 
-      // 개드립 게시판의 각 링크 주소를 집어넣음
+      // 개드립 게시판의 각 링크 주소
       $('tbody tr .title a').each((i, el) => {
         urls.push(el.attribs.href)
       })

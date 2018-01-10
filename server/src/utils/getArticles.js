@@ -2,85 +2,76 @@ import sanitizeHtml from 'utils/sanitizeHtml'
 import convertToJsx from 'utils/convertToJsx'
 import saveImages from 'utils/saveImages'
 import getImageName from 'utils/getImageName'
-import extractArticle from 'utils/extractArticle'
 import pipe from 'utils/pipe'
+import extractArticle from 'utils/extractArticle'
 import Article from 'models/Article'
 
 export default async (url, domain) => {
-  try {
-    const extracted = await extractArticle(url)
-    const { articleId, site, ...rest } = extracted
-    let { content } = extracted
-    let thumbnail = null
+  const data = await extractArticle(url)
 
-    // 개선점:
-    // 이미지 압축할것
-    content = await pipe(
-      c => sanitizeHtml(c),
-      (c) => {
-        if (site === 'dogdrip') {
-          // dogdrip uses lazyload feature
-          // therefore imgs hold original src data in attribute called 'data-original'
-          // so src value and data-original value should be exchanged
-          return c.replace(
-            /(src=")(\/addons\/lazyload\/img\/transparent.gif)"\s(data-original=")([http:|https:|.]{1,}[\w/.]{0,})"/g,
-            '$1$4" $3$2"',
-          )
-        }
-        return c
-      },
-      // converts relative path to absolute path
-      c => c.replace(/src="[.]/g, `src="${domain}`),
-      c => convertToJsx(c),
-      async (c) => {
-        const imgSrcRegex = /(<img src=")([http:|https:]{1,}[/\w?.=:]{0,})/
-        const imgSrcRegexGlobal = new RegExp(imgSrcRegex, 'g')
-        const urls = []
+  if (data) {
+    const { articleId, site, ...rest } = data
+    let { content } = data
 
-        if (c.match(imgSrcRegex)) {
-          // from full img tags, get url only
-          c.match(imgSrcRegexGlobal).forEach(src => urls.push(imgSrcRegex.exec(src)[2]))
-        }
+    try {
+      let thumbnail = null
 
-        if (urls.length) {
-          const [firstImage] = await saveImages(urls, site, articleId)
-          thumbnail = firstImage
+      content = await pipe(
+        c => sanitizeHtml(c),
+        (c) => {
+          if (site === 'dogdrip') {
+            // dogdrip uses lazyload feature
+            // therefore imgs hold original src data in attribute called 'data-original'
+            // so src value and data-original value should be exchanged
+            return c.replace(
+              /(src=")(\/addons\/lazyload\/img\/transparent.gif)"\s(data-original=")([http:|https:|.]{1,}[\w/.]{0,})"/g,
+              '$1$4" $3$2"',
+            )
+          }
+          return c
+        },
+        c => c.replace(/src="[.]/g, `src="${domain}`), // converts relative path to absolute path
+        c => convertToJsx(c),
+        async (c) => {
+          const imgSrcRegex = /(<img src=")([http:|https:]{1,}[/\w?.=:]{0,})/
+          const imgSrcRegexGlobal = new RegExp(imgSrcRegex, 'g')
+          const hasImages = imgSrcRegex.test(c)
+          const urls = []
 
-          // after saving images
-          // adjust image src to match public url
-          // e.g. images/example_site/articleId_imageName
-          return c.replace(
-            imgSrcRegex,
-            matched => `<img src="images/${site}/${articleId}_${getImageName(matched)}`,
-          )
-        }
+          if (hasImages) {
+            // from list of img tags, get url only
+            c.match(imgSrcRegexGlobal).forEach(src => urls.push(imgSrcRegex.exec(src)[2]))
 
-        return c
-      },
-    )(content)
+            const [firstImage] = await saveImages(urls, site, articleId)
+            thumbnail = firstImage
 
-    const article = {
-      articleId,
-      thumbnail,
-      content,
-      site,
-      ...rest,
-    }
+            // 프론트에서 보여주기 쉬운 형태로 src 태그 변환
+            // e.g. images/example_site/articleId_imageName
+            return c.replace(
+              imgSrcRegex,
+              matched => `<img src="images/${site}/${articleId}_${getImageName(matched)}`,
+            )
+          }
 
-    const isNotSaved =
-      (await Article.find({
-        site: article.site,
-        articleId: article.articleId,
-      }).count()) === 0
+          return c
+        },
+      )(content)
 
-    if (isNotSaved) {
+      const article = {
+        articleId,
+        thumbnail,
+        content,
+        site,
+        ...rest,
+      }
+
       await new Article(article).save()
+      console.log(articleId)
+      return article
+    } catch (error) {
+      console.log(12111, error)
+
+      return null
     }
-
-    return article
-  } catch (error) {
-    console.log(12111, error)
-
-    return null
   }
 }

@@ -1,10 +1,11 @@
 import cheerio from 'cheerio'
-import request from 'superagent'
+import axios from 'axios'
+import Article from 'models/Article'
 
 export default async (url) => {
   try {
-    const article = await request.get(url)
-    const $ = cheerio.load(article.text, {
+    const { data } = await axios.get(url)
+    const $ = cheerio.load(data, {
       decodeEntities: false,
     })
 
@@ -21,6 +22,16 @@ export default async (url) => {
         .trim()
       const site = 'dogdrip'
       const title = $('.titleAndUser .title h1 a').text()
+
+      const hasCrawled =
+        (await Article.find({
+          site,
+          articleId,
+        }).count()) === 1
+
+      if (hasCrawled) {
+        return null
+      }
 
       return {
         articleId,

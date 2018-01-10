@@ -1,5 +1,5 @@
 import imagemin from 'imagemin'
-import imageminGiflossy from 'imagemin-giflossy'
+import imageminGifsicle from 'imagemin-gifsicle'
 import imageminPngquant from 'imagemin-pngquant'
 import imageminMozjpeg from 'imagemin-mozjpeg'
 
@@ -8,20 +8,13 @@ export default (ext, body) => {
 
   if (ext === 'gif') {
     options = {
-      use: [
-        imageminGiflossy({
-          optimizationLevel: 3,
-          colors: 256,
-          lossy: 80,
-          optimize: 3,
-        }),
-      ],
+      use: [imageminGifsicle()],
     }
   } else if (ext === 'png') {
     options = {
       use: [
         imageminPngquant({
-          quality: '30',
+          quality: '70',
         }),
       ],
     }
@@ -29,7 +22,7 @@ export default (ext, body) => {
     options = {
       use: [
         imageminMozjpeg({
-          quality: '30',
+          quality: '70',
         }),
       ],
     }

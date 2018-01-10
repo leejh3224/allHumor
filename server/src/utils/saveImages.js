@@ -1,40 +1,32 @@
 import fs from 'fs'
-import request from 'superagent'
 import getImageName from 'utils/getImageName'
 import chalk from 'chalk'
 import path from 'path'
 import fileType from 'file-type'
 import bufferOptimizer from 'utils/bufferOptimizer'
+import axios from 'axios'
 
 const imagePath = '/Users/leejunhyung/allhumor/client/public/images'
 
-export default async function (sources, site, id) {
+export default function (sources, site, id) {
   return Promise.all(sources.map(async (src) => {
     try {
-      const { body } = await request.get(src)
-      const duplicate = await fs
-        .readdirSync(`${imagePath}/${site}`)
-        .reduce((acc, fileName) => acc && fileName.includes(id), false)
+      const { data } = await axios.get(src, {
+        responseType: 'arraybuffer',
+      })
+      const { ext } = fileType(data)
       let imageName = getImageName(src)
+      const hasFileExtension = path.extname(imageName)
 
-      if (!duplicate) {
-        const { ext } = fileType(body)
-
-        // sometimes getImageName fails to get extensions from url
-        // so we need to add it manually
-        if (!path.extname(imageName)) {
-          imageName = `${imageName}.${ext}`
-        }
-
-        // optimize buffer
-        const buffer = await bufferOptimizer(ext, body)
-        const wstream = fs.createWriteStream(`${imagePath}/${site}/${id}_${imageName}`, 'binary')
-        wstream.write(buffer)
-        wstream.end()
+      if (!hasFileExtension) {
+        imageName = `${imageName}.${ext}`
       }
 
-      // return formatted src path
-      return `images/${site}/${id}_${imageName}`
+      const buffer = await bufferOptimizer(ext, data)
+
+      await fs.writeFileSync(`${imagePath}/${site}/${id}_${imageName}`, buffer, 'binary')
+
+      return `images/${site}/${id}_${imageName}` // 프론트에서 이미지를 보여주기 좋은 형식으로 변환
     } catch (error) {
       console.log(chalk`{cyan [file saving error]} ${error}`)
 
