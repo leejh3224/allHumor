@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { func, bool, objectOf, object, shape, string } from 'prop-types'
 import { connect } from 'react-redux'
-import { ArticleList } from 'components'
+import { PreviewList } from 'components'
 import * as entityDucks from 'store/modules/entity'
 import * as fetchingDucks from 'store/modules/fetching'
 import * as paginationDucks from 'store/modules/pagination'
@@ -12,7 +12,7 @@ import { withRouter } from 'react-router-dom'
 const { getArticles } = entityDucks.selectors
 const { getFetchingArticle } = fetchingDucks.selectors
 
-class ArticleListContainer extends Component {
+class PreviewListContainer extends Component {
   static propTypes = {
     loadArticles: func.isRequired,
     fetching: bool.isRequired,
@@ -47,7 +47,7 @@ class ArticleListContainer extends Component {
     if (fetching) {
       return <p>loading ...</p>
     }
-    return <ArticleList articles={Object.values(sorted)} />
+    return <PreviewList articles={Object.values(sorted)} />
   }
 }
 
@@ -63,4 +63,4 @@ export default compose(
       loadArticles: paginationDucks.actions.loadArticles,
     },
   ),
-)(ArticleListContainer)
+)(PreviewListContainer)

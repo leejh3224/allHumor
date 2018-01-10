@@ -2,7 +2,7 @@ import React from 'react'
 import { arrayOf, object } from 'prop-types'
 import ListItem from './ListItem'
 
-const ArticleList = ({ articles }) => (
+const PreviewList = ({ articles }) => (
   <ul>
     {articles.map((article) => {
       const {
@@ -24,8 +24,8 @@ const ArticleList = ({ articles }) => (
   </ul>
 )
 
-ArticleList.propTypes = {
+PreviewList.propTypes = {
   articles: arrayOf(object).isRequired,
 }
 
-export default ArticleList
+export default PreviewList

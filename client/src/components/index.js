@@ -1,5 +1,5 @@
-export { default as ArticleList } from './ArticleList'
+export { default as PreviewList } from './PreviewList'
 export { default as ArticleDetail } from './ArticleDetail'
 export { default as Pagination } from './Pagination'
 export { default as ShareButton } from './ShareButton'
-export { default as ArticleCategories } from './ArticleCategories'
+export { default as CategoryGroup } from './CategoryGroup'

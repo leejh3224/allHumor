@@ -4,11 +4,11 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import { compose } from 'recompose'
 import * as paginationDucks from 'store/modules/pagination'
-import { ArticleCategories } from 'components'
+import { CategoryGroup } from 'components'
 
 const { getCategory } = paginationDucks.selectors
 
-class ArticleCategoriesContainer extends Component {
+class CategoryGroupContainer extends Component {
   static propTypes = {
     setCategory: func.isRequired,
     match: shape({ params: array }.isRequired).isRequired,
@@ -32,8 +32,8 @@ class ArticleCategoriesContainer extends Component {
   }
   render() {
     const { category, match: { params } } = this.props
-    const selected = params[0] || category
-    return <ArticleCategories selected={selected} />
+    const activeCategory = params[0] || category
+    return <CategoryGroup activeCategory={activeCategory} />
   }
 }
 
@@ -42,4 +42,4 @@ export default compose(
   connect(state => ({ category: getCategory(state) }), {
     setCategory: paginationDucks.actions.setCategory,
   }),
-)(ArticleCategoriesContainer)
+)(CategoryGroupContainer)

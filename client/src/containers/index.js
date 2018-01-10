@@ -1,3 +1,3 @@
-export { default as ArticleListContainer } from './ArticleListContainer'
+export { default as PreviewListContainer } from './PreviewListContainer'
 export { default as PaginationContainer } from './PaginationContainer'
-export { default as ArticleCategoriesContainer } from './ArticleCategoriesContainer'
+export { default as CategoryGroupContainer } from './CategoryGroupContainer'
