@@ -1,4 +1,4 @@
-export { default as PreviewList } from './PreviewList'
+export { default as PreviewItem } from './PreviewItem'
 export { default as ArticleDetail } from './ArticleDetail'
 export { default as Pagination } from './Pagination'
 export { default as ShareButton } from './ShareButton'

@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
 import { func, bool, objectOf, object, shape, string } from 'prop-types'
 import { connect } from 'react-redux'
-import { PreviewList } from 'components'
 import * as entityDucks from 'store/modules/entity'
 import * as fetchingDucks from 'store/modules/fetching'
 import * as paginationDucks from 'store/modules/pagination'
 import orderBy from 'lodash/orderBy'
 import { compose } from 'recompose'
 import { withRouter } from 'react-router-dom'
+import { PreviewItem } from 'components'
 
 const { getArticles } = entityDucks.selectors
 const { getFetchingArticle } = fetchingDucks.selectors
@@ -47,11 +47,10 @@ class PreviewListContainer extends Component {
     if (fetching) {
       return <p>loading ...</p>
     }
-    return <PreviewList articles={Object.values(sorted)} />
+    return <ul>{sorted.map(article => <PreviewItem article={article} />)}</ul>
   }
 }
 
-/* eslint-disable max-len */
 export default compose(
   withRouter,
   connect(

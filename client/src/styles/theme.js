@@ -4,7 +4,8 @@ const colors = {
   primary: 'hsla(204, 70%, 53%, 1)', // skyblue
   primaryDarker: 'hsla(204, 70%, 23%, 1)',
   divider: 'hsla(0, 0%, 75%, 1)',
-  lightGrey: 'hsla(0, 0%, 85%, 1)', // for icon
+  grey: 'hsla(0, 0%, 30%, 1)', // for icon
+  lightGrey: 'hsla(0, 0%, 85%, 1)',
   lighterGrey: 'hsla(0, 0%, 95%, 1)',
   font: 'hsla(0, 0%, 10%, 1)',
   black: 'hsla(0, 0%, 0%, 1)',
@@ -40,12 +41,28 @@ const media = {
 }
 
 const fonts = {
+  icon: {
+    fontSize: 28,
+
+    [media.lessThan('medium')]: {
+      fontSize: 26,
+    },
+  },
   header: {
     fontSize: 22,
-    lineHeight: 1.01,
+    fontWeight: 700,
+
+    [media.lessThan('medium')]: {
+      fontSize: 20,
+    },
   },
   small: {
-    fontSize: 12,
+    fontSize: 18,
+    fontWeight: 400,
+
+    [media.lessThan('medium')]: {
+      fontSize: 16,
+    },
   },
 }
 
