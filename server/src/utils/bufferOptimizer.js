@@ -14,7 +14,7 @@ export default (ext, body) => {
     options = {
       use: [
         imageminPngquant({
-          quality: '70',
+          quality: '60',
         }),
       ],
     }
@@ -22,7 +22,7 @@ export default (ext, body) => {
     options = {
       use: [
         imageminMozjpeg({
-          quality: '70',
+          quality: '60',
         }),
       ],
     }

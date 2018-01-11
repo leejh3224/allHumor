@@ -1,7 +1,7 @@
 import React from 'react'
 import { number, func, arrayOf, string } from 'prop-types'
 import { Link } from 'react-router-dom'
-import { spacing, colors } from 'styles/theme'
+import { spacing, colors, media } from 'styles/theme'
 import { css } from 'emotion'
 
 const buttonStyle = {
@@ -13,11 +13,21 @@ const buttonStyle = {
   height: 50,
   textDecoration: 'none',
   marginRight: spacing.xsmall,
+
+  [media.lessThan('medium')]: {
+    width: 40,
+    height: 40,
+  },
 }
 
 const LongButtonStyle = {
   ...buttonStyle,
   width: 100,
+
+  [media.lessThan('medium')]: {
+    width: 70,
+    height: 40,
+  },
 }
 
 const activeStyle = {
@@ -46,6 +56,10 @@ const Pagination = ({
       display: 'flex',
       justifyContent: 'center',
       margin: spacing.medium,
+
+      [media.lessThan('medium')]: {
+        margin: spacing.small,
+      },
     }}
   >
     <Link

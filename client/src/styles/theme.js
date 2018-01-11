@@ -41,6 +41,11 @@ const media = {
 }
 
 const fonts = {
+  huge: {
+    fontSize: 30,
+    fontWeight: 700,
+    lineHeight: '140%',
+  },
   icon: {
     fontSize: 28,
 
@@ -51,10 +56,15 @@ const fonts = {
   header: {
     fontSize: 22,
     fontWeight: 700,
+    lineHeight: '140%',
 
     [media.lessThan('medium')]: {
       fontSize: 20,
     },
+  },
+  body: {
+    fontSize: 16,
+    lineHeight: '140%',
   },
   small: {
     fontSize: 18,
@@ -63,6 +73,9 @@ const fonts = {
     [media.lessThan('medium')]: {
       fontSize: 16,
     },
+  },
+  xsmall: {
+    fontSize: 13,
   },
 }
 

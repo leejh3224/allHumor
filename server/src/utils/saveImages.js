@@ -6,7 +6,7 @@ import fileType from 'file-type'
 import bufferOptimizer from 'utils/bufferOptimizer'
 import axios from 'axios'
 
-const imagePath = '/Users/leejunhyung/allhumor/client/public/images'
+const imagePath = '/Users/leejunhyung/allhumor/client/public/article/images'
 
 export default function (sources, site, id) {
   return Promise.all(sources.map(async (src) => {

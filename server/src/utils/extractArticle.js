@@ -44,5 +44,6 @@ export default async (url) => {
     }
   } catch (error) {
     console.log(error)
+    return null
   }
 }

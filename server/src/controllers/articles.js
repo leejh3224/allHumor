@@ -27,4 +27,18 @@ export default {
       })
     }
   },
+  getArticle: async (req, res) => {
+    const { id } = req.params
+
+    try {
+      let article = await Article.findById(id).lean()
+      article = omit(article, ['__v'])
+      res.json({
+        articles: [article],
+      })
+    } catch (error) {
+      console.log(error)
+      res.json({ error })
+    }
+  },
 }

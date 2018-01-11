@@ -23,11 +23,12 @@ export const Thumbnail = ({ url }) => (
 
 export const Header = ({ title, author, date }) => [
   <div
+    key="previewItemTitle"
     css={{
       display: 'flex',
       flexWrap: 'wrap',
       alignItems: 'center',
-      marginBottom: spacing.small,
+      marginBottom: spacing.xsmall,
     }}
   >
     <h1
@@ -41,6 +42,7 @@ export const Header = ({ title, author, date }) => [
     </h1>
   </div>,
   <div
+    key="previewItemAuthorAndDate"
     css={{
       display: 'flex',
       justifyContent: 'space-between',
@@ -66,6 +68,7 @@ export const Footer = () => (
         alignItems: 'center',
         color: colors.grey,
         ...fonts.small,
+        lineHeight: 1.35,
         marginRight: spacing.medium,
       }}
     >
@@ -84,6 +87,7 @@ export const Footer = () => (
         display: 'flex',
         alignItems: 'center',
         color: colors.grey,
+        lineHeight: 1.35,
         ...fonts.small,
       }}
     >

@@ -58,11 +58,29 @@ export const selectors = {
 
 // thunks
 export const actions = {
+  loadArticle: id => async dispatch => {
+    dispatch({ type: types.article.REQUEST })
+
+    try {
+      const { data: { articles } } = await api.get(`/articles/${id}`)
+      const articleSchema = new schema.Entity('articles', {}, { idAttribute: '_id' })
+      const articleListSchema = [articleSchema]
+
+      if (articles) {
+        dispatch({
+          type: types.article.SUCCESS,
+          payload: normalize(articles, articleListSchema),
+        })
+      }
+    } catch (error) {
+      console.log(error)
+      dispatch({ type: types.article.ERROR, payload: error })
+    }
+  },
   loadArticles: (category, page) => async dispatch => {
     dispatch({ type: types.article.REQUEST })
 
     try {
-      /* eslint-disable */
       const { data: { articles, total } } = await api.get(`/articles/${category}/${page}`)
       const articleSchema = new schema.Entity('articles', {}, { idAttribute: '_id' })
       const articleListSchema = [articleSchema]
@@ -77,9 +95,9 @@ export const actions = {
         dispatch({ type: types.pagination.SET_PAGE, meta: { page } })
         dispatch({ type: types.pagination.SET_LAST_PAGE, meta: { category, total } })
       }
-    } catch (err) {
-      console.log(err)
-      dispatch({ type: types.article.ERROR, payload: err })
+    } catch (error) {
+      console.log(error)
+      dispatch({ type: types.article.ERROR, payload: error })
     }
   },
   loadPage: page => (dispatch, getState) => {
@@ -120,7 +138,10 @@ export const actions = {
 export default handleActions(
   {
     [types.article.SUCCESS]: (state, { meta }) => {
-      return state.setIn(['pages', meta.category, 'current'], meta.page)
+      if (meta) {
+        return state.setIn(['pages', meta.category, 'current'], meta.page)
+      }
+      return state
     },
     [types.pagination.SET_PAGE]: (state, { meta }) => {
       const category = state.get('category')

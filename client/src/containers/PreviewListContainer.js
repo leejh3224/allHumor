@@ -47,7 +47,8 @@ class PreviewListContainer extends Component {
     if (fetching) {
       return <p>loading ...</p>
     }
-    return <ul>{sorted.map(article => <PreviewItem article={article} />)}</ul>
+    /* eslint-disable no-underscore-dangle */
+    return <ul>{sorted.map(article => <PreviewItem key={article._id} article={article} />)}</ul>
   }
 }
 

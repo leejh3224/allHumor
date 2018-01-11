@@ -27,7 +27,7 @@ const PreviewItem = ({ article }) => {
             },
           }}
         >
-          <Thumbnail url={`../../../${thumbnail || 'images/noimage.jpg'}`} />
+          <Thumbnail url={`../../../article/${thumbnail || 'images/noimage.jpg'}`} />
           <div
             css={{
               display: 'flex',

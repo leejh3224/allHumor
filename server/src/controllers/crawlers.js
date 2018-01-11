@@ -1,6 +1,8 @@
 import axios from 'axios'
 import cheerio from 'cheerio'
 import getArticles from 'utils/getArticles'
+import Article from 'models/Article'
+import extractArticle from 'utils/extractArticle'
 
 export default {
   crawlDogdrip: async (req, res) => {
@@ -26,8 +28,12 @@ export default {
         urls.push(el.attribs.href)
       })
 
-      const articles = await Promise.all(urls.map(url => getArticles(url, 'http://www.dogdrip.net')))
+      let articles = await Promise.all(urls.map(url => extractArticle(url)))
+      articles = await Promise.all(articles.map(rawData => getArticles(rawData, 'http://www.dogdrip.net')))
+      articles = articles.filter(article => article) // get truthy value
+      await Article.insertMany(articles)
 
+      console.log('articles saved!')
       res.json({
         articles,
       })
