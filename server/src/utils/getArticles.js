@@ -1,5 +1,4 @@
 import sanitizeHtml from 'utils/sanitizeHtml'
-import convertToJsx from 'utils/convertToJsx'
 import saveImages from 'utils/saveImages'
 import getImageName from 'utils/getImageName'
 
@@ -26,7 +25,6 @@ export default async (rawData, domain) => {
   }
 
   content = content.replace(/src="[.]/g, `src="${domain}`) // converts relative path to absolute path
-  content = convertToJsx(content)
 
   const imgSrcRegex = /(<img src=")([http:|https:]{1,}[/\w?.=:]{0,})/
   const imgSrcRegexGlobal = new RegExp(imgSrcRegex, 'g')
@@ -37,7 +35,7 @@ export default async (rawData, domain) => {
     // from list of img tags, get url only
     content.match(imgSrcRegexGlobal).forEach(src => urls.push(imgSrcRegex.exec(src)[2]))
 
-    if (urls.length > 4) {
+    if (urls.length > 3) {
       return null // for the sake of response speed
     }
 

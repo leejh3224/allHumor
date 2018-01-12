@@ -36,6 +36,6 @@ export default html =>
     ],
     allowedAttributes: {
       img: ['src', 'alt', 'data-original'],
-      iframe: ['src', 'allowfullscreen', 'width', 'height'],
+      iframe: ['src', 'allowfullscreen'],
     },
   })
