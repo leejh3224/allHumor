@@ -2,10 +2,12 @@ import getImageName from 'utils/getImageName'
 import chalk from 'chalk'
 import axios from 'axios'
 import sharp from 'sharp'
+import imagemin from 'imagemin'
+import imageminGiflossy from 'imagemin-giflossy'
+import fs from 'fs'
 
 const imagePath = '/Users/leejunhyung/allhumor/client/public/article/images'
 
-// gif 는 mp4로 대신 html video 태그 삽입하는 코드 필요.
 export default function (sources, site, id) {
   return Promise.all(sources.map(async (src) => {
     try {
@@ -21,20 +23,35 @@ export default function (sources, site, id) {
       const h = meta.height
 
       if (f === 'gif') {
-        console.log(id, f)
-      }
+        const newWidth = w > 300 ? 300 : w
+        const newHeight = w > 300 ? Math.round(h * (300 / w)) : h
 
-      if (w > 1000) {
-        // big images
-        await buffer
-          .resize(700, Math.round(h * (700 / w)))
-          .jpeg({ quality: 75 })
-          .toFile(`${imagePath}/${site}/${id}_${imageName}`)
+        const optimizedGifBuffer = await imagemin.buffer(data, {
+          plugins: [
+            imageminGiflossy({
+              lossy: 30,
+              colors: 180,
+              resize: `${newWidth}x${newHeight}`,
+            }),
+          ],
+        })
+
+        await fs.writeFileSync(
+          `${imagePath}/${site}/${id}_${imageName}`,
+          optimizedGifBuffer,
+          'binary',
+        )
       } else {
-        await buffer
-          .resize(w, h)
-          .jpeg({ quality: 75 })
-          .toFile(`${imagePath}/${site}/${id}_${imageName}`)
+        /* eslint-disable no-lonely-if */
+        if (w > 700) {
+          // big images
+          await buffer
+            .resize(700, Math.round(h * (700 / w)))
+            .jpeg({ quality: 80 })
+            .toFile(`${imagePath}/${site}/${id}_${imageName}`)
+        } else {
+          await buffer.jpeg({ quality: 80 }).toFile(`${imagePath}/${site}/${id}_${imageName}`)
+        }
       }
 
       return `images/${site}/${id}_${imageName}` // 프론트에서 이미지를 보여주기 좋은 형식으로 변환

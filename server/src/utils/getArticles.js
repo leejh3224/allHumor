@@ -22,9 +22,10 @@ export default async (rawData, domain) => {
       /(src=")(\/addons\/lazyload\/img\/transparent.gif)"\s(data-original=")([http:|https:|.]{1,}[\w/.]{0,})"/g,
       '$1$4" $3$2"',
     )
-  }
 
-  content = content.replace(/src="[.]/g, `src="${domain}`) // converts relative path to absolute path
+    content = content.replace(/src="[.]/g, `src="${domain}`) // converts relative path to absolute path
+    content = content.replace(/"\/files\/attach/g, `"${domain}/files/attach`) // 개드립 예전 src url
+  }
 
   const imgSrcRegex = /(<img src=")([http:|https:]{1,}[/\w?.=:]{0,})/
   const imgSrcRegexGlobal = new RegExp(imgSrcRegex, 'g')

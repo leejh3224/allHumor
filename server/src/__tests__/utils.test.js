@@ -3,6 +3,7 @@ import app from 'app'
 import db from 'models'
 import sharp from 'sharp'
 import fs from 'fs'
+import ffmpeg from 'fluent-ffmpeg'
 
 const env = process.env.NODE_ENV
 const { port } = config[env]
@@ -20,20 +21,13 @@ afterAll(() => {
   db.disconnect()
 })
 
-test('image resizing', async () => {
+test('image resizing and saving', async () => {
   const test = fs.readFileSync(`${__dirname}/t.gif`)
   const image = sharp(test)
   console.log(`original data size is: ${test.byteLength}`)
   const meta = await image.metadata()
   const w = meta.width
   const h = meta.height
-
-  if (meta.format === 'gif') {
-    await image
-      .resize(Math.round(w * 0.85), Math.round(h * 0.85))
-      .webp({ quality: 70 })
-      .toFile(`${__dirname}/t-out.gif`)
-  }
 
   if (meta.width > 1000) {
     // big
@@ -42,4 +36,9 @@ test('image resizing', async () => {
       .jpeg({ quality: 75 })
       .toFile(`${__dirname}/t-out.jpeg`)
   }
+})
+
+test('convert gif to mp4', () => {
+  ffmpeg(`${__dirname}/t.gif`).save(`${__dirname}/t.mp4`)
+  return undefined
 })

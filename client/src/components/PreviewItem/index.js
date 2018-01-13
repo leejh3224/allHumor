@@ -46,7 +46,6 @@ const PreviewItem = ({ article }) => {
 
 PreviewItem.propTypes = {
   article: shape({
-    thumbnail: string.isRequired,
     title: string.isRequired,
     author: string.isRequired,
     uploadDate: string.isRequired,

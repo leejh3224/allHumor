@@ -5,24 +5,21 @@ import { colors, spacing, fonts } from 'styles/theme'
 import { css } from 'emotion'
 
 const activeStyle = {
-  borderBottom: `5px solid ${colors.lightGrey}`,
   opacity: 1,
 }
 
-const HeaderLink = ({ children, active, ...props }) => (
+const TabLink = ({ children, active, ...props }) => (
   <Link
     {...props}
     css={css(
       {
         ...fonts.header,
-        borderBottom: `5px solid ${colors.primary}`,
         color: colors.white,
         opacity: 0.7,
         textDecoration: 'none',
         textAlign: 'center',
-        padding: spacing.medium,
-        width: '33%',
-        maxWidth: 250,
+        padding: spacing.small,
+        minWidth: 90,
         ':hover': activeStyle,
       },
       active && activeStyle,
@@ -32,9 +29,9 @@ const HeaderLink = ({ children, active, ...props }) => (
   </Link>
 )
 
-HeaderLink.propTypes = {
+TabLink.propTypes = {
   active: bool.isRequired,
   children: node.isRequired,
 }
 
-export default HeaderLink
+export default TabLink

@@ -25,7 +25,6 @@ class CategoryGroupContainer extends Component {
     const oldCategory = this.props.match.params[0] || 'all'
     const newCategory = params[0] || 'all'
 
-    console.log(oldCategory, newCategory)
     if (newCategory !== oldCategory) {
       setCategory(newCategory)
     }
