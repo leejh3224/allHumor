@@ -10,6 +10,10 @@ const colors = {
   font: 'hsla(0, 0%, 10%, 1)',
   black: 'hsla(0, 0%, 0%, 1)',
   white: 'hsla(360, 100%, 100%, 1)',
+
+  // brand
+  facebook: 'hsla(221, 44%, 41%, 1)',
+  twitter: 'hsla(205, 65%, 62%, 1)',
 }
 
 const screenSize = {

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { shape, array, func, string } from 'prop-types'
+import { shape, array, func, string, bool } from 'prop-types'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import { compose } from 'recompose'
@@ -13,6 +13,7 @@ class CategoryGroupContainer extends Component {
     setCategory: func.isRequired,
     match: shape({ params: array }.isRequired).isRequired,
     category: string.isRequired,
+    isSticky: bool.isRequired,
   }
   componentWillMount() {
     const { setCategory, match: { params } } = this.props
@@ -30,9 +31,9 @@ class CategoryGroupContainer extends Component {
     }
   }
   render() {
-    const { category, match: { params } } = this.props
+    const { category, match: { params }, isSticky } = this.props
     const activeCategory = params[0] || category
-    return <CategoryGroup activeCategory={activeCategory} />
+    return <CategoryGroup isSticky={isSticky} activeCategory={activeCategory} />
   }
 }
 

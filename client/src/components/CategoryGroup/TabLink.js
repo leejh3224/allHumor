@@ -19,7 +19,7 @@ const TabLink = ({ children, active, ...props }) => (
         textDecoration: 'none',
         textAlign: 'center',
         padding: spacing.small,
-        minWidth: 90,
+        minWidth: '23%',
         ':hover': activeStyle,
       },
       active && activeStyle,

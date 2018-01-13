@@ -1,9 +1,7 @@
 import React from 'react'
 import { string, bool } from 'prop-types'
 import { colors } from 'styles/theme'
-import { compose } from 'recompose'
 import categories from 'globals/categories'
-import StickyOnScroll from './StickyOnScroll'
 import TabLink from './TabLink'
 
 const CategoryGroup = ({ isSticky, activeCategory }) => (
@@ -15,6 +13,7 @@ const CategoryGroup = ({ isSticky, activeCategory }) => (
       backgroundColor: colors.primary,
       display: 'flex',
       overflowX: 'scroll',
+      transition: 'position 0.3s ease-out',
     }}
   >
     {Object.keys(categories).map(eng => (
@@ -30,4 +29,4 @@ CategoryGroup.propTypes = {
   activeCategory: string.isRequired,
 }
 
-export default compose(StickyOnScroll)(CategoryGroup)
+export default CategoryGroup

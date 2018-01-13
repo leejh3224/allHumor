@@ -2,7 +2,6 @@ import React from 'react'
 import { Link, withRouter } from 'react-router-dom'
 import { colors, spacing, fonts } from 'styles/theme'
 import { compose } from 'recompose'
-import { CategoryGroupContainer } from 'containers'
 
 const baseLinkStyle = {
   color: colors.white,
@@ -37,10 +36,7 @@ const Header = () => (
         로그인
       </Link>
     </nav>
-    <CategoryGroupContainer />
   </header>
 )
-
-Header.propTypes = {}
 
 export default compose(withRouter)(Header)
