@@ -60,5 +60,7 @@ export default async (rawData, domain) => {
     site,
     content, // 제대로 된 jsx 로 overwrite
     thumbnail,
+    comments: [],
+    upvotedUsers: [],
   }
 }

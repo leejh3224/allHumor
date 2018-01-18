@@ -11,9 +11,13 @@ const colors = {
   black: 'hsla(0, 0%, 0%, 1)',
   white: 'hsla(360, 100%, 100%, 1)',
 
+  // state
+  error: 'hsla(360, 100%, 49%, 1)',
+
   // brand
-  facebook: 'hsla(221, 44%, 41%, 1)',
+  facebook: 'hsla(221, 44%, 42%, 1)',
   twitter: 'hsla(205, 65%, 62%, 1)',
+  google: 'hsla(2, 73%, 59%, 1)',
 }
 
 const screenSize = {
@@ -25,9 +29,9 @@ const screenSize = {
 const media = {
   between(smallKey, largeKey, excludeLarge = false) {
     if (excludeLarge) {
-      return `@media (min-width: ${screenSize[smallKey].min}px) and (max-width: ${screenSize[
-        largeKey
-      ].min - 1}px)`
+      return `@media (min-width: ${
+        screenSize[smallKey].min
+      }px) and (max-width: ${screenSize[largeKey].min - 1}px)`
     }
     if (screenSize[largeKey].max === Infinity) {
       return `@media (min-width: ${screenSize[smallKey].min}px)`

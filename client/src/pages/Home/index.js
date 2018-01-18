@@ -1,12 +1,12 @@
 import React from 'react'
-import { bool } from 'prop-types'
+import { bool, shape, func } from 'prop-types'
 import { Header } from 'layout'
 import StickyOnScroll from 'pages/StickyOnScroll'
 import { PreviewListContainer, PaginationContainer, CategoryGroupContainer } from 'containers'
 
-const Home = ({ isSticky }) => (
+const Home = ({ isSticky, auth: { isAuthenticated, logout } }) => (
   <div>
-    <Header />
+    <Header isLoggedIn={isAuthenticated()} logout={logout} />
     <CategoryGroupContainer isSticky={isSticky} />
     <section css={{ paddingTop: isSticky ? 50 : 0 }}>
       <PreviewListContainer />
@@ -17,6 +17,7 @@ const Home = ({ isSticky }) => (
 
 Home.propTypes = {
   isSticky: bool.isRequired,
+  auth: shape({ isAuthenticated: func.isRequired }).isRequired,
 }
 
 export default StickyOnScroll(Home)

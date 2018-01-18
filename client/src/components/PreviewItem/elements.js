@@ -92,7 +92,7 @@ export const Footer = () => (
       }}
     >
       <i
-        className="ion-heart"
+        className="ion-thumbsup"
         css={{
           color: colors.grey,
           marginRight: spacing.xsmall,

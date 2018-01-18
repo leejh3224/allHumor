@@ -1,24 +1,36 @@
 import React from 'react'
-// import PropTypes from 'prop-types'
+import { string, func } from 'prop-types'
 import { Link } from 'react-router-dom'
 import { colors, fonts, spacing, media } from 'styles/theme'
+import ReactRouterPropTypes from 'react-router-prop-types'
+import Auth from 'utils/auth'
+
+const auth = new Auth()
 
 const baseButtonStyle = {
   display: 'flex',
-  justifyContent: 'center',
   alignItems: 'center',
   color: colors.white,
   borderRadius: 30,
   boxShadow: `0 4px 2px -2px ${colors.black}`,
   padding: spacing.small,
   marginBottom: spacing.small,
-  width: 280,
+  width: 250,
   ...fonts.xsmall,
 }
 
-const Login = () => (
+const socialIconStyle = {
+  width: 30,
+  height: 30,
+  marginRight: spacing.small,
+  marginLeft: spacing.medium,
+}
+
+const Login = ({ view, switchView, history }) => (
   <div
     css={{
+      display: 'flex',
+      alignItems: 'center',
       backgroundColor: colors.grey,
       width: '100%',
       height: '100vh',
@@ -29,7 +41,7 @@ const Login = () => (
       <i
         className="ion-chevron-left"
         css={{
-          color: colors.primary,
+          color: colors.white,
           ...fonts.icon,
           paddingLeft: spacing.small,
 
@@ -80,6 +92,7 @@ const Login = () => (
             backgroundColor: colors.white,
             color: colors.black,
           }}
+          onClick={() => history.replace('/register')}
         >
           <i
             className="ion-ios-email-outline"
@@ -87,21 +100,22 @@ const Login = () => (
               fontSize: 24.6,
               marginTop: 2,
               marginRight: spacing.small,
+              marginLeft: spacing.medium,
             }}
           />
-          이메일로 가입하기
+          {view === 'login' ? '이메일로 로그인하기' : '이메일로 가입하기'}
         </button>
         <button
           css={{
             ...baseButtonStyle,
             backgroundColor: colors.facebook,
           }}
+          onClick={() => auth.socialLogin('facebook')}
         >
           <img
             css={{
-              width: 30,
-              height: 30,
-              marginRight: spacing.small,
+              ...socialIconStyle,
+              marginLeft: spacing.small, // 좀 더 자연스러운 간격을 위해
             }}
             src={`${process.env.PUBLIC_URL}images/facebook.png`}
             alt="페이스북"
@@ -111,15 +125,25 @@ const Login = () => (
         <button
           css={{
             ...baseButtonStyle,
+            backgroundColor: colors.google,
+          }}
+          onClick={() => auth.socialLogin()} // default provider is google
+        >
+          <img
+            css={socialIconStyle}
+            src={`${process.env.PUBLIC_URL}images/google.png`}
+            alt="구글"
+          />
+          구글로 계속하기
+        </button>
+        <button
+          css={{
+            ...baseButtonStyle,
             backgroundColor: colors.twitter,
           }}
         >
           <img
-            css={{
-              width: 30,
-              height: 30,
-              marginRight: spacing.small,
-            }}
+            css={socialIconStyle}
             src={`${process.env.PUBLIC_URL}images/twitter.png`}
             alt="트위터"
           />
@@ -132,11 +156,7 @@ const Login = () => (
           }}
         >
           <img
-            css={{
-              width: 30,
-              height: 30,
-              marginRight: spacing.small,
-            }}
+            css={socialIconStyle}
             src={`${process.env.PUBLIC_URL}images/github.png`}
             alt="깃허브"
           />
@@ -150,24 +170,33 @@ const Login = () => (
           ...fonts.body,
         }}
       >
-        이미 계정이 있으신가요?{' '}
-        <Link
-          to="/register"
+        {view === 'login' ? '처음이신가요?' : '이미 계정이 있으신가요?'}
+        {/* eslint-disable jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
+        <a
+          onClick={switchView}
           css={{
-            marginLeft: spacing.small,
             color: colors.white,
-            fontWeight: 900,
+            fontWeight: 700,
+            marginLeft: spacing.small,
+            textDecoration: 'underline',
+            cursor: 'pointer',
           }}
         >
-          로그인하기
-        </Link>
+          {view === 'login' ? '가입하기' : '로그인하기'}
+        </a>
       </p>
-      <p css={{ color: colors.white, ...fonts.body }}>회원가입을 하게 되면</p>
-      <p css={{ color: colors.white, ...fonts.body }}>약관에 동의한 것으로 간주됩니다.</p>
+      <p css={{ color: colors.white, ...fonts.xsmall }}>
+        회원가입을 하게 되면 약관에 동의한
+      </p>
+      <p css={{ color: colors.white, ...fonts.xsmall }}>것으로 간주됩니다.</p>
     </div>
   </div>
 )
 
-Login.propTypes = {}
+Login.propTypes = {
+  view: string.isRequired,
+  switchView: func.isRequired,
+  history: ReactRouterPropTypes.history.isRequired,
+}
 
 export default Login

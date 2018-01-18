@@ -13,13 +13,13 @@ const TabLink = ({ children, active, ...props }) => (
     {...props}
     css={css(
       {
-        ...fonts.header,
+        ...fonts.small,
         color: colors.white,
         opacity: 0.7,
         textDecoration: 'none',
         textAlign: 'center',
         padding: spacing.small,
-        minWidth: '23%',
+        maxWidth: 150,
         ':hover': activeStyle,
       },
       active && activeStyle,

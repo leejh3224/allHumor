@@ -3,6 +3,7 @@ module.exports = {
   parser: 'babel-eslint',
   rules: {
     semi: 0,
+    'max-len': 0,
 
     // import
     'import/no-extraneous-dependencies': 0,

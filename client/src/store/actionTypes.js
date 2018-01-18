@@ -9,4 +9,7 @@ export default {
     SET_PAGE: 'pagination/SET_PAGE',
     SET_LAST_PAGE: 'pagination/SET_LAST_PAGE',
   },
+  login: {
+    SWITCH_VIEW: 'login/SWITCH_VIEW',
+  },
 }

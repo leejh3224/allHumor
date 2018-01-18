@@ -11,7 +11,7 @@ export default injectGlobal`
   ol, ul {
     list-style: none;
   }
-  body, div, span, p, ul, img, figure, h1, button {
+  body, div, span, p, ul, img, figure, h1, button, input {
     margin: 0;
     padding: 0;
     border: 0;
