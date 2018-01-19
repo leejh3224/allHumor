@@ -18,11 +18,6 @@ const Comment = new Schema(
         ref: 'Commment',
       },
     ],
-    upvotedUsers: [
-      {
-        type: String,
-      },
-    ],
   },
   { timestamps: true },
 )

@@ -18,7 +18,7 @@ const Register = ({ auth: { sendMagicLink } }) => (
   >
     <h1
       css={{
-        ...fonts.huge,
+        ...fonts.large,
         color: colors.white,
         padding: spacing.medium,
       }}

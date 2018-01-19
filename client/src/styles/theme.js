@@ -4,7 +4,7 @@ const colors = {
   primary: 'hsla(204, 70%, 53%, 1)', // skyblue
   primaryDarker: 'hsla(204, 70%, 23%, 1)',
   divider: 'hsla(0, 0%, 75%, 1)',
-  grey: 'hsla(0, 0%, 30%, 1)', // for icon
+  grey: 'hsla(0, 0%, 55%, 1)', // for icon
   lightGrey: 'hsla(0, 0%, 85%, 1)',
   lighterGrey: 'hsla(0, 0%, 95%, 1)',
   font: 'hsla(0, 0%, 10%, 1)',
@@ -49,7 +49,10 @@ const media = {
 }
 
 const fonts = {
-  huge: {
+  xlarge: {
+    fontSize: 55,
+  },
+  large: {
     fontSize: 30,
     fontWeight: 700,
     lineHeight: '140%',

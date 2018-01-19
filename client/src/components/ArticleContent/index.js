@@ -24,7 +24,7 @@ const ArticleContent = ({ article }) => (
     >
       <h1
         css={{
-          ...fonts.huge,
+          ...fonts.large,
           padding: spacing.medium,
 
           [media.greaterThan('medium')]: {

@@ -62,7 +62,7 @@ const Login = ({ view, switchView, history }) => (
         css={{
           color: colors.white,
           fontStyle: 'italic',
-          ...fonts.huge,
+          ...fonts.large,
           padding: spacing.medium,
         }}
       >
