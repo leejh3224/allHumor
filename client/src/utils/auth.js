@@ -15,10 +15,29 @@ export default class Auth {
         : process.env.REACT_APP_PROD_REDIRECT_URI,
     audience: process.env.AUDIENCE,
     responseType: 'token id_token',
-    scope: 'email',
+    scope: 'email profile',
   })
 
+  userProfile
   tokenRenewalTimeout // for token renewal
+
+  getAccessToken = () => {
+    const accessToken = localStorage.getItem('access_token')
+    if (!accessToken) {
+      throw new Error('no access token')
+    }
+    return accessToken
+  }
+
+  getProfile = (cb) => {
+    const accessToken = this.getAccessToken()
+    this.auth0.client.userInfo(accessToken, (err, profile) => {
+      if (profile) {
+        this.userProfile = profile
+      }
+      cb(err, profile)
+    })
+  }
 
   sendMagicLink = (email, cb) => {
     this.auth0.passwordlessStart(

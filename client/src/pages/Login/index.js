@@ -152,15 +152,15 @@ const Login = ({ view, switchView, history }) => (
         <button
           css={{
             ...baseButtonStyle,
-            backgroundColor: colors.black,
+            backgroundColor: colors.white,
           }}
         >
           <img
             css={socialIconStyle}
-            src={`${process.env.PUBLIC_URL}images/github.png`}
-            alt="깃허브"
+            src={`${process.env.PUBLIC_URL}images/instgram.png`}
+            alt="인스타그램"
           />
-          깃허브로 계속하기
+          인스타그램으로 계속하기
         </button>
       </div>
       <p

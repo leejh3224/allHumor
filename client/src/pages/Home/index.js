@@ -2,7 +2,11 @@ import React from 'react'
 import { bool, shape, func } from 'prop-types'
 import { Header } from 'layout'
 import StickyOnScroll from 'pages/StickyOnScroll'
-import { PreviewListContainer, PaginationContainer, CategoryGroupContainer } from 'containers'
+import {
+  PreviewListContainer,
+  PaginationContainer,
+  CategoryGroupContainer,
+} from 'containers'
 
 const Home = ({ isSticky, auth: { isAuthenticated, logout } }) => (
   <div>
