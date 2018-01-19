@@ -30,7 +30,6 @@ const Login = ({ view, switchView, history }) => (
   <div
     css={{
       display: 'flex',
-      alignItems: 'center',
       backgroundColor: colors.grey,
       width: '100%',
       height: '100vh',
@@ -152,12 +151,13 @@ const Login = ({ view, switchView, history }) => (
         <button
           css={{
             ...baseButtonStyle,
-            backgroundColor: colors.white,
+            color: colors.black,
+            backgroundColor: colors.lighterGrey,
           }}
         >
           <img
             css={socialIconStyle}
-            src={`${process.env.PUBLIC_URL}images/instgram.png`}
+            src={`${process.env.PUBLIC_URL}images/instagram.png`}
             alt="인스타그램"
           />
           인스타그램으로 계속하기

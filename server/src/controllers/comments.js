@@ -24,12 +24,29 @@ export default {
       })
     }
   },
+  editComment: async (req, res) => {
+    const { id } = req.params
+    const { content } = req.body
+
+    try {
+      await Comment.findByIdAndUpdate(id, { content })
+      res.json({
+        success: true,
+      })
+    } catch (error) {
+      console.log(error)
+      res.json({
+        success: false,
+        error,
+      })
+    }
+  },
   deleteComment: async (req, res) => {
-    const { _id } = req.params // delete 요청은 body를 사용할 수 없음
+    const { id } = req.params // delete 요청은 body를 사용할 수 없음
 
     try {
       /* 만약 post remove hook을 트리거하려면 이런 식으로 도큐먼트.remove를 사용해야함 */
-      await Comment.findByIdAndRemove(_id, (err, doc) => {
+      await Comment.findByIdAndRemove(id, (err, doc) => {
         doc.remove()
       })
 

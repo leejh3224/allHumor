@@ -41,4 +41,36 @@ export default {
       res.json({ error })
     }
   },
+  voteArticle: async (req, res) => {
+    const { id } = req.params
+    const { userId } = req.body
+
+    try {
+      await Article.findByIdAndUpdate(id, { $push: { upvotedUsers: userId } })
+      res.json({
+        success: true,
+      })
+    } catch (error) {
+      console.log(error)
+      res.json({
+        error,
+      })
+    }
+  },
+  cancelVotes: async (req, res) => {
+    const { id } = req.params
+    const { userId } = req.body
+
+    try {
+      await Article.findByIdAndUpdate(id, { $pull: { upvotedUsers: userId } })
+      res.json({
+        success: true,
+      })
+    } catch (error) {
+      console.log(error)
+      res.json({
+        error,
+      })
+    }
+  },
 }
