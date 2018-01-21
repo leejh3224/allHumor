@@ -1,5 +1,5 @@
 import React from 'react'
-// import PropTypes from 'prop-types'
+import { number } from 'prop-types'
 import { spacing, fonts, colors } from 'styles/theme'
 
 const baseButtonStyle = {
@@ -10,7 +10,7 @@ const baseButtonStyle = {
   },
 }
 
-const AddComment = () => (
+const AddComment = ({ commentCounts }) => (
   <div
     css={{
       marginBottom: spacing.large,
@@ -22,7 +22,7 @@ const AddComment = () => (
         ...fonts.small,
       }}
     >
-      댓글 12개
+      댓글 {commentCounts}개
     </p>
     <form>
       <textarea
@@ -66,6 +66,8 @@ const AddComment = () => (
   </div>
 )
 
-AddComment.propTypes = {}
+AddComment.propTypes = {
+  commentCounts: number.isRequired,
+}
 
 export default AddComment

@@ -38,22 +38,30 @@ export default {
         _id: new mongoose.Types.ObjectId(id),
       },
     }
-    const lookup = {
+    const lookupForVotes = {
       $lookup: {
         from: 'votes',
         localField: 'votes',
         foreignField: '_id',
-        as: 'voteInfo',
+        as: 'votes',
       },
     }
     const addField = {
       $addFields: {
-        voteCounts: { $sum: '$voteInfo.counts' },
+        voteCounts: { $sum: '$votes.counts' },
+      },
+    }
+    const lookUpForComments = {
+      $lookup: {
+        from: 'comments',
+        localField: 'comments',
+        foreignField: '_id',
+        as: 'comments',
       },
     }
 
     try {
-      let [article] = await Article.aggregate([match, lookup, addField])
+      let [article] = await Article.aggregate([match, lookupForVotes, addField, lookUpForComments])
       article = omit(article, ['__v'])
       res.json({
         articles: [article],
@@ -95,8 +103,6 @@ export default {
       if (vote.counts < 25) {
         await Vote.update({ articleId: id, userId }, { counts: vote.counts + 1 })
       }
-
-      console.log(vote)
 
       res.json({
         success: true,

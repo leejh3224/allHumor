@@ -1,12 +1,16 @@
 import Comment from 'models/Comment'
 
 export default {
-  saveComment: async (req, res) => {
-    const { articleId, author, content } = req.body
+  addComment: async (req, res) => {
+    const {
+      articleId, userId, avatar, author, content,
+    } = req.body
 
     try {
       const comment = await new Comment({
         articleId,
+        userId,
+        avatar,
         author,
         content,
         replies: [],
@@ -15,7 +19,7 @@ export default {
 
       res.json({
         success: true,
-        comment,
+        comments: [comment],
       })
     } catch (error) {
       console.log(error)
@@ -29,9 +33,10 @@ export default {
     const { content } = req.body
 
     try {
-      await Comment.findByIdAndUpdate(id, { content })
+      const comment = await Comment.findByIdAndUpdate(id, { content })
       res.json({
         success: true,
+        comments: [comment],
       })
     } catch (error) {
       console.log(error)

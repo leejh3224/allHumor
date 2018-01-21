@@ -1,4 +1,4 @@
-import { fromJS } from 'immutable'
+import { fromJS, Map } from 'immutable'
 import { handleActions } from 'redux-actions'
 import types from 'store/actionTypes'
 
@@ -10,7 +10,8 @@ const initialState = fromJS({
 
 // selectors
 export const selectors = {
-  getArticles: ({ entity }) => entity.getIn(['entities', 'articles']).toJS(),
+  getArticles: ({ entity }) =>
+    (entity.getIn(['entities', 'articles']) || Map()).toJS(),
 }
 
 // reducer

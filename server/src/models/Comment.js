@@ -10,6 +10,14 @@ const Comment = new Schema(
       ref: 'Article',
       required: true,
     },
+    userId: {
+      type: String,
+      required: true,
+    },
+    avatar: {
+      type: String,
+      required: true,
+    },
     author: { type: String, required: true },
     content: { type: String, required: true },
     replies: [
@@ -20,7 +28,6 @@ const Comment = new Schema(
     ],
     recipient: {
       type: String,
-      required: true,
     },
   },
   { timestamps: true },

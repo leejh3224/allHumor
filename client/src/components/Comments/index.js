@@ -1,9 +1,9 @@
 import React from 'react'
-// import PropTypes from 'prop-types'
+import { arrayOf, shape } from 'prop-types'
 import { spacing, media } from 'styles/theme'
 import { AddComment, CommentItem } from 'components'
 
-const Comments = () => (
+const Comments = ({ comments }) => (
   <section
     css={{
       padding: spacing.medium,
@@ -15,28 +15,26 @@ const Comments = () => (
       },
     }}
   >
-    <AddComment />
+    <AddComment commentCounts={comments.length} />
     <ul>
-      <li
-        css={{
-          paddingTop: spacing.small,
-          paddingBottom: spacing.small,
-        }}
-      >
-        <CommentItem />
-      </li>
-      <li
-        css={{
-          paddingTop: spacing.small,
-          paddingBottom: spacing.small,
-        }}
-      >
-        <CommentItem />
-      </li>
+      {comments.map(comment => (
+        <li
+          /* eslint-disable no-underscore-dangle */
+          key={comment._id}
+          css={{
+            paddingTop: spacing.small,
+            paddingBottom: spacing.small,
+          }}
+        >
+          <CommentItem comment={comment} />
+        </li>
+      ))}
     </ul>
   </section>
 )
 
-Comments.propTypes = {}
+Comments.propTypes = {
+  comments: arrayOf(shape({})).isRequired,
+}
 
 export default Comments

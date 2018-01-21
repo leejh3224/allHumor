@@ -1,13 +1,22 @@
 import React, { Component } from 'react'
-// import PropTypes from 'prop-types'
+import { shape } from 'prop-types'
 import { connect } from 'react-redux'
 import { Comments } from 'components'
+import * as commentDucks from 'store/modules/comment'
 
 class CommentsContainer extends Component {
-  static propTypes = {}
+  static propTypes = {
+    comments: shape({}).isRequired,
+  }
   render() {
-    return <Comments />
+    const { comments } = this.props
+    return <Comments comments={Object.values(comments)} />
   }
 }
 
-export default connect(null, null)(CommentsContainer)
+export default connect(
+  state => ({
+    comments: commentDucks.selectors.getComments(state),
+  }),
+  null,
+)(CommentsContainer)

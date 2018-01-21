@@ -98,7 +98,7 @@ export default handleActions(
   {
     [types.article.SUCCESS]: (state, { payload: { entities, result } }) => {
       if (result.length === 1) {
-        const votes = entities.articles[result[0]].voteInfo
+        const { votes } = entities.articles[result[0]]
 
         return state
           .set('articleId', result[0])

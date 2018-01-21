@@ -5,6 +5,7 @@ import error from './error'
 import pagination from './pagination'
 import login from './login'
 import voting from './voting'
+import comment from './comment'
 
 const rootReducer = combineReducers({
   entity,
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
   pagination,
   login,
   voting,
+  comment,
 })
 
 export default rootReducer
