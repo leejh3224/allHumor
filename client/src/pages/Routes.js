@@ -38,7 +38,11 @@ const Routes = () => (
           return <Callback {...props} />
         }}
       />
-      <Route exact path="/article/:id" component={Article} />
+      <Route
+        exact
+        path="/article/:id"
+        render={props => <Article auth={auth} {...props} />}
+      />
       <Route
         path="/(all|dogdrip)?/:page?"
         render={props => <Home auth={auth} {...props} />}
@@ -47,7 +51,5 @@ const Routes = () => (
     </Switch>
   </Router>
 )
-
-Routes.propTypes = {}
 
 export default Routes

@@ -17,7 +17,8 @@ class PreviewListContainer extends Component {
     loadArticles: func.isRequired,
     fetching: bool.isRequired,
     articles: objectOf(object).isRequired,
-    match: shape({ params: { page: string.isRequired }.isRequired }.isRequired).isRequired,
+    match: shape({ params: { page: string.isRequired }.isRequired }.isRequired)
+      .isRequired,
   }
   componentWillMount() {
     const { loadArticles, match: { params } } = this.props
@@ -48,7 +49,15 @@ class PreviewListContainer extends Component {
       return <p>loading ...</p>
     }
     /* eslint-disable no-underscore-dangle */
-    return <ul>{sorted.map(article => <PreviewItem key={article._id} article={article} />)}</ul>
+    return (
+      <ul>
+        {sorted.length
+          ? sorted.map(article => (
+            <PreviewItem key={article._id} article={article} />
+            ))
+          : '네트워크 연결이 불안정합니다.'}
+      </ul>
+    )
   }
 }
 

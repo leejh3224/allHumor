@@ -18,6 +18,10 @@ const Comment = new Schema(
         ref: 'Commment',
       },
     ],
+    recipient: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true },
 )

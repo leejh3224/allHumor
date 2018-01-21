@@ -47,7 +47,7 @@
 
    4. 문서 단위의 save 말고도 insertMany 를 통해 array 단위로 문서를 쓸 수 있다.
 
-   5. 기본 \_id 말도 custom id 를 사용하고 샆을 때:
+   5. 기본 \_id 말고 custom id 를 사용하고 샆을 때:
 
    mongodb 는 기본적으로 \_id 없이는 문서 저장이 안 된다.
    그러므로 \_id 의 디폴트 값을 false 로 설정해두고,
@@ -57,7 +57,31 @@
 
    7. mongodb date 타입: new Date()로 저장하면 zulu time 으로 저장됨.
 
-3. nodemailer
+   8. mongodb 의 aggregation:
+      mongodb 의 computed value 개념.
+      기본적으로 $match 를 통해 pipeline 을 시작하며,
+      갖가지 연산을 통해 나온 값을 받을 수 있다.
+      $match 의 경우 objectId 를 매치하려면 mongoose 의 type 을 가져와야 한다.
+
+   예시) array 필드의 길이값을 추가해서 리턴하는 pipeline
+
+   ```js
+    let [article] = await Article.aggregate([
+        {
+          $match: {
+            _id: new mongoose.Types.ObjectId(id), // 이런 식으로 매치해야 작동함
+          },
+        },
+        {
+          $addFields: {
+            vote_counts: { $size: '$votes' },
+            // string 안에 array 값을 넣으면 사이즈를 리턴
+          },
+        },
+      ])
+   ```
+
+3) nodemailer
 
    ```js
    var nodemailer = require('nodemailer')
@@ -95,7 +119,7 @@
 
    위 예시 코드의 경우 상당히 오래되었으며, 그에 따라 createTransport 의 첫 번째 인자로 "SMTP"를 주는 대신 아무 것도 넣지 않으면 잘 작동한다.
 
-4. 특정 시간이 지나가면 response timeout 일으키기
+4) 특정 시간이 지나가면 response timeout 일으키기
 
    connect-timeout 모듈을 이용하면 된다.
 
@@ -113,7 +137,7 @@
    }
    ```
 
-5. cheerio
+5) cheerio
 
 cheerio 에는 치명적인 결합이 있는데 그건 한국어로 된 문서를 크롤링할 경우 이상한 문자열들만 출력된다는 점이다. 이것은 cheerio 가 크롤링을 수행하면서 decode 를 진행하기 때문인데 문서를 load 할때 decodeEntities 옵션을 false 로 두면 해결된다.
 

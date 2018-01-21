@@ -20,9 +20,10 @@ const Article = new Schema(
         ref: 'Comment',
       },
     ],
-    upvotedUsers: [
+    votes: [
       {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref: 'Vote',
       },
     ],
   },

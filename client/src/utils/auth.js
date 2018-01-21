@@ -1,7 +1,7 @@
 import auth0 from 'auth0-js'
 import history from 'utils/history'
 
-export default class Auth {
+class Auth {
   constructor() {
     this.scheduleRenewal()
   }
@@ -18,7 +18,6 @@ export default class Auth {
     scope: 'email profile',
   })
 
-  userProfile
   tokenRenewalTimeout // for token renewal
 
   getAccessToken = () => {
@@ -31,12 +30,7 @@ export default class Auth {
 
   getProfile = (cb) => {
     const accessToken = this.getAccessToken()
-    this.auth0.client.userInfo(accessToken, (err, profile) => {
-      if (profile) {
-        this.userProfile = profile
-      }
-      cb(err, profile)
-    })
+    this.auth0.client.userInfo(accessToken, cb)
   }
 
   sendMagicLink = (email, cb) => {
@@ -113,3 +107,5 @@ export default class Auth {
     }
   }
 }
+
+export default Auth

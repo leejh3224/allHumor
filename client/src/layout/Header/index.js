@@ -53,9 +53,14 @@ const Header = ({ isLoggedIn, logout }) => (
   </header>
 )
 
+Header.defaultProps = {
+  isLoggedIn: false,
+  logout: () => {},
+}
+
 Header.propTypes = {
-  isLoggedIn: bool.isRequired,
-  logout: func.isRequired,
+  isLoggedIn: bool,
+  logout: func,
 }
 
 export default compose(withRouter)(Header)

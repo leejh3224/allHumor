@@ -11,5 +11,11 @@ export default {
   },
   login: {
     SWITCH_VIEW: 'login/SWITCH_VIEW',
+    SET_USER_PROFILE: 'login/SET_USER_PROFILE',
+  },
+  voting: {
+    REQUEST: 'voting/VOTING_REQUEST',
+    SUCCESS: 'voting/VOTING_SUCCESS',
+    ERROR: 'voting/VOTING_ERROR',
   },
 }

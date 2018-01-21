@@ -1,26 +1,52 @@
 import React, { Component } from 'react'
-import { func, string } from 'prop-types'
+import history from 'utils/history'
+import { func, string, shape, number } from 'prop-types'
 import { connect } from 'react-redux'
-import { ArticleContent } from 'components'
+import { ArticleContent, Voting } from 'components'
 import isEmpty from 'lodash/isEmpty'
 import * as entityDucks from 'store/modules/entity'
 import * as paginationDucks from 'store/modules/pagination'
+import * as votingDucks from 'store/modules/voting'
 
 class ArticleContentContainer extends Component {
   static propTypes = {
     loadArticle: func.isRequired,
-    id: string.isRequired,
-    article: string.isRequired,
+    articleId: string.isRequired,
+    articleContent: shape({}).isRequired,
+    voteArticle: func.isRequired,
+    voteCounts: number.isRequired,
+    userId: string.isRequired,
   }
   componentWillMount() {
-    const { id, loadArticle } = this.props
+    const { articleId, loadArticle } = this.props
 
-    loadArticle(id)
+    loadArticle(articleId)
+  }
+  handleVoting = (userId) => {
+    if (this.props.userId === '') {
+      return history.replace('/login')
+    }
+    return this.props.voteArticle(userId)
   }
   render() {
-    const { article, id } = this.props
-    if (!isEmpty(article)) {
-      return <ArticleContent article={article[id]} />
+    const {
+      articleContent, articleId, voteCounts, userId,
+    } = this.props
+    const { handleVoting } = this
+
+    if (!isEmpty(articleContent)) {
+      return [
+        <ArticleContent
+          key="article_content"
+          article={articleContent[articleId]}
+        />,
+        <Voting
+          key="article_votes"
+          counts={voteCounts}
+          vote={handleVoting}
+          userId={userId}
+        />,
+      ]
     }
     return 'loading...'
   }
@@ -29,9 +55,11 @@ class ArticleContentContainer extends Component {
 /* eslint-disable */
 export default connect(
   state => ({
-    article: entityDucks.selectors.getArticles(state),
+    articleContent: entityDucks.selectors.getArticles(state),
+    voteCounts: votingDucks.selectors.getVoteCounts(state),
   }),
   {
     loadArticle: paginationDucks.actions.loadArticle,
+    voteArticle: votingDucks.actions.voteArticle,
   },
 )(ArticleContentContainer)

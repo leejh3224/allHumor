@@ -23,16 +23,17 @@ const initialState = fromJS({
   category: 'all',
 })
 
-/* eslint-disable */
 export const selectors = {
   getCurrentPage: ({ pagination }) => {
     const category = pagination.get('category')
     return pagination.getIn(['pages', category, 'current'])
   },
-  /* eslint-disable no-mixed-operators */
+  /* eslint-disable no-mixed-operators, arrow-parens */
   getMinPage: ({ pagination }) => {
     const curruntPage = selectors.getCurrentPage({ pagination })
-    return Math.floor((curruntPage - 1) / lengthPageButton) * lengthPageButton + 1
+    return (
+      Math.floor((curruntPage - 1) / lengthPageButton) * lengthPageButton + 1
+    )
   },
   getMaxPage: state => {
     const minPage = selectors.getMinPage(state)
@@ -63,7 +64,11 @@ export const actions = {
 
     try {
       const { data: { articles } } = await api.get(`/articles/${id}`)
-      const articleSchema = new schema.Entity('articles', {}, { idAttribute: '_id' })
+      const articleSchema = new schema.Entity(
+        'articles',
+        {},
+        { idAttribute: '_id' },
+      )
       const articleListSchema = [articleSchema]
 
       if (articles) {
@@ -82,7 +87,11 @@ export const actions = {
 
     try {
       const { data: { articles, total } } = await api.get(`/articles/${category}/${page}`)
-      const articleSchema = new schema.Entity('articles', {}, { idAttribute: '_id' })
+      const articleSchema = new schema.Entity(
+        'articles',
+        {},
+        { idAttribute: '_id' },
+      )
       const articleListSchema = [articleSchema]
 
       if (articles) {
@@ -93,7 +102,10 @@ export const actions = {
         })
 
         dispatch({ type: types.pagination.SET_PAGE, meta: { page } })
-        dispatch({ type: types.pagination.SET_LAST_PAGE, meta: { category, total } })
+        dispatch({
+          type: types.pagination.SET_LAST_PAGE,
+          meta: { category, total },
+        })
       }
     } catch (error) {
       console.log(error)
@@ -148,8 +160,12 @@ export default handleActions(
       return state.setIn(['pages', category, 'current'], meta.page)
     },
     [types.pagination.SET_LAST_PAGE]: (state, { meta }) =>
-      state.setIn(['pages', meta.category, 'last'], Math.ceil(meta.total / perPage)),
-    [types.pagination.SET_CATEGORY]: (state, { meta }) => state.set('category', meta.category),
+      state.setIn(
+        ['pages', meta.category, 'last'],
+        Math.ceil(meta.total / perPage),
+      ),
+    [types.pagination.SET_CATEGORY]: (state, { meta }) =>
+      state.set('category', meta.category),
   },
   initialState,
 )

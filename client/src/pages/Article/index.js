@@ -1,5 +1,5 @@
-import React from 'react'
-import { shape, string, bool } from 'prop-types'
+import React, { Component } from 'react'
+import { shape, string, bool, func } from 'prop-types'
 import { Header } from 'layout'
 import StickyOnScroll from 'pages/StickyOnScroll'
 import {
@@ -7,28 +7,51 @@ import {
   CategoryGroupContainer,
   CommentsContainer,
 } from 'containers'
-import { Voting } from 'components'
 
-const Article = ({ location: { pathname }, isSticky }) => {
-  const idRegex = /(article)\/([\w]{0,})/
-  const id = idRegex.exec(pathname)[2]
+class Article extends Component {
+  static propTypes = {
+    location: shape({ pathname: string.isRequired }).isRequired,
+    isSticky: bool.isRequired,
+    auth: shape({ isAuthenticated: func.isRequired, logout: func.isRequired })
+      .isRequired,
+  }
+  state = {
+    userId: '',
+  }
+  componentDidMount() {
+    if (this.props.auth.isAuthenticated()) {
+      this.props.auth.getProfile((err, profile) => {
+        if (profile) {
+          this.setState(prev => ({
+            ...prev,
+            userId: profile.identities[0].user_id,
+          }))
+        }
+      })
+    }
+  }
 
-  return (
-    <div>
-      <Header />
-      <CategoryGroupContainer isSticky={isSticky} />
-      <section css={{ paddingTop: isSticky ? 50 : 0 }}>
-        <ArticleContentContainer id={id} />
-      </section>
-      <Voting />
-      <CommentsContainer />
-    </div>
-  )
-}
+  render() {
+    const {
+      auth: { isAuthenticated, logout },
+      location: { pathname },
+      isSticky,
+    } = this.props
+    const { userId } = this.state
 
-Article.propTypes = {
-  location: shape({ pathname: string.isRequired }).isRequired,
-  isSticky: bool.isRequired,
+    const idRegex = /(article)\/([\w]{0,})/
+    const articleId = idRegex.exec(pathname)[2]
+    return (
+      <div>
+        <Header isLoggedIn={isAuthenticated()} logout={logout} />
+        <CategoryGroupContainer isSticky={isSticky} />
+        <section css={{ paddingTop: isSticky ? 50 : 0 }}>
+          <ArticleContentContainer articleId={articleId} userId={userId} />
+        </section>
+        <CommentsContainer />
+      </div>
+    )
+  }
 }
 
 export default StickyOnScroll(Article)

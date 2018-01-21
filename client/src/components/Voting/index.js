@@ -1,8 +1,8 @@
 import React from 'react'
-// import PropTypes from 'prop-types'
+import { number, func, string } from 'prop-types'
 import { spacing, fonts, colors } from 'styles/theme'
 
-const Voting = () => (
+const Voting = ({ counts, vote, userId }) => (
   <div
     css={{
       display: 'flex',
@@ -13,21 +13,27 @@ const Voting = () => (
       fontWeight: 400,
     }}
   >
-    <i
-      className="ion-thumbsup"
-      css={{
-        ...fonts.xlarge,
-        cursor: 'pointer',
-        marginRight: spacing.small,
-        ':hover': {
-          color: colors.primary,
-        },
-      }}
-    />
-    122
+    <button onClick={() => vote(userId)}>
+      <i
+        className="ion-thumbsup"
+        css={{
+          ...fonts.xlarge,
+          cursor: 'pointer',
+          marginRight: spacing.small,
+          ':hover': {
+            color: colors.primary,
+          },
+        }}
+      />
+    </button>
+    {counts}
   </div>
 )
 
-Voting.propTypes = {}
+Voting.propTypes = {
+  counts: number.isRequired,
+  vote: func.isRequired,
+  userId: string.isRequired,
+}
 
 export default Voting

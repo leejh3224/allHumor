@@ -140,6 +140,7 @@ const Login = ({ view, switchView, history }) => (
             ...baseButtonStyle,
             backgroundColor: colors.twitter,
           }}
+          onClick={() => auth.socialLogin('twitter')}
         >
           <img
             css={socialIconStyle}
@@ -154,6 +155,7 @@ const Login = ({ view, switchView, history }) => (
             color: colors.black,
             backgroundColor: colors.lighterGrey,
           }}
+          onClick={() => auth.socialLogin('instagram')}
         >
           <img
             css={socialIconStyle}

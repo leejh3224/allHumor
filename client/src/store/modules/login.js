@@ -4,11 +4,15 @@ import types from 'store/actionTypes'
 
 const initialState = fromJS({
   view: 'login',
+  userProfile: null,
 })
 
 export const actions = {
   switchView: () => (dispatch) => {
     dispatch({ type: types.login.SWITCH_VIEW })
+  },
+  setUserProfile: profile => (dispatch) => {
+    dispatch({ type: types.login.SET_USER_PROFILE, payload: profile })
   },
 }
 
@@ -25,6 +29,8 @@ export default handleActions(
       }
       return state.set('view', 'login')
     },
+    [types.login.SET_USER_PROFILE]: (state, payload) =>
+      state.set('userProfile', payload),
   },
   initialState,
 )

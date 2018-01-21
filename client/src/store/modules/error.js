@@ -8,7 +8,10 @@ const initialState = fromJS({
 
 export default handleActions(
   {
-    [types.article.ERROR]: (state, { payload }) => state.set('error', payload.error),
+    [types.article.ERROR]: (state, { payload }) =>
+      state.set('error', payload.error),
+    [types.voting.ERROR]: (state, { payload }) =>
+      state.set('error', payload.error),
   },
   initialState,
 )
