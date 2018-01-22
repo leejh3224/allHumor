@@ -28,7 +28,32 @@ export default {
         urls.push(el.attribs.href)
       })
 
-      let articles = await Promise.all(urls.map(url => extractArticle(url)))
+      const [fromDB] = await Article.aggregate([
+        {
+          $match: { site: 'dogdrip' },
+        },
+        {
+          $group: { _id: null, articleIds: { $push: '$articleId' } },
+        },
+        {
+          $project: { _id: 0, articleIds: 1 },
+        },
+      ])
+
+      const urlsWithoutDuplicate = urls
+        .map((url) => {
+          const getArticleId = str => str.replace(/[http|https]{1,}:\/\/www.[\w.]{1,}\//, '')
+          const hasCrawled = fromDB.articleIds.includes(getArticleId(url))
+
+          if (hasCrawled) {
+            return null
+          }
+
+          return url
+        })
+        .filter(url => url)
+
+      let articles = await Promise.all(urlsWithoutDuplicate.map(url => extractArticle(url)))
       articles = await Promise.all(articles.map(rawData => getArticles(rawData, 'http://www.dogdrip.net')))
       articles = articles.filter(article => article) // get truthy value
       await Article.insertMany(articles)

@@ -1,6 +1,5 @@
 import cheerio from 'cheerio'
 import axios from 'axios'
-import Article from 'models/Article'
 
 export default async (url) => {
   try {
@@ -22,16 +21,6 @@ export default async (url) => {
         .trim()
       const site = 'dogdrip'
       const title = $('.titleAndUser .title h1 a').text()
-
-      const hasCrawled =
-        (await Article.find({
-          site,
-          articleId,
-        }).count()) === 1
-
-      if (hasCrawled) {
-        return null
-      }
 
       return {
         articleId,

@@ -45,7 +45,7 @@ export default async (rawData, domain) => {
     // from list of img tags, get url only
     content.match(imgSrcRegexGlobal).forEach(src => urls.push(imgSrcRegex.exec(src)[2]))
 
-    if (urls.length > 3) {
+    if (urls.length > 2) {
       return null // for the sake of response speed
     }
 
@@ -61,7 +61,7 @@ export default async (rawData, domain) => {
     )
   }
 
-  // console.log(articleId)
+  console.log(articleId)
 
   return {
     ...rest, // overwrite를 하려면 overwrite 되기 전의 데이터부터 넣어야됨
