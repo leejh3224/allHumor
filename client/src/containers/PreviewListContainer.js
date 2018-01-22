@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { func, bool, objectOf, object, shape, string } from 'prop-types'
+import { func, bool, objectOf, object, number, string } from 'prop-types'
 import { connect } from 'react-redux'
 import * as entityDucks from 'store/modules/entity'
 import * as fetchingDucks from 'store/modules/fetching'
@@ -9,6 +9,7 @@ import { compose } from 'recompose'
 import { withRouter } from 'react-router-dom'
 import { PreviewItem } from 'components'
 
+const { getCategory, getCurrentPage } = paginationDucks.selectors
 const { getArticles } = entityDucks.selectors
 const { getFetchingArticle } = fetchingDucks.selectors
 
@@ -17,28 +18,13 @@ class PreviewListContainer extends Component {
     loadArticles: func.isRequired,
     fetching: bool.isRequired,
     articles: objectOf(object).isRequired,
-    match: shape({ params: { page: string.isRequired }.isRequired }.isRequired)
-      .isRequired,
+    category: string.isRequired,
+    currentPage: number.isRequired,
   }
-  componentWillMount() {
-    const { loadArticles, match: { params } } = this.props
-    const category = params[0] || 'all'
-    const page = this.props.match.params.page || 1
+  componentDidMount() {
+    const { loadArticles, category, currentPage } = this.props
 
-    loadArticles(category, parseInt(page, 10))
-  }
-  componentWillReceiveProps(nextProps) {
-    const { loadArticles, match: { params } } = nextProps
-    const oldCategory = this.props.match.params[0] || 'all'
-    const newCategory = params[0] || 'all'
-    const oldPage = this.props.match.params.page || 1
-    const nextPage = params.page || 1
-    const changingCategory = newCategory !== oldCategory
-    const changingPage = !changingCategory && oldPage !== nextPage
-
-    if (changingCategory || changingPage) {
-      loadArticles(newCategory, parseInt(nextPage, 10))
-    }
+    loadArticles(category, currentPage)
   }
   render() {
     const { fetching, articles } = this.props
@@ -67,6 +53,8 @@ export default compose(
     state => ({
       articles: getArticles(state),
       fetching: getFetchingArticle(state),
+      category: getCategory(state),
+      currentPage: getCurrentPage(state),
     }),
     {
       loadArticles: paginationDucks.actions.loadArticles,

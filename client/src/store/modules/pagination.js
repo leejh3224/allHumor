@@ -9,15 +9,19 @@ import types from 'store/actionTypes'
 const perPage = 10
 const lengthPageButton = 5
 
+// normalizr
+const articleSchema = new schema.Entity('articles', {}, { idAttribute: '_id' })
+const articleListSchema = [articleSchema]
+
 const initialState = fromJS({
   pages: {
     all: {
       current: 1,
-      last: 5,
+      last: 1,
     },
     dogdrip: {
       current: 1,
-      last: 5,
+      last: 1,
     },
   },
   category: 'all',
@@ -29,14 +33,14 @@ export const selectors = {
     return pagination.getIn(['pages', category, 'current'])
   },
   /* eslint-disable no-mixed-operators, arrow-parens */
-  getMinPage: ({ pagination }) => {
+  getCurrentMinPage: ({ pagination }) => {
     const curruntPage = selectors.getCurrentPage({ pagination })
     return (
       Math.floor((curruntPage - 1) / lengthPageButton) * lengthPageButton + 1
     )
   },
-  getMaxPage: state => {
-    const minPage = selectors.getMinPage(state)
+  getCurrentMaxPage: state => {
+    const minPage = selectors.getCurrentMinPage(state)
     const lastPage = selectors.getLastPage(state)
 
     if (minPage + lengthPageButton <= lastPage) {
@@ -49,8 +53,8 @@ export const selectors = {
     return pagination.getIn(['pages', category, 'last'])
   },
   getRangeMinMax: state => {
-    const minPage = selectors.getMinPage(state)
-    const maxPage = selectors.getMaxPage(state)
+    const minPage = selectors.getCurrentMinPage(state)
+    const maxPage = selectors.getCurrentMaxPage(state)
 
     return range(minPage, maxPage + 1)
   },
@@ -64,12 +68,6 @@ export const actions = {
 
     try {
       const { data: { articles } } = await api.get(`/articles/${id}`)
-      const articleSchema = new schema.Entity(
-        'articles',
-        {},
-        { idAttribute: '_id' },
-      )
-      const articleListSchema = [articleSchema]
 
       if (articles) {
         dispatch({
@@ -87,12 +85,6 @@ export const actions = {
 
     try {
       const { data: { articles, total } } = await api.get(`/articles/${category}/${page}`)
-      const articleSchema = new schema.Entity(
-        'articles',
-        {},
-        { idAttribute: '_id' },
-      )
-      const articleListSchema = [articleSchema]
 
       if (articles) {
         dispatch({
@@ -100,8 +92,6 @@ export const actions = {
           payload: normalize(articles, articleListSchema),
           meta: { page, category },
         })
-
-        dispatch({ type: types.pagination.SET_PAGE, meta: { page } })
         dispatch({
           type: types.pagination.SET_LAST_PAGE,
           meta: { category, total },
@@ -111,39 +101,6 @@ export const actions = {
       console.log(error)
       dispatch({ type: types.article.ERROR, payload: error })
     }
-  },
-  loadPage: page => (dispatch, getState) => {
-    const category = selectors.getCategory(getState())
-
-    dispatch({ type: types.pagination.SET_PAGE, meta: { page } })
-    actions.loadArticles(category, page)(dispatch, getState)
-  },
-  loadNextPage: () => (dispatch, getState) => {
-    const maxPage = selectors.getMaxPage(getState())
-    const lastPage = selectors.getLastPage(getState())
-    const nextPage = maxPage + 1
-
-    if (maxPage < lastPage) {
-      actions.loadPage(nextPage)(dispatch, getState)
-    }
-  },
-  loadPrevPage: () => (dispatch, getState) => {
-    const minPage = selectors.getMinPage(getState())
-    const currentPage = selectors.getCurrentPage(getState())
-
-    if (minPage > 1) {
-      actions.loadPage(minPage - 1)(dispatch, getState)
-    }
-
-    if (minPage === 1 && currentPage !== 1) {
-      actions.loadPage(minPage)(dispatch, getState)
-    }
-  },
-  setCategory: category => dispatch => {
-    dispatch({ type: types.pagination.SET_CATEGORY, meta: { category } })
-
-    // go to first page of category
-    dispatch({ type: types.pagination.SET_PAGE, meta: { page: 1 } })
   },
 }
 
@@ -155,17 +112,31 @@ export default handleActions(
       }
       return state
     },
-    [types.pagination.SET_PAGE]: (state, { meta }) => {
-      const category = state.get('category')
-      return state.setIn(['pages', category, 'current'], meta.page)
-    },
     [types.pagination.SET_LAST_PAGE]: (state, { meta }) =>
       state.setIn(
         ['pages', meta.category, 'last'],
         Math.ceil(meta.total / perPage),
       ),
-    [types.pagination.SET_CATEGORY]: (state, { meta }) =>
-      state.set('category', meta.category),
+    '@@router/LOCATION_CHANGE': (state, { payload }) => {
+      const routerMatch = payload.pathname.match(/\/(all|dogdrip)\/(\d{1,})/)
+      const oldCategory = state.get('category')
+      const oldPage = state.getIn(['pages', oldCategory, 'current'])
+
+      if (routerMatch) {
+        const [, newCategory = 'all', nextPage = '1'] = routerMatch
+        const changingCategory = oldCategory !== newCategory
+        const changingPage = !changingCategory && oldPage !== nextPage
+
+        if (changingCategory || changingPage) {
+          return state
+            .set('category', newCategory)
+            .setIn(['pages', newCategory, 'current'], parseInt(nextPage, 10))
+        }
+      }
+
+      // go to home
+      return state.set('category', 'all').setIn(['pages', 'all', 'current'], 1)
+    },
   },
   initialState,
 )

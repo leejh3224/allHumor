@@ -42,9 +42,9 @@ const LastButtonStyle = {
 
 const Pagination = ({
   currentPage,
-  loadPage,
   lastPage,
   rangeMinMax,
+  loadArticles,
   loadNextPage,
   loadPrevPage,
   category,
@@ -65,7 +65,7 @@ const Pagination = ({
     <Link
       to={`/${category}/1`}
       css={LongButtonStyle}
-      onClick={() => currentPage !== 1 && loadPage(1)}
+      onClick={() => currentPage !== 1 && loadArticles(category, 1)}
     >
       처음
     </Link>
@@ -80,7 +80,7 @@ const Pagination = ({
       <Link
         to={`/${category}/${page}`}
         key={page}
-        onClick={() => loadPage(page)}
+        onClick={() => loadArticles(category, page)}
         css={css(buttonStyle, currentPage === page && activeStyle)}
       >
         {page}
@@ -96,7 +96,9 @@ const Pagination = ({
     <Link
       to={`/${category}/${lastPage}`}
       css={LastButtonStyle}
-      onClick={() => currentPage !== lastPage && loadPage(lastPage)}
+      onClick={() =>
+        currentPage !== lastPage && loadArticles(category, lastPage)
+      }
     >
       마지막
     </Link>
@@ -105,9 +107,9 @@ const Pagination = ({
 
 Pagination.propTypes = {
   currentPage: number.isRequired,
-  loadPage: func.isRequired,
   lastPage: number.isRequired,
   rangeMinMax: arrayOf(number).isRequired,
+  loadArticles: func.isRequired,
   loadNextPage: func.isRequired,
   loadPrevPage: func.isRequired,
   category: string.isRequired,

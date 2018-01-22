@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { shape, array, func, string, bool } from 'prop-types'
+import { string, bool, func } from 'prop-types'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import { compose } from 'recompose'
@@ -10,36 +10,38 @@ const { getCategory } = paginationDucks.selectors
 
 class CategoryGroupContainer extends Component {
   static propTypes = {
-    setCategory: func.isRequired,
-    match: shape({ params: array }.isRequired).isRequired,
     category: string.isRequired,
     isSticky: bool.isRequired,
+    loadArticles: func.isRequired,
   }
-  componentWillMount() {
-    const { setCategory, match: { params } } = this.props
-    const category = params[0] || 'all'
-
-    setCategory(category)
-  }
-  componentWillReceiveProps(nextProps) {
-    const { setCategory, match: { params } } = nextProps
-    const oldCategory = this.props.match.params[0] || 'all'
-    const newCategory = params[0] || 'all'
-
-    if (newCategory !== oldCategory) {
-      setCategory(newCategory)
+  loadNewCategory = (newCategory) => {
+    const { category, loadArticles } = this.props
+    if (category !== newCategory) {
+      loadArticles(newCategory, 1)
     }
   }
   render() {
-    const { category, match: { params }, isSticky } = this.props
-    const activeCategory = params[0] || category
-    return <CategoryGroup isSticky={isSticky} activeCategory={activeCategory} />
+    const { category, isSticky } = this.props
+    const { loadNewCategory } = this
+    const activeCategory = category
+    return (
+      <CategoryGroup
+        isSticky={isSticky}
+        activeCategory={activeCategory}
+        loadNewCategory={loadNewCategory}
+      />
+    )
   }
 }
 
 export default compose(
   withRouter,
-  connect(state => ({ category: getCategory(state) }), {
-    setCategory: paginationDucks.actions.setCategory,
-  }),
+  connect(
+    state => ({
+      category: getCategory(state),
+    }),
+    {
+      loadArticles: paginationDucks.actions.loadArticles,
+    },
+  ),
 )(CategoryGroupContainer)

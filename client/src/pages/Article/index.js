@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
 import { shape, string, bool, func } from 'prop-types'
-import { Header } from 'layout'
 import StickyOnScroll from 'pages/StickyOnScroll'
 import {
   ArticleContentContainer,
   CategoryGroupContainer,
   CommentsContainer,
+  HeaderContainer,
 } from 'containers'
 
 class Article extends Component {
@@ -43,7 +43,7 @@ class Article extends Component {
     const articleId = idRegex.exec(pathname)[2]
     return (
       <div>
-        <Header isLoggedIn={isAuthenticated()} logout={logout} />
+        <HeaderContainer isLoggedIn={isAuthenticated()} logout={logout} />
         <CategoryGroupContainer isSticky={isSticky} />
         <section css={{ paddingTop: isSticky ? 50 : 0 }}>
           <ArticleContentContainer articleId={articleId} userId={userId} />

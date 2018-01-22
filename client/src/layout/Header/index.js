@@ -10,7 +10,7 @@ const baseLinkStyle = {
   ...fonts.header,
 }
 
-const Header = ({ isLoggedIn, logout }) => (
+const Header = ({ isLoggedIn, logout, loadArticles }) => (
   <header
     css={{
       position: 'relative',
@@ -25,7 +25,8 @@ const Header = ({ isLoggedIn, logout }) => (
       }}
     >
       <Link
-        to="/all/1"
+        to="/"
+        onClick={() => loadArticles('all', 1)}
         css={{
           fontStyle: 'italic',
           ...baseLinkStyle,
@@ -61,6 +62,7 @@ Header.defaultProps = {
 Header.propTypes = {
   isLoggedIn: bool,
   logout: func,
+  loadArticles: func.isRequired,
 }
 
 export default compose(withRouter)(Header)

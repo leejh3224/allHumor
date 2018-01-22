@@ -2,7 +2,7 @@ import axios from 'axios'
 import cheerio from 'cheerio'
 import getArticles from 'utils/getArticles'
 import Article from 'models/Article'
-import extractArticle from 'utils/extractArticle'
+import extractRawArticle from 'utils/extractRawArticle'
 
 export default {
   crawlDogdrip: async (req, res) => {
@@ -28,7 +28,7 @@ export default {
         urls.push(el.attribs.href)
       })
 
-      const [fromDB] = await Article.aggregate([
+      const [fromDB = { articleIds: [] }] = await Article.aggregate([
         {
           $match: { site: 'dogdrip' },
         },
@@ -53,10 +53,10 @@ export default {
         })
         .filter(url => url)
 
-      let articles = await Promise.all(urlsWithoutDuplicate.map(url => extractArticle(url)))
-      articles = await Promise.all(articles.map(rawData => getArticles(rawData, 'http://www.dogdrip.net')))
-      articles = articles.filter(article => article) // get truthy value
-      await Article.insertMany(articles)
+      const rawArticles = await Promise.all(urlsWithoutDuplicate.map(url => extractRawArticle(url)))
+      const articles = await Promise.all(rawArticles.map(rawArticle => getArticles(rawArticle, 'http://www.dogdrip.net')))
+
+      await Article.insertMany(articles.filter(article => article))
 
       console.log('articles saved!')
       res.json({

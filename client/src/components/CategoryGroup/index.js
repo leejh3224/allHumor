@@ -1,10 +1,10 @@
 import React from 'react'
-import { string, bool } from 'prop-types'
+import { string, bool, func } from 'prop-types'
 import { colors } from 'styles/theme'
 import categories from 'globals/categories'
 import TabLink from './TabLink'
 
-const CategoryGroup = ({ isSticky, activeCategory }) => (
+const CategoryGroup = ({ isSticky, activeCategory, loadNewCategory }) => (
   <nav
     css={{
       position: isSticky ? 'fixed' : 'static',
@@ -16,9 +16,14 @@ const CategoryGroup = ({ isSticky, activeCategory }) => (
       transition: 'position 0.3s ease-out',
     }}
   >
-    {Object.keys(categories).map(eng => (
-      <TabLink key={eng} to={`/${eng}/1`} active={eng === activeCategory}>
-        {categories[eng]}
+    {Object.keys(categories).map(pathName => (
+      <TabLink
+        key={pathName}
+        to={`/${pathName}/1`}
+        active={pathName === activeCategory}
+        onClick={() => loadNewCategory(pathName)}
+      >
+        {categories[pathName]}
       </TabLink>
     ))}
   </nav>
@@ -27,6 +32,7 @@ const CategoryGroup = ({ isSticky, activeCategory }) => (
 CategoryGroup.propTypes = {
   isSticky: bool.isRequired,
   activeCategory: string.isRequired,
+  loadNewCategory: func.isRequired,
 }
 
 export default CategoryGroup
