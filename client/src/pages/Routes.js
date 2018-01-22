@@ -1,6 +1,7 @@
 import React from 'react'
 // import PropTypes from 'prop-types'
-import { Router, Switch, Route } from 'react-router-dom'
+import { Switch, Route } from 'react-router-dom'
+import { ConnectedRouter } from 'react-router-redux'
 // import SwipeableViews from 'react-swipeable-views'
 import history from 'utils/history'
 import 'styles/globalStyle'
@@ -22,7 +23,7 @@ const handleAuthentication = ({ location }) => {
 }
 
 const Routes = () => (
-  <Router history={history}>
+  <ConnectedRouter history={history}>
     <Switch>
       <Route exact path="/" render={props => <Home auth={auth} {...props} />} />
       <Route exact path="/login" component={LoginPageContainer} />
@@ -49,7 +50,7 @@ const Routes = () => (
       />
       <Route component={NotFound} />
     </Switch>
-  </Router>
+  </ConnectedRouter>
 )
 
 export default Routes

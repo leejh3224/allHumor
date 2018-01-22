@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux'
+import { routerReducer } from 'react-router-redux'
 import entity from './entity'
 import fetching from './fetching'
 import error from './error'
@@ -8,6 +9,7 @@ import voting from './voting'
 import comment from './comment'
 
 const rootReducer = combineReducers({
+  router: routerReducer,
   entity,
   fetching,
   error,

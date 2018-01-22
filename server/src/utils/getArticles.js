@@ -23,7 +23,16 @@ export default async (rawData, domain) => {
       '$1$4" $3$2"',
     )
 
-    content = content.replace(/src="[.]/g, `src="${domain}`) // converts relative path to absolute path
+    // 상대경로인 경우와 절대경로이지만 개드립 url이 누락된 경우 모두를 커버하기 위해
+    // 그리고 iframe의 src는 not match
+    // ex) case1: src="dvs/b/i/18 ..." / case2: src="./dvs/b/i/18 ..."
+    content = content.replace(/src="(?!https:\/\/www.youtube.com)[.]?\/?dvs/g, (matched) => {
+      if (matched.includes('dvs')) {
+        // 첫 번째 케이스 fix
+        return `src="${domain}/dvs`
+      }
+      return `src="${domain}`
+    })
     content = content.replace(/"\/files\/attach/g, `"${domain}/files/attach`) // 개드립 예전 src url
   }
 
@@ -52,7 +61,7 @@ export default async (rawData, domain) => {
     )
   }
 
-  console.log(articleId)
+  // console.log(articleId)
 
   return {
     ...rest, // overwrite를 하려면 overwrite 되기 전의 데이터부터 넣어야됨
