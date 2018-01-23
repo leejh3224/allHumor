@@ -1,4 +1,4 @@
-import { fromJS, Map } from 'immutable'
+import { fromJS } from 'immutable'
 import { handleActions } from 'redux-actions'
 import types from 'store/actionTypes'
 import api from 'api'
@@ -39,25 +39,12 @@ export const actions = {
     const articleId = selectors.getArticleId(getState())
 
     if (!myvote) {
-      dispatch({ type: types.voting.REQUEST })
+      dispatch({ type: types.voting.REQUEST, payload: { userId } })
 
       try {
-        const { data: { votes } } = await api.post(
-          `/articles/${articleId}/votes`,
-          {
-            userId,
-          },
-        )
-
-        if (votes) {
-          dispatch({
-            type: types.voting.SUCCESS,
-            payload: {
-              votes: normalize(votes, voteListSchema),
-              userId,
-            },
-          })
-        }
+        await api.post(`/articles/${articleId}/votes`, {
+          userId,
+        })
       } catch (error) {
         console.log(error)
         dispatch({ type: types.voting.ERROR, payload: error })
@@ -67,25 +54,12 @@ export const actions = {
         return
       }
 
-      dispatch({ type: types.voting.REQUEST })
+      dispatch({ type: types.voting.REQUEST, payload: { userId } })
 
       try {
-        const { data: { votes } } = await api.put(
-          `/articles/${articleId}/votes`,
-          {
-            userId,
-          },
-        )
-
-        if (votes) {
-          dispatch({
-            type: types.voting.SUCCESS,
-            payload: {
-              votes: normalize(votes, voteListSchema),
-              userId,
-            },
-          })
-        }
+        await api.put(`/articles/${articleId}/votes`, {
+          userId,
+        })
       } catch (error) {
         console.log(error)
         dispatch({ type: types.voting.ERROR, payload: error })
@@ -94,6 +68,9 @@ export const actions = {
   },
 }
 
+// 어차피 canonical state로 업데이트 하는 건
+// 새로고침 했을 때, 즉 article.success 액션이 dispatch 됐을 때 뿐
+// 그러므로 request가 dispatch 되자마자 vote를 업데이트 하는 게 맞음.
 export default handleActions(
   {
     [types.article.SUCCESS]: (state, { payload: { entities, result } }) => {
@@ -101,17 +78,17 @@ export default handleActions(
         const { votes } = entities.articles[result[0]]
 
         return state
-          .set('articleId', result[0])
+          .update('articleId', () => result[0])
           .merge(normalize(votes, voteListSchema))
       } // 디테일 페이지일 경우 1개의 article만 가져오므로(get canonical state)
 
       return state
     },
-    [types.voting.SUCCESS]: (state, { payload: { votes, userId } }) => {
-      const targetPath = ['entities', 'votes', userId]
-      const updatedValue = votes.entities.votes[userId]
+    [types.voting.REQUEST]: (state, { payload: { userId } }) => {
+      const targetPath = ['entities', 'votes', userId, 'counts']
+      const previousCount = state.getIn(targetPath) || 0
 
-      return state.updateIn(targetPath, () => Map(updatedValue)) // for immutability
+      return state.updateIn(targetPath, () => previousCount + 1)
     },
   },
   initialState,

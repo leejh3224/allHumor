@@ -2,7 +2,9 @@ import React from 'react'
 import { number, func, string } from 'prop-types'
 import { spacing, fonts, colors } from 'styles/theme'
 
-const Voting = ({ counts, vote, userId }) => (
+const Voting = ({
+  counts, userId, votingMouseDown, votingMouseUp,
+}) => (
   <div
     css={{
       display: 'flex',
@@ -13,7 +15,10 @@ const Voting = ({ counts, vote, userId }) => (
       fontWeight: 400,
     }}
   >
-    <button onClick={() => vote(userId)}>
+    <button
+      onMouseDown={() => votingMouseDown(userId)}
+      onMouseUp={votingMouseUp}
+    >
       <i
         className="ion-thumbsup"
         css={{
@@ -32,7 +37,8 @@ const Voting = ({ counts, vote, userId }) => (
 
 Voting.propTypes = {
   counts: number.isRequired,
-  vote: func.isRequired,
+  votingMouseDown: func.isRequired,
+  votingMouseUp: func.isRequired,
   userId: string.isRequired,
 }
 

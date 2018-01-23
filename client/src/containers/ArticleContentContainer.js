@@ -19,7 +19,6 @@ class ArticleContentContainer extends Component {
   }
   componentWillMount() {
     const { articleId, loadArticle } = this.props
-
     loadArticle(articleId)
   }
   handleVoting = (userId) => {
@@ -28,11 +27,16 @@ class ArticleContentContainer extends Component {
     }
     return this.props.voteArticle(userId)
   }
+  votingMouseDown = (userId) => {
+    this.intervalId = setInterval(() => this.handleVoting(userId), 700)
+  }
+  votingMouseUp = () => clearInterval(this.intervalId)
+
   render() {
     const {
       articleContent, articleId, voteCounts, userId,
     } = this.props
-    const { handleVoting } = this
+    const { votingMouseDown, votingMouseUp } = this
 
     if (!isEmpty(articleContent)) {
       return [
@@ -43,8 +47,9 @@ class ArticleContentContainer extends Component {
         <Voting
           key="article_votes"
           counts={voteCounts}
-          vote={handleVoting}
           userId={userId}
+          votingMouseDown={votingMouseDown}
+          votingMouseUp={votingMouseUp}
         />,
       ]
     }

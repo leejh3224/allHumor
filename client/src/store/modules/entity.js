@@ -8,13 +8,11 @@ const initialState = fromJS({
   },
 })
 
-// selectors
 export const selectors = {
   getArticles: ({ entity }) =>
     (entity.getIn(['entities', 'articles']) || Map()).toJS(),
 }
 
-// reducer
 export default handleActions(
   {
     [types.article.SUCCESS]: (state, { payload }) => state.merge(payload),

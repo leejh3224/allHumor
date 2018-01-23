@@ -18,6 +18,8 @@ export default createStore(
   rootReducer,
   compose(
     applyMiddleware(...middlewares),
-    isDev && window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+    isDev &&
+      window.__REDUX_DEVTOOLS_EXTENSION__ &&
+      window.__REDUX_DEVTOOLS_EXTENSION__(),
   ),
 )

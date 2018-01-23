@@ -6,8 +6,8 @@ import range from 'lodash/range'
 import types from 'store/actionTypes'
 
 // pagination settings
-const perPage = 10
-const lengthPageButton = 5
+const ARTICLE_PER_PAGE = 10
+const PAGEBUTTON_LENGTH = 5
 
 // normalizr
 const articleSchema = new schema.Entity('articles', {}, { idAttribute: '_id' })
@@ -36,15 +36,15 @@ export const selectors = {
   getCurrentMinPage: ({ pagination }) => {
     const curruntPage = selectors.getCurrentPage({ pagination })
     return (
-      Math.floor((curruntPage - 1) / lengthPageButton) * lengthPageButton + 1
+      Math.floor((curruntPage - 1) / PAGEBUTTON_LENGTH) * PAGEBUTTON_LENGTH + 1
     )
   },
   getCurrentMaxPage: state => {
     const minPage = selectors.getCurrentMinPage(state)
     const lastPage = selectors.getLastPage(state)
 
-    if (minPage + lengthPageButton <= lastPage) {
-      return minPage + (lengthPageButton - 1)
+    if (minPage + PAGEBUTTON_LENGTH <= lastPage) {
+      return minPage + (PAGEBUTTON_LENGTH - 1)
     }
     return lastPage
   },
@@ -55,13 +55,11 @@ export const selectors = {
   getRangeMinMax: state => {
     const minPage = selectors.getCurrentMinPage(state)
     const maxPage = selectors.getCurrentMaxPage(state)
-
     return range(minPage, maxPage + 1)
   },
   getCategory: ({ pagination }) => pagination.get('category'),
 }
 
-// thunks
 export const actions = {
   loadArticle: id => async dispatch => {
     dispatch({ type: types.article.REQUEST })
@@ -106,16 +104,14 @@ export const actions = {
 
 export default handleActions(
   {
-    [types.article.SUCCESS]: (state, { meta }) => {
-      if (meta) {
-        return state.setIn(['pages', meta.category, 'current'], meta.page)
-      }
-      return state
-    },
+    [types.article.SUCCESS]: (state, { meta }) =>
+      (meta
+        ? state.setIn(['pages', meta.category, 'current'], meta.page)
+        : state),
     [types.pagination.SET_LAST_PAGE]: (state, { meta }) =>
       state.setIn(
         ['pages', meta.category, 'last'],
-        Math.ceil(meta.total / perPage),
+        Math.ceil(meta.total / ARTICLE_PER_PAGE),
       ),
     '@@router/LOCATION_CHANGE': (state, { payload }) => {
       const routerMatch = payload.pathname.match(/\/(all|dogdrip)\/(\d{1,})/)
@@ -123,6 +119,7 @@ export default handleActions(
       const oldPage = state.getIn(['pages', oldCategory, 'current'])
 
       if (routerMatch) {
+        // 홈을 제외한 어떤 카테고리든 선택
         const [, newCategory = 'all', nextPage = '1'] = routerMatch
         const changingCategory = oldCategory !== newCategory
         const changingPage = !changingCategory && oldPage !== nextPage
@@ -133,8 +130,6 @@ export default handleActions(
             .setIn(['pages', newCategory, 'current'], parseInt(nextPage, 10))
         }
       }
-
-      // go to home
       return state.set('category', 'all').setIn(['pages', 'all', 'current'], 1)
     },
   },
