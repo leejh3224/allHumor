@@ -1,11 +1,21 @@
 import React from 'react'
-import { shape } from 'prop-types'
+import { shape, func, bool } from 'prop-types'
 import { spacing, fonts, colors } from 'styles/theme'
+import formatDate from 'utils/formatDate'
+import Reply from './Reply'
+import WithState from './WithState'
 
-const CommentItem = ({ comment }) => {
+const CommentItem = ({
+  comment,
+  getRepliesOfComment,
+  showReplies,
+  showingReplies,
+  fetchingReplies,
+}) => {
   const {
-    avatar, author, content, replies,
+    _id, avatar, author, content, replies = [], createdAt,
   } = comment
+  const repliesList = Object.values(getRepliesOfComment(_id))
   return (
     <div
       css={{
@@ -44,35 +54,70 @@ const CommentItem = ({ comment }) => {
               fontWeight: 400,
             }}
           >
-            2시간 전
+            {formatDate(createdAt)}
           </span>
         </p>
         <p
           css={{
             ...fonts.body,
             marginTop: spacing.xsmall,
-            marginBottom: spacing.small,
+            marginBottom: spacing.xsmall,
           }}
         >
           {content}
         </p>
-        {replies.length ? (
-          <p
+        {/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */}
+        <div
+          css={{
+            display: 'flex',
+            alignItems: 'center',
+            marginBottom: spacing.medium,
+          }}
+        >
+          <button
             css={{
               ...fonts.xsmall,
-              fontWeight: 700,
               cursor: 'pointer',
+              color: colors.grey,
+              marginRight: spacing.small,
             }}
           >
-            답글 보기{' '}
-            <i
+            답글 달기
+          </button>
+          {replies.length ? (
+            <p
               css={{
-                marginLeft: spacing.small,
+                ...fonts.xsmall,
+                fontWeight: 700,
+                cursor: 'pointer',
               }}
-              className="ion-chevron-down"
-            />
-          </p>
-        ) : null}
+              onClick={showReplies}
+            >
+              {showingReplies
+                ? '답글 숨기기'
+                : `답글 ${
+                    replies.length > 1 ? `${replies.length}개` : ''
+                  } 보기`}
+              <i
+                css={{
+                  marginLeft: spacing.xsmall,
+                }}
+                className={`ion-chevron-${showingReplies ? 'up' : 'down'}`}
+              />
+            </p>
+          ) : null}
+        </div>
+        {fetchingReplies ? (
+          '불러오는 중...'
+        ) : (
+          <ul>
+            {repliesList.map(reply => (
+              <li>
+                <Reply reply={reply} />
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   )
@@ -80,6 +125,10 @@ const CommentItem = ({ comment }) => {
 
 CommentItem.propTypes = {
   comment: shape().isRequired,
+  getRepliesOfComment: func.isRequired,
+  showReplies: func.isRequired,
+  showingReplies: bool.isRequired,
+  fetchingReplies: bool.isRequired,
 }
 
-export default CommentItem
+export default WithState(CommentItem)

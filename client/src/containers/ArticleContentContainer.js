@@ -4,7 +4,7 @@ import { func, string, shape, number } from 'prop-types'
 import { connect } from 'react-redux'
 import { ArticleContent, Voting } from 'components'
 import isEmpty from 'lodash/isEmpty'
-import * as entityDucks from 'store/modules/entity'
+import * as articleDucks from 'store/modules/article'
 import * as paginationDucks from 'store/modules/pagination'
 import * as votingDucks from 'store/modules/voting'
 
@@ -28,7 +28,7 @@ class ArticleContentContainer extends Component {
     return this.props.voteArticle(userId)
   }
   votingMouseDown = (userId) => {
-    this.intervalId = setInterval(() => this.handleVoting(userId), 700)
+    this.intervalId = setInterval(() => this.handleVoting(userId), 500)
   }
   votingMouseUp = () => clearInterval(this.intervalId)
 
@@ -36,7 +36,7 @@ class ArticleContentContainer extends Component {
     const {
       articleContent, articleId, voteCounts, userId,
     } = this.props
-    const { votingMouseDown, votingMouseUp } = this
+    const { handleVoting, votingMouseDown, votingMouseUp } = this
 
     if (!isEmpty(articleContent)) {
       return [
@@ -48,6 +48,7 @@ class ArticleContentContainer extends Component {
           key="article_votes"
           counts={voteCounts}
           userId={userId}
+          handleVoting={handleVoting}
           votingMouseDown={votingMouseDown}
           votingMouseUp={votingMouseUp}
         />,
@@ -60,7 +61,7 @@ class ArticleContentContainer extends Component {
 /* eslint-disable */
 export default connect(
   state => ({
-    articleContent: entityDucks.selectors.getArticles(state),
+    articleContent: articleDucks.selectors.getArticles(state),
     voteCounts: votingDucks.selectors.getVoteCounts(state),
   }),
   {

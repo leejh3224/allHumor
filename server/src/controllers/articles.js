@@ -79,14 +79,13 @@ export default {
     const { userId } = req.body
 
     try {
-      const vote = await new Vote({
+      await new Vote({
         userId,
         counts: 1,
         articleId: id,
       }).save()
       res.json({
         success: true,
-        votes: [vote],
       })
     } catch (error) {
       console.log(error)
@@ -109,7 +108,6 @@ export default {
 
       res.json({
         success: true,
-        votes: [vote],
       })
     } catch (error) {
       console.log(error)

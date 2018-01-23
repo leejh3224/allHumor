@@ -9,8 +9,8 @@ const initialState = fromJS({
 })
 
 export const selectors = {
-  getArticles: ({ entity }) =>
-    (entity.getIn(['entities', 'articles']) || Map()).toJS(),
+  getArticles: ({ article }) =>
+    (article.getIn(['entities', 'articles']) || Map()).toJS(),
 }
 
 export default handleActions(

@@ -67,7 +67,7 @@ export const actions = {
     try {
       const { data: { articles } } = await api.get(`/articles/${id}`)
 
-      if (articles) {
+      if (articles.length) {
         dispatch({
           type: types.article.SUCCESS,
           payload: normalize(articles, articleListSchema),
@@ -84,7 +84,7 @@ export const actions = {
     try {
       const { data: { articles, total } } = await api.get(`/articles/${category}/${page}`)
 
-      if (articles) {
+      if (articles.length) {
         dispatch({
           type: types.article.SUCCESS,
           payload: normalize(articles, articleListSchema),

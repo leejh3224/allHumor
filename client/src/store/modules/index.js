@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux'
 import { routerReducer } from 'react-router-redux'
-import entity from './entity'
+import article from './article'
 import fetching from './fetching'
 import error from './error'
 import pagination from './pagination'
@@ -10,7 +10,7 @@ import comment from './comment'
 
 const rootReducer = combineReducers({
   router: routerReducer,
-  entity,
+  article,
   fetching,
   error,
   pagination,

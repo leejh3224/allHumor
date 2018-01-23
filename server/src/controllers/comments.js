@@ -14,7 +14,6 @@ export default {
         author,
         content,
         replies: [],
-        upvotedUsers: [],
       }).save()
 
       res.json({
@@ -50,7 +49,8 @@ export default {
     const { id } = req.params // delete 요청은 body를 사용할 수 없음
 
     try {
-      /* 만약 post remove hook을 트리거하려면 이런 식으로 도큐먼트.remove를 사용해야함 */
+      // workaround for "Remove hook not triggered when removing documents"\
+      // https://github.com/Automattic/mongoose/issues/1241
       await Comment.findByIdAndRemove(id, (err, doc) => {
         doc.remove()
       })
@@ -66,4 +66,55 @@ export default {
       })
     }
   },
+  getAllReply: async (req, res) => {
+    try {
+      const { id } = req.params
+      const { replies } = await Comment.findById(id)
+        .populate('replies')
+        .lean()
+      res.json({
+        success: true,
+        replies,
+      })
+    } catch (error) {
+      console.log(error)
+      res.json({
+        success: false,
+        error,
+      })
+    }
+  },
+  addReply: async (req, res) => {
+    try {
+      const { id } = req.params
+      const {
+        userId, avatar, author, content, recipient,
+      } = req.body
+      const { _id, articleId, ...rest } = await Comment.findById(id).lean()
+      const reply = await new Comment({
+        articleId,
+        userId,
+        avatar,
+        author,
+        content,
+        parent: _id,
+        recipient: recipient || rest.author,
+      }).save()
+      await Comment.findByIdAndUpdate(id, {
+        $push: { replies: reply._id },
+      })
+      res.json({
+        success: true,
+        comments: [reply],
+      })
+    } catch (error) {
+      console.log(error)
+      res.json({
+        success: false,
+        error,
+      })
+    }
+  },
+  editReply: () => {},
+  deleteReply: () => {},
 }

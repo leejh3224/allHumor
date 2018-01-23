@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { func, bool, objectOf, object, number, string } from 'prop-types'
 import { connect } from 'react-redux'
-import * as entityDucks from 'store/modules/entity'
+import * as articleDucks from 'store/modules/article'
 import * as fetchingDucks from 'store/modules/fetching'
 import * as paginationDucks from 'store/modules/pagination'
 import orderBy from 'lodash/orderBy'
@@ -10,7 +10,7 @@ import { withRouter } from 'react-router-dom'
 import { PreviewItem } from 'components'
 
 const { getCategory, getCurrentPage } = paginationDucks.selectors
-const { getArticles } = entityDucks.selectors
+const { getArticles } = articleDucks.selectors
 const { getFetchingArticle } = fetchingDucks.selectors
 
 class PreviewListContainer extends Component {

@@ -1,9 +1,14 @@
 import React from 'react'
-import { arrayOf, shape } from 'prop-types'
+import { arrayOf, shape, func, bool } from 'prop-types'
 import { spacing, media } from 'styles/theme'
 import { AddComment, CommentItem } from 'components'
 
-const Comments = ({ comments }) => (
+const Comments = ({
+  comments,
+  loadReplies,
+  getRepliesOfComment,
+  fetchingReplies,
+}) => (
   <section
     css={{
       padding: spacing.medium,
@@ -26,7 +31,12 @@ const Comments = ({ comments }) => (
             paddingBottom: spacing.small,
           }}
         >
-          <CommentItem comment={comment} />
+          <CommentItem
+            comment={comment}
+            loadReplies={loadReplies}
+            getRepliesOfComment={getRepliesOfComment}
+            fetchingReplies={fetchingReplies}
+          />
         </li>
       ))}
     </ul>
@@ -35,6 +45,9 @@ const Comments = ({ comments }) => (
 
 Comments.propTypes = {
   comments: arrayOf(shape({})).isRequired,
+  loadReplies: func.isRequired,
+  getRepliesOfComment: func.isRequired,
+  fetchingReplies: bool.isRequired,
 }
 
 export default Comments

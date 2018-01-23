@@ -3,7 +3,11 @@ import { number, func, string } from 'prop-types'
 import { spacing, fonts, colors } from 'styles/theme'
 
 const Voting = ({
-  counts, userId, votingMouseDown, votingMouseUp,
+  counts,
+  userId,
+  handleVoting,
+  votingMouseDown,
+  votingMouseUp,
 }) => (
   <div
     css={{
@@ -16,6 +20,7 @@ const Voting = ({
     }}
   >
     <button
+      onClick={() => handleVoting(userId)}
       onMouseDown={() => votingMouseDown(userId)}
       onMouseUp={votingMouseUp}
     >
@@ -37,6 +42,7 @@ const Voting = ({
 
 Voting.propTypes = {
   counts: number.isRequired,
+  handleVoting: func.isRequired,
   votingMouseDown: func.isRequired,
   votingMouseUp: func.isRequired,
   userId: string.isRequired,

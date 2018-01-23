@@ -16,4 +16,9 @@ export default {
     SUCCESS: 'voting/VOTING_SUCCESS',
     ERROR: 'voting/VOTING_ERROR',
   },
+  reply: {
+    REQUEST: 'comment/REPLY_REQUEST',
+    SUCCESS: 'comment/REPLY_SUCCESS',
+    ERROR: 'comment/REPLY_ERROR',
+  },
 }

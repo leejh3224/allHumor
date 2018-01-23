@@ -20,38 +20,54 @@ const Comment = new Schema(
     },
     author: { type: String, required: true },
     content: { type: String, required: true },
+    parent: { type: Schema.Types.ObjectId, ref: 'Comment' },
     replies: [
       {
         type: Schema.Types.ObjectId,
-        ref: 'Commment',
+        ref: 'Comment',
       },
     ],
     recipient: {
       type: String,
+      default: null,
     },
   },
   { timestamps: true },
 )
 
+/* eslint-disable func-names */
+// workaround for "Empty array is saved when a property references a schema"
+// https://github.com/Automattic/mongoose/issues/1335#issuecomment-13254654
+Comment.pre('save', function (next) {
+  if (this.isNew && !this.replies.length) {
+    this.replies = undefined
+  }
+  next()
+})
+
 Comment.post('save', async (doc, next) => {
-  const { _id } = doc
-  try {
-    await Article.findByIdAndUpdate(doc.articleId, { $push: { comments: _id } })
-    console.log('comment saved')
-  } catch (error) {
-    console.log(error)
-    next(error)
+  const { _id, recipient } = doc
+  if (!recipient) {
+    try {
+      await Article.findByIdAndUpdate(doc.articleId, { $push: { comments: _id } })
+      console.log('comment saved')
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
   }
 })
 
 Comment.post('remove', async (doc, next) => {
-  const { _id } = doc
-  try {
-    await Article.findByIdAndUpdate(doc.articleId, { $pull: { comments: _id } })
-    console.log('comment removed')
-  } catch (error) {
-    console.log(error)
-    next(error)
+  const { _id, recipient } = doc
+  if (!recipient) {
+    try {
+      await Article.findByIdAndUpdate(doc.articleId, { $pull: { comments: _id } })
+      console.log('comment removed')
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
   }
 })
 

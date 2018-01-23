@@ -80,7 +80,7 @@ export default handleActions(
         return state
           .update('articleId', () => result[0])
           .merge(normalize(votes, voteListSchema))
-      } // 디테일 페이지일 경우 1개의 article만 가져오므로(get canonical state)
+      }
 
       return state
     },
