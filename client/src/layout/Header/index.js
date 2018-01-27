@@ -1,32 +1,68 @@
 import React from 'react'
-// import PropTypes from 'prop-types'
-import { Link } from 'react-router-dom'
+import { bool, func } from 'prop-types'
+import { Link, withRouter } from 'react-router-dom'
+import { colors, spacing, fonts } from 'styles/theme'
+import { compose } from 'recompose'
 
-import styles from './Header.sass'
+const baseLinkStyle = {
+  color: colors.white,
+  textDecoration: 'none',
+  ...fonts.header,
+}
 
-const Header = () => (
-  <header className={styles.header}>
-    <div className={styles.wrapper}>
-      <div className={styles.brand}>ALL유머</div>
-      <a href="/" className={styles.loginButton}>
-        로그인
-      </a>
-    </div>
-    {/* eslint-disable jsx-a11y/anchor-is-valid */}
-    <nav className={styles.tabLinks}>
-      <Link className={styles.tabLink} to="/">
-        새 글
+const Header = ({ isLoggedIn, logout, loadNewest }) => (
+  <header
+    css={{
+      position: 'relative',
+      backgroundColor: colors.primary,
+    }}
+  >
+    <nav
+      css={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        padding: spacing.medium,
+      }}
+    >
+      <Link
+        to="/"
+        onClick={loadNewest}
+        css={{
+          fontStyle: 'italic',
+          ...baseLinkStyle,
+        }}
+      >
+        ALL유머
       </Link>
-      <Link className={styles.tabLink} to="/">
-        공유
-      </Link>
-      <Link className={styles.tabLink} to="/">
-        검색
-      </Link>
+      {isLoggedIn ? (
+        <Link
+          to="/"
+          css={{ ...baseLinkStyle }}
+          onClick={(e) => {
+            e.preventDefault()
+            logout()
+          }}
+        >
+          로그아웃
+        </Link>
+      ) : (
+        <Link to="/login" css={{ ...baseLinkStyle }}>
+          로그인
+        </Link>
+      )}
     </nav>
   </header>
 )
 
-Header.propTypes = {}
+Header.defaultProps = {
+  isLoggedIn: false,
+  logout: () => {},
+}
 
-export default Header
+Header.propTypes = {
+  isLoggedIn: bool,
+  logout: func,
+  loadNewest: func.isRequired,
+}
+
+export default compose(withRouter)(Header)

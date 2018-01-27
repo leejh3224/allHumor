@@ -1,17 +1,27 @@
 import React from 'react'
-// import PropTypes from 'prop-types'
-import DOMpurify from 'dompurify'
-import { Header } from 'layout'
-import { ArticleListContainer } from 'containers'
+import { bool } from 'prop-types'
+import StickyOnScroll from 'pages/StickyOnScroll'
+import {
+  PreviewListContainer,
+  PaginationContainer,
+  CategoryGroupContainer,
+  HeaderContainer,
+} from 'containers'
+import { isAuthenticated, logout } from 'utils/auth'
 
-/* eslint-disable */
-const Home = () => (
+const Home = ({ isSticky }) => (
   <div>
-    <Header />
-    <ArticleListContainer />
-    {/* with the help of DOMpurify I can enable dangerously set html */}
-    <div dangerouslySetInnerHTML={{ __html: DOMpurify.sanitize('<div>x</div>') }} />
+    <HeaderContainer isLoggedIn={isAuthenticated()} logout={logout} />
+    <CategoryGroupContainer isSticky={isSticky} />
+    <section css={{ paddingTop: isSticky ? 50 : 0 }}>
+      <PreviewListContainer />
+    </section>
+    <PaginationContainer />
   </div>
 )
 
-export default Home
+Home.propTypes = {
+  isSticky: bool.isRequired,
+}
+
+export default StickyOnScroll(Home)

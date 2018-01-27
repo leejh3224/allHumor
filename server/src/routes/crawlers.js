@@ -3,6 +3,6 @@ import crawlersController from 'controllers/crawlers'
 
 const routes = Router()
 
-routes.get('/crawlers/dogdrip/:page', crawlersController.crawlDogdrip)
+routes.get('/crawlers/dogdrip/:boardName/:page', crawlersController.crawlDogdrip)
 
 export default routes
