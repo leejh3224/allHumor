@@ -4,22 +4,24 @@ import types from 'store/actionTypes'
 
 const initialState = fromJS({
   article: false,
-  reply: false,
+  add: {
+    comment: false,
+  },
 })
 
-export const selectors = {
-  getFetchingArticle: ({ fetching }) => fetching.get('article'),
-  getFetchingReply: ({ fetching }) => fetching.get('reply'),
-}
+export const getFetchingArticle = ({ fetching }) => fetching.get('article')
+export const getFetchingAddComment = ({ fetching }) =>
+  fetching.getIn(['add', 'comment'])
 
 export default handleActions(
   {
     [types.article.REQUEST]: state => state.setIn(['article'], true),
     [types.article.SUCCESS]: state => state.setIn(['article'], false),
     [types.article.ERROR]: state => state.setIn(['article'], false),
-    [types.reply.REQUEST]: state => state.setIn(['reply'], true),
-    [types.reply.SUCCESS]: state => state.setIn(['reply'], false),
-    [types.reply.ERROR]: state => state.setIn(['reply'], false),
+    [types.comment.ADD_REQUEST]: state => state.setIn(['add', 'comment'], true),
+    [types.comment.ADD_SUCCESS]: state =>
+      state.setIn(['add', 'comment'], false),
+    [types.comment.ADD_ERROR]: state => state.setIn(['add', 'comment'], false),
   },
   initialState,
 )

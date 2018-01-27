@@ -1,11 +1,10 @@
 import React, { Component } from 'react'
 import history from 'utils/history'
-import { func, string, shape, number } from 'prop-types'
+import { func, string, shape, number, bool } from 'prop-types'
 import { connect } from 'react-redux'
 import { ArticleContent, Voting } from 'components'
 import isEmpty from 'lodash/isEmpty'
 import * as articleDucks from 'store/modules/article'
-import * as paginationDucks from 'store/modules/pagination'
 import * as votingDucks from 'store/modules/voting'
 
 class ArticleContentContainer extends Component {
@@ -14,28 +13,31 @@ class ArticleContentContainer extends Component {
     articleId: string.isRequired,
     articleContent: shape({}).isRequired,
     voteArticle: func.isRequired,
-    voteCounts: number.isRequired,
-    userId: string.isRequired,
+    voteCount: number.isRequired,
+    isLoggedIn: bool.isRequired,
   }
   componentWillMount() {
     const { articleId, loadArticle } = this.props
     loadArticle(articleId)
   }
-  handleVoting = (userId) => {
-    if (this.props.userId === '') {
+  componentWillUnmount() {
+    clearInterval(this.intervalId)
+  }
+  handleVoting = () => {
+    const { isLoggedIn, voteArticle } = this.props
+
+    if (!isLoggedIn) {
       return history.replace('/login')
     }
-    return this.props.voteArticle(userId)
+    return voteArticle()
   }
-  votingMouseDown = (userId) => {
-    this.intervalId = setInterval(() => this.handleVoting(userId), 500)
+  votingMouseDown = () => {
+    this.intervalId = setInterval(() => this.handleVoting(), 500)
   }
   votingMouseUp = () => clearInterval(this.intervalId)
 
   render() {
-    const {
-      articleContent, articleId, voteCounts, userId,
-    } = this.props
+    const { articleContent, articleId, voteCount } = this.props
     const { handleVoting, votingMouseDown, votingMouseUp } = this
 
     if (!isEmpty(articleContent)) {
@@ -46,8 +48,7 @@ class ArticleContentContainer extends Component {
         />,
         <Voting
           key="article_votes"
-          counts={voteCounts}
-          userId={userId}
+          counts={voteCount}
           handleVoting={handleVoting}
           votingMouseDown={votingMouseDown}
           votingMouseUp={votingMouseUp}
@@ -58,14 +59,13 @@ class ArticleContentContainer extends Component {
   }
 }
 
-/* eslint-disable */
 export default connect(
   state => ({
-    articleContent: articleDucks.selectors.getArticles(state),
-    voteCounts: votingDucks.selectors.getVoteCounts(state),
+    articleContent: articleDucks.getArticles(state),
+    voteCount: votingDucks.getVoteCount(state),
   }),
   {
-    loadArticle: paginationDucks.actions.loadArticle,
-    voteArticle: votingDucks.actions.voteArticle,
+    ...articleDucks,
+    ...votingDucks,
   },
 )(ArticleContentContainer)

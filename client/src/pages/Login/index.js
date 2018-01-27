@@ -3,9 +3,7 @@ import { string, func } from 'prop-types'
 import { Link } from 'react-router-dom'
 import { colors, fonts, spacing, media } from 'styles/theme'
 import ReactRouterPropTypes from 'react-router-prop-types'
-import Auth from 'utils/auth'
-
-const auth = new Auth()
+import { socialLogin } from 'utils/auth'
 
 const baseButtonStyle = {
   display: 'flex',
@@ -26,7 +24,7 @@ const socialIconStyle = {
   marginLeft: spacing.medium,
 }
 
-const Login = ({ view, switchView, history }) => (
+const Login = ({ view, switchLoginView, history }) => (
   <div
     css={{
       display: 'flex',
@@ -109,7 +107,7 @@ const Login = ({ view, switchView, history }) => (
             ...baseButtonStyle,
             backgroundColor: colors.facebook,
           }}
-          onClick={() => auth.socialLogin('facebook')}
+          onClick={() => socialLogin('facebook')}
         >
           <img
             css={{
@@ -126,7 +124,7 @@ const Login = ({ view, switchView, history }) => (
             ...baseButtonStyle,
             backgroundColor: colors.google,
           }}
-          onClick={() => auth.socialLogin()} // default provider is google
+          onClick={() => socialLogin()} // default provider is google
         >
           <img
             css={socialIconStyle}
@@ -140,7 +138,7 @@ const Login = ({ view, switchView, history }) => (
             ...baseButtonStyle,
             backgroundColor: colors.twitter,
           }}
-          onClick={() => auth.socialLogin('twitter')}
+          onClick={() => socialLogin('twitter')}
         >
           <img
             css={socialIconStyle}
@@ -155,7 +153,7 @@ const Login = ({ view, switchView, history }) => (
             color: colors.black,
             backgroundColor: colors.lighterGrey,
           }}
-          onClick={() => auth.socialLogin('instagram')}
+          onClick={() => socialLogin('instagram')}
         >
           <img
             css={socialIconStyle}
@@ -175,7 +173,7 @@ const Login = ({ view, switchView, history }) => (
         {view === 'login' ? '처음이신가요?' : '이미 계정이 있으신가요?'}
         {/* eslint-disable jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
         <a
-          onClick={switchView}
+          onClick={switchLoginView}
           css={{
             color: colors.white,
             fontWeight: 700,
@@ -197,7 +195,7 @@ const Login = ({ view, switchView, history }) => (
 
 Login.propTypes = {
   view: string.isRequired,
-  switchView: func.isRequired,
+  switchLoginView: func.isRequired,
   history: ReactRouterPropTypes.history.isRequired,
 }
 

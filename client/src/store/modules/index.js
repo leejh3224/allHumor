@@ -4,9 +4,10 @@ import article from './article'
 import fetching from './fetching'
 import error from './error'
 import pagination from './pagination'
-import login from './login'
 import voting from './voting'
 import comment from './comment'
+import user from './user'
+import ui from './ui'
 
 const rootReducer = combineReducers({
   router: routerReducer,
@@ -14,9 +15,10 @@ const rootReducer = combineReducers({
   fetching,
   error,
   pagination,
-  login,
   voting,
   comment,
+  user,
+  ui,
 })
 
 export default rootReducer

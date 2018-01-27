@@ -4,15 +4,6 @@ import { connect } from 'react-redux'
 import { Pagination } from 'components'
 import * as paginationDucks from 'store/modules/pagination'
 
-const {
-  getCurrentPage,
-  getLastPage,
-  getRangeMinMax,
-  getCategory,
-  getCurrentMinPage,
-  getCurrentMaxPage,
-} = paginationDucks.selectors
-
 class PaginationContainer extends Component {
   static propTypes = {
     currentPage: number.isRequired,
@@ -20,55 +11,79 @@ class PaginationContainer extends Component {
     rangeMinMax: arrayOf(number).isRequired,
     loadArticles: func.isRequired,
     category: string.isRequired,
-    nextPage: number.isRequired,
-    prevPage: number.isRequired,
+    buttonsPerPage: number.isRequired,
+    minPage: number.isRequired,
+    maxPage: number.isRequired,
+  }
+  loadFirstPage = () => {
+    const { category, currentPage, loadArticles } = this.props
+
+    if (currentPage !== 1) {
+      loadArticles(category, 1)
+    }
+  }
+  loadLastPage = () => {
+    const {
+      currentPage, category, lastPage, loadArticles,
+    } = this.props
+
+    if (currentPage !== lastPage) {
+      loadArticles(category, lastPage)
+    }
   }
   loadNextPage = () => {
     const {
-      loadArticles, category, nextPage, lastPage,
+      loadArticles, category, maxPage, lastPage,
     } = this.props
 
-    if (nextPage < lastPage + 1) {
-      loadArticles(category, nextPage)
+    if (maxPage === lastPage) {
+      return this.loadLastPage()
     }
+    return loadArticles(category, maxPage + 1)
   }
   loadPrevPage = () => {
     const {
-      loadArticles, category, prevPage, currentPage,
+      loadArticles,
+      category,
+      buttonsPerPage,
+      minPage,
+      currentPage,
     } = this.props
 
-    if (prevPage > 0) {
-      loadArticles(category, prevPage)
+    if (currentPage === 1) {
+      return this.loadFirstPage()
     }
 
-    // 첫 다섯 페이지
-    if (prevPage === 0 && currentPage !== 1) {
-      loadArticles(category, prevPage + 1)
+    if (currentPage <= buttonsPerPage) {
+      return loadArticles(category, 1)
     }
+    return loadArticles(category, minPage - 1)
   }
   render() {
     const {
+      buttonsPerPage,
       category,
-      nextPage,
-      prevPage,
+      minPage,
+      maxPage,
       currentPage,
       lastPage,
       rangeMinMax,
       loadArticles,
     } = this.props
-    const { loadPrevPage, loadNextPage } = this
     return (
       <Pagination
+        buttonsPerPage={buttonsPerPage}
         category={category}
-        nextPage={nextPage}
-        prevPage={prevPage}
+        maxPage={maxPage}
+        minPage={minPage}
         currentPage={currentPage}
         lastPage={lastPage}
         rangeMinMax={rangeMinMax}
-        // functions
         loadArticles={loadArticles}
-        loadNextPage={loadNextPage}
-        loadPrevPage={loadPrevPage}
+        loadFirstPage={this.loadFirstPage}
+        loadLastPage={this.loadLastPage}
+        loadNextPage={this.loadNextPage}
+        loadPrevPage={this.loadPrevPage}
       />
     )
   }
@@ -76,14 +91,13 @@ class PaginationContainer extends Component {
 
 export default connect(
   state => ({
-    category: getCategory(state),
-    nextPage: getCurrentMaxPage(state) + 1,
-    prevPage: getCurrentMinPage(state) - 1,
-    currentPage: getCurrentPage(state),
-    lastPage: getLastPage(state),
-    rangeMinMax: getRangeMinMax(state),
+    category: paginationDucks.getCategory(state),
+    buttonsPerPage: paginationDucks.getButtonsPerPage(state),
+    minPage: paginationDucks.getMinPage(state),
+    maxPage: paginationDucks.getMaxPage(state),
+    currentPage: paginationDucks.getCurrentPage(state),
+    lastPage: paginationDucks.getLastPage(state),
+    rangeMinMax: paginationDucks.getRangeMinMax(state),
   }),
-  {
-    loadArticles: paginationDucks.actions.loadArticles,
-  },
+  paginationDucks,
 )(PaginationContainer)

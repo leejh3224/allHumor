@@ -88,7 +88,7 @@ export default {
     try {
       const { id } = req.params
       const {
-        userId, avatar, author, content, recipient,
+        userId, avatar, author, content,
       } = req.body
       const { _id, articleId, ...rest } = await Comment.findById(id).lean()
       const reply = await new Comment({
@@ -98,14 +98,14 @@ export default {
         author,
         content,
         parent: _id,
-        recipient: recipient || rest.author,
+        recipient: rest.author,
       }).save()
       await Comment.findByIdAndUpdate(id, {
         $push: { replies: reply._id },
       })
       res.json({
         success: true,
-        comments: [reply],
+        replies: [reply],
       })
     } catch (error) {
       console.log(error)

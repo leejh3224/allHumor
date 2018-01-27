@@ -108,4 +108,13 @@ class Auth {
   }
 }
 
-export default Auth
+const auth = new Auth()
+
+export const {
+  isAuthenticated,
+  logout,
+  handleAuthentication,
+  socialLogin,
+  sendMagicLink,
+  getProfile,
+} = auth

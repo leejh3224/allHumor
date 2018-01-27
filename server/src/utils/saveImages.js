@@ -6,7 +6,7 @@ import imagemin from 'imagemin'
 import imageminGiflossy from 'imagemin-giflossy'
 import fs from 'fs'
 
-const imagePath = '/Users/leejunhyung/allhumor/client/public/article/images'
+const imagePath = '/Users/leejunhyung/Google 드라이브/allhumor/client/public/article/images'
 
 export default function (sources, site, id) {
   return Promise.all(sources.map(async (src) => {

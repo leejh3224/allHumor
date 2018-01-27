@@ -1,5 +1,5 @@
 import React from 'react'
-import { string } from 'prop-types'
+import { string, number } from 'prop-types'
 import { colors, spacing, media, fonts } from 'styles/theme'
 
 export const Thumbnail = ({ url }) => (
@@ -55,7 +55,7 @@ export const Header = ({ title, author, date }) => [
   </div>,
 ]
 
-export const Footer = () => (
+export const Footer = ({ voteCount, commentCount }) => (
   <div
     css={{
       display: 'flex',
@@ -80,7 +80,7 @@ export const Footer = () => (
           ...fonts.icon,
         }}
       />
-      12
+      {commentCount}
     </div>
     <div
       css={{
@@ -99,7 +99,7 @@ export const Footer = () => (
           ...fonts.icon,
         }}
       />
-      12
+      {voteCount}
     </div>
   </div>
 )
@@ -112,6 +112,11 @@ Header.propTypes = {
   title: string.isRequired,
   author: string.isRequired,
   date: string.isRequired,
+}
+
+Footer.propTypes = {
+  commentCount: number.isRequired,
+  voteCount: number.isRequired,
 }
 
 export default Thumbnail

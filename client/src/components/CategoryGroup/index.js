@@ -14,6 +14,7 @@ const CategoryGroup = ({ isSticky, activeCategory, loadNewCategory }) => (
       display: 'flex',
       overflowX: 'scroll',
       transition: 'position 0.3s ease-out',
+      zIndex: '10',
     }}
   >
     {Object.keys(categories).map(pathName => (

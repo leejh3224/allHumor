@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Login from 'pages/Login'
-import * as loginDucks from 'store/modules/login'
+import * as uiDucks from 'store/modules/ui'
 
 class LoginPageContainer extends Component {
   render() {
@@ -11,9 +11,7 @@ class LoginPageContainer extends Component {
 
 export default connect(
   state => ({
-    view: loginDucks.selectors.getView(state),
+    view: uiDucks.getLoginView(state),
   }),
-  {
-    switchView: loginDucks.actions.switchView,
-  },
+  uiDucks,
 )(LoginPageContainer)

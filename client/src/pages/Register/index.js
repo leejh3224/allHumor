@@ -1,9 +1,9 @@
 import React from 'react'
-import { shape, func } from 'prop-types'
 import { colors, fonts, spacing } from 'styles/theme'
 import { SendEmail } from 'components'
+import { sendMagicLink } from 'utils/auth'
 
-const Register = ({ auth: { sendMagicLink } }) => (
+const Register = () => (
   <div
     css={{
       display: 'flex',
@@ -58,11 +58,5 @@ const Register = ({ auth: { sendMagicLink } }) => (
     <p css={{ color: colors.white, ...fonts.xsmall }}>것으로 간주됩니다.</p>
   </div>
 )
-
-Register.propTypes = {
-  auth: shape({
-    sendMagicLink: func.isRequired,
-  }).isRequired,
-}
 
 export default Register

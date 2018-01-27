@@ -6,8 +6,6 @@ import { compose } from 'recompose'
 import * as paginationDucks from 'store/modules/pagination'
 import { CategoryGroup } from 'components'
 
-const { getCategory } = paginationDucks.selectors
-
 class CategoryGroupContainer extends Component {
   static propTypes = {
     category: string.isRequired,
@@ -38,10 +36,10 @@ export default compose(
   withRouter,
   connect(
     state => ({
-      category: getCategory(state),
+      category: paginationDucks.getCategory(state),
     }),
     {
-      loadArticles: paginationDucks.actions.loadArticles,
+      loadArticles: paginationDucks.loadArticles,
     },
   ),
 )(CategoryGroupContainer)

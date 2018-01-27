@@ -1,30 +1,22 @@
 import React, { Component } from 'react'
-import { shape, func, bool } from 'prop-types'
+import { func } from 'prop-types'
 import { connect } from 'react-redux'
 import { Comments } from 'components'
 import * as commentDucks from 'store/modules/comment'
 import * as fetchingDucks from 'store/modules/fetching'
+import * as uiDucks from 'store/modules/ui'
 
 class CommentsContainer extends Component {
   static propTypes = {
-    comments: shape({}).isRequired,
-    loadReplies: func.isRequired,
-    getRepliesOfComment: func.isRequired,
-    fetchingReplies: bool.isRequired,
+    getRepliesOfCommentThunk: func.isRequired,
   }
   render() {
-    const {
-      comments,
-      loadReplies,
-      getRepliesOfComment,
-      fetchingReplies,
-    } = this.props
+    const { getRepliesOfCommentThunk } = this.props
+
     return (
       <Comments
-        comments={Object.values(comments)}
-        loadReplies={loadReplies}
-        getRepliesOfComment={getRepliesOfComment}
-        fetchingReplies={fetchingReplies}
+        {...this.props}
+        getRepliesOfComment={getRepliesOfCommentThunk}
       />
     )
   }
@@ -32,12 +24,10 @@ class CommentsContainer extends Component {
 
 export default connect(
   state => ({
-    comments: commentDucks.selectors.getComments(state),
-    getRepliesOfComment: commentId =>
-      commentDucks.selectors.getRepliesOfComment(state, commentId),
-    fetchingReplies: fetchingDucks.selectors.getFetchingReply(state),
+    comments: commentDucks.getOrderedComments(state),
+    getRepliesOfCommentThunk: commentId =>
+      commentDucks.getOrderedReplies(state, commentId),
+    fetchingAddComment: fetchingDucks.getFetchingAddComment(state),
   }),
-  {
-    loadReplies: commentDucks.actions.loadReplies,
-  },
+  { ...commentDucks, ...uiDucks },
 )(CommentsContainer)

@@ -39,7 +39,7 @@ const Comment = new Schema(
 // workaround for "Empty array is saved when a property references a schema"
 // https://github.com/Automattic/mongoose/issues/1335#issuecomment-13254654
 Comment.pre('save', function (next) {
-  if (this.isNew && !this.replies.length) {
+  if (this.isNew && this.recipient) {
     this.replies = undefined
   }
   next()

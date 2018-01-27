@@ -1,122 +1,100 @@
 import { fromJS } from 'immutable'
 import { handleActions } from 'redux-actions'
+import { createSelector } from 'reselect'
 import api from 'api'
 import { normalize, schema } from 'normalizr'
 import range from 'lodash/range'
 import types from 'store/actionTypes'
-
-// pagination settings
-const ARTICLE_PER_PAGE = 10
-const PAGEBUTTON_LENGTH = 5
 
 // normalizr
 const articleSchema = new schema.Entity('articles', {}, { idAttribute: '_id' })
 const articleListSchema = [articleSchema]
 
 const initialState = fromJS({
-  pages: {
-    all: {
-      current: 1,
-      last: 1,
-    },
-    dogdrip: {
-      current: 1,
-      last: 1,
-    },
+  articles: {
+    category: 'all',
+    perPage: 0,
+    current: 0,
+    pageCount: 0,
+    buttonsPerPage: 5,
   },
-  category: 'all',
 })
 
-export const selectors = {
-  getCurrentPage: ({ pagination }) => {
-    const category = pagination.get('category')
-    return pagination.getIn(['pages', category, 'current'])
-  },
-  /* eslint-disable no-mixed-operators, arrow-parens */
-  getCurrentMinPage: ({ pagination }) => {
-    const curruntPage = selectors.getCurrentPage({ pagination })
-    return (
-      Math.floor((curruntPage - 1) / PAGEBUTTON_LENGTH) * PAGEBUTTON_LENGTH + 1
-    )
-  },
-  getCurrentMaxPage: state => {
-    const minPage = selectors.getCurrentMinPage(state)
-    const lastPage = selectors.getLastPage(state)
+export const getCategory = ({ pagination }) =>
+  pagination.getIn(['articles', 'category'])
+export const getCurrentPage = ({ pagination }) =>
+  pagination.getIn(['articles', 'current'])
+export const getLastPage = ({ pagination }) =>
+  pagination.getIn(['articles', 'pageCount'])
+export const getButtonsPerPage = ({ pagination }) =>
+  pagination.getIn(['articles', 'buttonsPerPage'])
 
-    if (minPage + PAGEBUTTON_LENGTH <= lastPage) {
-      return minPage + (PAGEBUTTON_LENGTH - 1)
+/* eslint-disable no-mixed-operators, arrow-parens */
+export const getMinPage = createSelector(
+  getCurrentPage,
+  getButtonsPerPage,
+  (currentPage, buttonsPerPage) => {
+    const N = Math.ceil(currentPage / buttonsPerPage)
+    return 5 * N - 4
+  },
+)
+export const getMaxPage = createSelector(
+  getCurrentPage,
+  getLastPage,
+  getButtonsPerPage,
+  (currentPage, lastPage, buttonsPerPage) => {
+    const N = Math.ceil(currentPage / buttonsPerPage)
+    return lastPage < 5 * N ? lastPage : 5 * N
+  },
+)
+export const getRangeMinMax = createSelector(
+  getMinPage,
+  getMaxPage,
+  (min, max) => range(min, max + 1),
+)
+
+export const loadArticles = (category, page) => async dispatch => {
+  dispatch({ type: types.article.REQUEST })
+
+  try {
+    const { data: { articles, total, perPage } } = await api.get(`/articles/${category}/${page}`)
+
+    if (articles.length) {
+      dispatch({
+        type: types.article.SUCCESS,
+        payload: normalize(articles, articleListSchema),
+        meta: {
+          page,
+          category,
+          perPage,
+          total,
+        },
+      })
     }
-    return lastPage
-  },
-  getLastPage: ({ pagination }) => {
-    const category = pagination.get('category')
-    return pagination.getIn(['pages', category, 'last'])
-  },
-  getRangeMinMax: state => {
-    const minPage = selectors.getCurrentMinPage(state)
-    const maxPage = selectors.getCurrentMaxPage(state)
-    return range(minPage, maxPage + 1)
-  },
-  getCategory: ({ pagination }) => pagination.get('category'),
-}
-
-export const actions = {
-  loadArticle: id => async dispatch => {
-    dispatch({ type: types.article.REQUEST })
-
-    try {
-      const { data: { articles } } = await api.get(`/articles/${id}`)
-
-      if (articles.length) {
-        dispatch({
-          type: types.article.SUCCESS,
-          payload: normalize(articles, articleListSchema),
-        })
-      }
-    } catch (error) {
-      console.log(error)
-      dispatch({ type: types.article.ERROR, payload: error })
-    }
-  },
-  loadArticles: (category, page) => async dispatch => {
-    dispatch({ type: types.article.REQUEST })
-
-    try {
-      const { data: { articles, total } } = await api.get(`/articles/${category}/${page}`)
-
-      if (articles.length) {
-        dispatch({
-          type: types.article.SUCCESS,
-          payload: normalize(articles, articleListSchema),
-          meta: { page, category },
-        })
-        dispatch({
-          type: types.pagination.SET_LAST_PAGE,
-          meta: { category, total },
-        })
-      }
-    } catch (error) {
-      console.log(error)
-      dispatch({ type: types.article.ERROR, payload: error })
-    }
-  },
+  } catch (error) {
+    console.log(error)
+    dispatch({ type: types.article.ERROR, payload: error })
+  }
 }
 
 export default handleActions(
   {
-    [types.article.SUCCESS]: (state, { meta }) =>
-      (meta
-        ? state.setIn(['pages', meta.category, 'current'], meta.page)
-        : state),
-    [types.pagination.SET_LAST_PAGE]: (state, { meta }) =>
-      state.setIn(
-        ['pages', meta.category, 'last'],
-        Math.ceil(meta.total / ARTICLE_PER_PAGE),
-      ),
+    [types.article.SUCCESS]: (state, { meta }) => {
+      if (meta) {
+        return state
+          .setIn(['articles', 'current'], meta.page)
+          .setIn(['articles', 'perPage'], meta.perPage)
+          .setIn(
+            ['articles', 'pageCount'],
+            Math.ceil(meta.total / meta.perPage),
+          )
+      }
+      return state
+    },
     '@@router/LOCATION_CHANGE': (state, { payload }) => {
       const routerMatch = payload.pathname.match(/\/(all|dogdrip)\/(\d{1,})/)
-      const oldCategory = state.get('category')
-      const oldPage = state.getIn(['pages', oldCategory, 'current'])
+      const oldCategory = state.getIn(['articles', 'category'])
+      const oldPage = state.getIn(['articles', 'current'])
 
       if (routerMatch) {
         // 홈을 제외한 어떤 카테고리든 선택
@@ -126,11 +104,13 @@ export default handleActions(
 
         if (changingCategory || changingPage) {
           return state
-            .set('category', newCategory)
-            .setIn(['pages', newCategory, 'current'], parseInt(nextPage, 10))
+            .setIn(['articles', 'category'], newCategory)
+            .setIn(['articles', 'current'], parseInt(nextPage, 10))
         }
       }
-      return state.set('category', 'all').setIn(['pages', 'all', 'current'], 1)
+      return state
+        .setIn(['articles', 'category'], 'all')
+        .setIn(['articles', 'current'], 1)
     },
   },
   initialState,

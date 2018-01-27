@@ -1,13 +1,10 @@
 import React from 'react'
 import { arrayOf, shape, func, bool } from 'prop-types'
-import { spacing, media } from 'styles/theme'
+import { spacing, media, fonts } from 'styles/theme'
 import { AddComment, CommentItem } from 'components'
 
 const Comments = ({
-  comments,
-  loadReplies,
-  getRepliesOfComment,
-  fetchingReplies,
+  comments, addComment, fetchingAddComment, ...props
 }) => (
   <section
     css={{
@@ -20,8 +17,17 @@ const Comments = ({
       },
     }}
   >
-    <AddComment commentCounts={comments.length} />
+    <p
+      css={{
+        paddingBottom: spacing.small,
+        ...fonts.small,
+      }}
+    >
+      댓글 {comments.length}개
+    </p>
+    <AddComment addComment={addComment} />
     <ul>
+      {fetchingAddComment && '로딩 중입니다 ...'}
       {comments.map(comment => (
         <li
           /* eslint-disable no-underscore-dangle */
@@ -32,10 +38,10 @@ const Comments = ({
           }}
         >
           <CommentItem
+            {...props}
+            key={comment._id}
             comment={comment}
-            loadReplies={loadReplies}
-            getRepliesOfComment={getRepliesOfComment}
-            fetchingReplies={fetchingReplies}
+            addComment={addComment}
           />
         </li>
       ))}
@@ -45,9 +51,8 @@ const Comments = ({
 
 Comments.propTypes = {
   comments: arrayOf(shape({})).isRequired,
-  loadReplies: func.isRequired,
-  getRepliesOfComment: func.isRequired,
-  fetchingReplies: bool.isRequired,
+  addComment: func.isRequired,
+  fetchingAddComment: bool.isRequired,
 }
 
 export default Comments

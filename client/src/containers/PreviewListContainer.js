@@ -9,10 +9,6 @@ import { compose } from 'recompose'
 import { withRouter } from 'react-router-dom'
 import { PreviewItem } from 'components'
 
-const { getCategory, getCurrentPage } = paginationDucks.selectors
-const { getArticles } = articleDucks.selectors
-const { getFetchingArticle } = fetchingDucks.selectors
-
 class PreviewListContainer extends Component {
   static propTypes = {
     loadArticles: func.isRequired,
@@ -51,13 +47,11 @@ export default compose(
   withRouter,
   connect(
     state => ({
-      articles: getArticles(state),
-      fetching: getFetchingArticle(state),
-      category: getCategory(state),
-      currentPage: getCurrentPage(state),
+      articles: articleDucks.getArticles(state),
+      fetching: fetchingDucks.getFetchingArticle(state),
+      category: paginationDucks.getCategory(state),
+      currentPage: paginationDucks.getCurrentPage(state),
     }),
-    {
-      loadArticles: paginationDucks.actions.loadArticles,
-    },
+    paginationDucks,
   ),
 )(PreviewListContainer)

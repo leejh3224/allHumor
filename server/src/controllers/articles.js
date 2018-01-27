@@ -6,25 +6,63 @@ import omit from 'lodash/omit'
 export default {
   getArticlesByCategory: async (req, res) => {
     const { category, page } = req.params
-    const perPage = 10
+    const PER_PAGE = 10
 
     // find all for category all
     const findQuery = category === 'all' ? {} : { site: category }
 
-    // lean option -> to js object
+    // aggregation
+    const match = {
+      $match: findQuery,
+    }
+    const lookupForVotes = {
+      $lookup: {
+        from: 'votes',
+        localField: 'votes',
+        foreignField: '_id',
+        as: 'votes',
+      },
+    }
+    const addFieldVoteCounts = {
+      $addFields: {
+        voteCount: { $sum: '$votes.counts' },
+        commentCount: { $size: '$comments' },
+      },
+    }
+    const excludeFieldVotes = {
+      $project: {
+        votes: false,
+        comments: false,
+      },
+    }
+    const skip = {
+      $skip: PER_PAGE * (page - 1),
+    }
+    const limit = {
+      $limit: PER_PAGE,
+    }
+    const sort = {
+      $sort: { uploadDate: -1 },
+    }
+
     try {
-      const total = await Article.count()
-      let articles = await Article.find(findQuery)
-        .skip(perPage * (page - 1))
-        .limit(perPage)
-        .sort({ uploadDate: -1 })
-        .lean()
+      const total = await Article.find(findQuery).count()
+      let articles = await Article.aggregate([
+        match,
+        lookupForVotes,
+        addFieldVoteCounts,
+        excludeFieldVotes,
+        skip,
+        limit,
+        sort,
+      ])
 
       articles = articles.map(article => omit(article, ['__v']))
 
       res.json({
         articles,
         total,
+        perPage: PER_PAGE,
       })
     } catch (error) {
       res.json({
@@ -35,9 +73,9 @@ export default {
   getArticle: async (req, res) => {
     const { id } = req.params
 
-    // aggregation pipeline operators
     const match = {
       $match: {
+        // way to match objectId
         _id: new mongoose.Types.ObjectId(id),
       },
     }
@@ -51,14 +89,20 @@ export default {
     }
     const addField = {
       $addFields: {
-        voteCounts: { $sum: '$votes.counts' },
+        voteCount: { $sum: '$votes.counts' },
       },
     }
     const lookUpForComments = {
       $lookup: {
         from: 'comments',
-        localField: 'comments',
-        foreignField: '_id',
+        pipeline: [
+          {
+            $match: {
+              articleId: new mongoose.Types.ObjectId(id),
+              replies: { $exists: true },
+            },
+          },
+        ],
         as: 'comments',
       },
     }

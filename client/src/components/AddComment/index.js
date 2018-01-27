@@ -1,6 +1,7 @@
 import React from 'react'
-import { number } from 'prop-types'
+import { func, string } from 'prop-types'
 import { spacing, fonts, colors } from 'styles/theme'
+import WithState from './WithState'
 
 const baseButtonStyle = {
   ...fonts.small,
@@ -10,30 +11,30 @@ const baseButtonStyle = {
   },
 }
 
-const AddComment = ({ commentCounts }) => (
+const AddComment = ({
+  content,
+  onCancel,
+  handleInputChange,
+  handleSubmit,
+  parentId,
+}) => (
   <div
     css={{
-      marginBottom: spacing.large,
+      marginBottom: spacing.medium,
     }}
   >
-    <p
-      css={{
-        paddingBottom: spacing.small,
-        ...fonts.small,
-      }}
-    >
-      댓글 {commentCounts}개
-    </p>
-    <form>
+    <form onSubmit={e => handleSubmit(e, parentId)}>
       <textarea
         type="text"
         placeholder="댓글"
         css={{
           width: '100%',
-          height: 100,
+          height: 80,
           ...fonts.small,
           padding: spacing.small,
         }}
+        onChange={handleInputChange}
+        value={content}
       />
       <div
         css={{
@@ -47,6 +48,7 @@ const AddComment = ({ commentCounts }) => (
             marginRight: spacing.small,
             ...baseButtonStyle,
           }}
+          onClick={onCancel}
         >
           취소
         </button>
@@ -66,8 +68,17 @@ const AddComment = ({ commentCounts }) => (
   </div>
 )
 
-AddComment.propTypes = {
-  commentCounts: number.isRequired,
+AddComment.defaultProps = {
+  parentId: '',
+  onCancel: () => {},
 }
 
-export default AddComment
+AddComment.propTypes = {
+  content: string.isRequired,
+  onCancel: func,
+  handleInputChange: func.isRequired,
+  handleSubmit: func.isRequired,
+  parentId: string,
+}
+
+export default WithState(AddComment)
