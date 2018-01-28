@@ -17,14 +17,14 @@ const WithStateHoc = WrappedComponent =>
       const { value } = e.target
       this.setState(prev => ({ ...prev, content: value }))
     }
-    handleSubmit = (e, parentId) => {
+    handleSubmit = (e, parentId, from) => {
       e.preventDefault()
       if (!this.state.content.trim().length) {
         return
       }
 
       if (parentId.length) {
-        this.props.addReply(this.state.content, parentId)
+        this.props.addReply(this.state.content, parentId, from)
         this.reset()
         return
       }

@@ -1,5 +1,5 @@
 import React from 'react'
-import { shape, func } from 'prop-types'
+import { shape, func, string } from 'prop-types'
 import { spacing, fonts, colors } from 'styles/theme'
 import formatDate from 'utils/formatDate'
 import { AddComment } from 'components'
@@ -15,18 +15,21 @@ const CommentItem = ({
   addReply,
   toggleExpandComment,
   loadReplies,
+  myUserId,
 }) => {
   const {
     _id,
+    userId,
     avatar,
     author,
     content,
-    replies = [],
+    replies,
     createdAt,
     isAddingReply,
     isShowingReply,
     isTruncated,
     isFetchingReply,
+    isFetchingAddReply,
   } = comment
   const repliesList = Object.values(getRepliesOfComment(_id))
   return (
@@ -162,10 +165,12 @@ const CommentItem = ({
             onCancel={() => hideAddComment(_id)}
             parentId={_id}
             addReply={addReply}
+            from={_id}
           />
         )}
+        {isFetchingAddReply && '불러오는 중 ...'}
         {isFetchingReply
-          ? isShowingReply && '불러오는 중...'
+          ? isShowingReply && '불러오는 중 ...'
           : isShowingReply && (
           <ul>
             {repliesList.map(reply => (
@@ -185,12 +190,34 @@ const CommentItem = ({
                   addReply={addReply}
                   parentId={_id}
                   showAddComment={showAddComment}
+                  myUserId={myUserId}
                 />
               </li>
                 ))}
           </ul>
             )}
       </div>
+      {userId === myUserId && (
+        <button
+          className="button-more"
+          css={{
+            width: 20,
+            height: 30,
+            cursor: 'pointer',
+            ':hover > .ion-android-more-vertical': {
+              color: colors.font,
+            },
+          }}
+        >
+          <i
+            className="ion-android-more-vertical"
+            css={{
+              ...fonts.icon,
+              color: colors.grey,
+            }}
+          />
+        </button>
+      )}
     </div>
   )
 }
@@ -205,6 +232,7 @@ CommentItem.propTypes = {
   addReply: func.isRequired,
   toggleExpandComment: func.isRequired,
   loadReplies: func.isRequired,
+  myUserId: string.isRequired,
 }
 
 export default CommentItem

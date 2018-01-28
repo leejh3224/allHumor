@@ -16,6 +16,12 @@ export default injectGlobal`
     padding: 0;
     border: 0;
   }
+  button {
+    background: #fff;
+  }
+  input:focus {
+    outline: 0;
+  }
   // 크롤링 된 게시물의 줄간격 및 글자크기
   p, div {
     font-size: ${fonts.body.fontSize}px;

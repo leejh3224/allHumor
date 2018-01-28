@@ -17,13 +17,14 @@ const AddComment = ({
   handleInputChange,
   handleSubmit,
   parentId,
+  from,
 }) => (
   <div
     css={{
       marginBottom: spacing.medium,
     }}
   >
-    <form onSubmit={e => handleSubmit(e, parentId)}>
+    <form onSubmit={e => handleSubmit(e, parentId, from)}>
       <textarea
         type="text"
         placeholder="댓글"
@@ -71,6 +72,7 @@ const AddComment = ({
 AddComment.defaultProps = {
   parentId: '',
   onCancel: () => {},
+  from: '',
 }
 
 AddComment.propTypes = {
@@ -79,6 +81,7 @@ AddComment.propTypes = {
   handleInputChange: func.isRequired,
   handleSubmit: func.isRequired,
   parentId: string,
+  from: string,
 }
 
 export default WithState(AddComment)

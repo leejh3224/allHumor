@@ -12,9 +12,11 @@ const Reply = ({
   addReply,
   parentId,
   showAddComment,
+  myUserId,
 }) => {
   const {
     _id,
+    userId,
     avatar,
     author,
     createdAt,
@@ -120,9 +122,31 @@ const Reply = ({
             onCancel={() => hideAddComment(_id)}
             parentId={parentId}
             addReply={addReply}
+            from={_id}
           />
         )}
       </div>
+      {userId === myUserId && (
+        <button
+          className="button-more"
+          css={{
+            width: 20,
+            height: 30,
+            cursor: 'pointer',
+            ':hover > .ion-android-more-vertical': {
+              color: colors.font,
+            },
+          }}
+        >
+          <i
+            className="ion-android-more-vertical"
+            css={{
+              ...fonts.icon,
+              color: colors.grey,
+            }}
+          />
+        </button>
+      )}
     </div>
   )
 }
@@ -135,6 +159,7 @@ Reply.propTypes = {
   addReply: func.isRequired,
   parentId: string.isRequired,
   showAddComment: func.isRequired,
+  myUserId: string.isRequired,
 }
 
 export default Reply

@@ -51,13 +51,16 @@ export const addComment = content => async (dispatch, getState) => {
   }
 }
 
-export const addReply = (content, parentId) => async (dispatch, getState) => {
+export const addReply = (content, parentId, from) => async (
+  dispatch,
+  getState,
+) => {
   const state = getState()
   const userId = state.user.get('userId')
   const avatar = state.user.get('avatar')
   const author = state.user.get('displayName')
 
-  dispatch({ type: types.reply.ADD_REQUEST })
+  dispatch({ type: types.reply.ADD_REQUEST, payload: from })
 
   try {
     const { data: { replies } } = await api.post(
@@ -73,12 +76,15 @@ export const addReply = (content, parentId) => async (dispatch, getState) => {
     if (replies) {
       dispatch({
         type: types.reply.ADD_SUCCESS,
-        payload: normalize(replies, replyListSchema),
+        payload: {
+          id: from,
+          data: normalize(replies, replyListSchema),
+        },
       })
     }
   } catch (error) {
     console.log(error)
-    dispatch({ type: types.reply.ADD_ERROR })
+    dispatch({ type: types.reply.ADD_ERROR, payload: { id: from, error } })
   }
 }
 
@@ -119,8 +125,7 @@ export const getComments = ({ comment, ui }) =>
     .map(c => c.merge(ui.getIn(['comments', c.get('_id')])))
     .toJS()
 
-export const getOrderedComments = createSelector(getComments, comments =>
-  orderBy(Object.values(comments), ['createdAt'], ['desc']))
+export const getOrderedComments = createSelector(getComments, comments => orderBy(Object.values(comments), ['createdAt'], ['desc']))
 
 export default handleActions(
   {
@@ -148,6 +153,21 @@ export default handleActions(
       }, fromJS(payload)),
     [types.reply.SUCCESS]: (state, { payload }) =>
       state.mergeDeep(payload.data),
+    [types.reply.ADD_SUCCESS]: (state, { payload: { id, data } }) => {
+      const isCommentType = state.getIn(['entities', 'comments']).has(id)
+      const replyId = Object.values(data.entities.replies)[0]._id
+      return state
+        .mergeDeepWith((prev, next, key) => {
+          if (key === 'comments') {
+            return prev
+          }
+          return next
+        }, fromJS(data))
+        .updateIn(
+          ['entities', 'comments', id, 'replies'],
+          replies => (isCommentType ? replies.push(replyId) : replies),
+        )
+    },
   },
   initialState,
 )

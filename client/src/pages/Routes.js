@@ -14,11 +14,13 @@ import Home from './Home'
 import Article from './Article'
 import Register from './Register'
 import Callback from './Callback'
+import Search from './Search'
 import NotFound from './NotFound'
 
 const Routes = props => (
   <ConnectedRouter history={history}>
     <Switch>
+      <Route exact path="/search" component={Search} />
       <Route
         exact
         path="/login"
