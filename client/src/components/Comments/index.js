@@ -4,7 +4,11 @@ import { spacing, media, fonts } from 'styles/theme'
 import { AddComment, CommentItem } from 'components'
 
 const Comments = ({
-  comments, addComment, fetchingAddComment, ...props
+  comments,
+  addComment,
+  fetchingAddComment,
+  fetchingComment,
+  ...props
 }) => (
   <section
     css={{
@@ -46,6 +50,7 @@ const Comments = ({
         </li>
       ))}
     </ul>
+    {comments.length && fetchingComment ? '불러오는 중입니다 ...' : null}
   </section>
 )
 
@@ -53,6 +58,7 @@ Comments.propTypes = {
   comments: arrayOf(shape({})).isRequired,
   addComment: func.isRequired,
   fetchingAddComment: bool.isRequired,
+  fetchingComment: bool.isRequired,
 }
 
 export default Comments

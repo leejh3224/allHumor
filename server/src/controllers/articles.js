@@ -72,6 +72,7 @@ export default {
   },
   getArticle: async (req, res) => {
     const { id } = req.params
+    const COMMETNS_PER_PAGE = 20
 
     const match = {
       $match: {
@@ -101,6 +102,12 @@ export default {
               articleId: new mongoose.Types.ObjectId(id),
               replies: { $exists: true },
             },
+          },
+          {
+            $sort: { createdAt: -1 },
+          },
+          {
+            $limit: COMMETNS_PER_PAGE,
           },
         ],
         as: 'comments',

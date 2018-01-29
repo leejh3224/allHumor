@@ -1,15 +1,11 @@
 import { fromJS, Map } from 'immutable'
 import { handleActions } from 'redux-actions'
 import types from 'store/actionTypes'
-import { normalize, schema } from 'normalizr'
+import { commentListSchema, replyListSchema } from 'store/schema'
+import { normalize } from 'normalizr'
 import { createSelector } from 'reselect'
 import api from 'api'
 import orderBy from 'lodash/orderBy'
-
-const commentSchema = new schema.Entity('comments', {}, { idAttribute: '_id' })
-const commentListSchema = [commentSchema]
-const replySchema = new schema.Entity('replies', {}, { idAttribute: '_id' })
-const replyListSchema = [replySchema]
 
 const initialState = fromJS({
   articleId: 0,
@@ -42,12 +38,14 @@ export const addComment = content => async (dispatch, getState) => {
     if (comments) {
       dispatch({
         type: types.comment.ADD_SUCCESS,
-        payload: normalize(comments, commentListSchema),
+        payload: {
+          data: normalize(comments, commentListSchema),
+        },
       })
     }
   } catch (error) {
     console.log(error)
-    dispatch({ type: types.comment.ADD_ERROR, payload: error })
+    dispatch({ type: types.comment.ADD_ERROR, payload: { error } })
   }
 }
 
@@ -60,7 +58,7 @@ export const addReply = (content, parentId, from) => async (
   const avatar = state.user.get('avatar')
   const author = state.user.get('displayName')
 
-  dispatch({ type: types.reply.ADD_REQUEST, payload: from })
+  dispatch({ type: types.reply.ADD_REQUEST, payload: { id: from } })
 
   try {
     const { data: { replies } } = await api.post(
@@ -89,12 +87,12 @@ export const addReply = (content, parentId, from) => async (
 }
 
 export const loadReplies = commentId => async (dispatch) => {
-  dispatch({ type: types.reply.REQUEST, payload: commentId })
+  dispatch({ type: types.reply.REQUEST, payload: { id: commentId } })
 
   try {
     const { data: { replies } } = await api.get(`/comments/${commentId}/replies`)
 
-    if (replies.length) {
+    if (replies) {
       dispatch({
         type: types.reply.SUCCESS,
         payload: {
@@ -125,11 +123,15 @@ export const getComments = ({ comment, ui }) =>
     .map(c => c.merge(ui.getIn(['comments', c.get('_id')])))
     .toJS()
 
-export const getOrderedComments = createSelector(getComments, comments => orderBy(Object.values(comments), ['createdAt'], ['desc']))
+export const getOrderedComments = createSelector(getComments, comments =>
+  orderBy(Object.values(comments), ['createdAt'], ['desc']))
 
 export default handleActions(
   {
-    [types.article.SUCCESS]: (state, { payload: { entities, result } }) => {
+    [types.article.SUCCESS]: (
+      state,
+      { payload: { data: { entities, result } } },
+    ) => {
       if (result.length === 1) {
         const articleId = result[0]
         const { comments } = entities.articles[articleId]
@@ -144,13 +146,20 @@ export default handleActions(
       }
       return state
     },
-    [types.comment.ADD_SUCCESS]: (state, { payload }) =>
+    [types.comment.SUCCESS]: (state, { payload: { data } }) =>
       state.mergeDeepWith((prev, next, key) => {
         if (key === 'replies') {
           return prev
         }
         return next
-      }, fromJS(payload)),
+      }, fromJS(data)),
+    [types.comment.ADD_SUCCESS]: (state, { payload: { data } }) =>
+      state.mergeDeepWith((prev, next, key) => {
+        if (key === 'replies') {
+          return prev
+        }
+        return next
+      }, fromJS(data)),
     [types.reply.SUCCESS]: (state, { payload }) =>
       state.mergeDeep(payload.data),
     [types.reply.ADD_SUCCESS]: (state, { payload: { id, data } }) => {

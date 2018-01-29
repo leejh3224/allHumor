@@ -3,6 +3,7 @@ import commentsController from 'controllers/comments'
 
 const routes = Router()
 
+routes.get('/comments/:articleId/page/:page', commentsController.getComments)
 routes.post('/comments', commentsController.addComment)
 routes.put('/comments/:id', commentsController.editComment)
 routes.delete('/comments/:id', commentsController.deleteComment)

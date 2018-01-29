@@ -1,6 +1,7 @@
 import React from 'react'
 import { shape, string, bool } from 'prop-types'
 import StickyOnScroll from 'pages/StickyOnScroll'
+import ScrollToBottomDetector from 'pages/ScrollToBottomDetector'
 import {
   ArticleContentContainer,
   CategoryGroupContainer,
@@ -9,7 +10,7 @@ import {
 } from 'containers'
 import { isAuthenticated, logout } from 'utils/auth'
 
-const Article = ({ location: { pathname }, isSticky }) => {
+const Article = ({ location: { pathname }, isSticky, isAtTheBottom }) => {
   const idRegex = /(article)\/([\w]{0,})/
   const articleId = idRegex.exec(pathname)[2]
   return (
@@ -22,7 +23,7 @@ const Article = ({ location: { pathname }, isSticky }) => {
           isLoggedIn={isAuthenticated()}
         />
       </section>
-      <CommentsContainer />
+      <CommentsContainer isAtTheBottom={isAtTheBottom} />
     </div>
   )
 }
@@ -30,6 +31,7 @@ const Article = ({ location: { pathname }, isSticky }) => {
 Article.propTypes = {
   location: shape({ pathname: string.isRequired }).isRequired,
   isSticky: bool.isRequired,
+  isAtTheBottom: bool.isRequired,
 }
 
-export default StickyOnScroll(Article)
+export default ScrollToBottomDetector(StickyOnScroll(Article))

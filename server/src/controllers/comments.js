@@ -1,6 +1,32 @@
 import Comment from 'models/Comment'
 
 export default {
+  getComments: async (req, res) => {
+    const { articleId, page } = req.params
+    const PER_PAGE = 20
+    const loaded = PER_PAGE * page
+    const notReplies = { articleId, replies: { $exists: true } }
+
+    try {
+      const total = await Comment.find(notReplies).count()
+      const comments = await Comment.find(notReplies)
+        .sort({ createdAt: -1 })
+        .skip(total < 20 ? 0 : total - loaded)
+        .limit(PER_PAGE)
+
+      res.json({
+        success: true,
+        comments,
+        total,
+        perPage: PER_PAGE,
+      })
+    } catch (error) {
+      console.log(error)
+      res.json({
+        error,
+      })
+    }
+  },
   addComment: async (req, res) => {
     const {
       articleId, userId, avatar, author, content,

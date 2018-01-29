@@ -5,6 +5,9 @@ export default {
     ERROR: 'article/ARTICLE_ERROR',
   },
   comment: {
+    REQUEST: 'comment/COMMENT_REQUEST',
+    SUCCESS: 'comment/COMMENT_SUCCESS',
+    ERROR: 'comment/COMMENT_ERROR',
     ADD_REQUEST: 'comment/COMMENT_ADD_REQUEST',
     ADD_SUCCESS: 'comment/COMMENT_ADD_SUCCESS',
     ADD_ERROR: 'comment/COMMENT_ADD_ERROR',

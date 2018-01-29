@@ -2,13 +2,11 @@ import { fromJS } from 'immutable'
 import { handleActions } from 'redux-actions'
 import { createSelector } from 'reselect'
 import api from 'api'
-import { normalize, schema } from 'normalizr'
+import { articleListSchema, commentListSchema } from 'store/schema'
+import { normalize } from 'normalizr'
 import range from 'lodash/range'
 import types from 'store/actionTypes'
-
-// normalizr
-const articleSchema = new schema.Entity('articles', {}, { idAttribute: '_id' })
-const articleListSchema = [articleSchema]
+import isEmpty from 'lodash/isEmpty'
 
 const initialState = fromJS({
   articles: {
@@ -17,6 +15,12 @@ const initialState = fromJS({
     current: 0,
     pageCount: 0,
     buttonsPerPage: 5,
+  },
+  comments: {
+    articleId: 0,
+    perPage: 0,
+    current: 1,
+    pageCount: 0,
   },
 })
 
@@ -28,6 +32,13 @@ export const getLastPage = ({ pagination }) =>
   pagination.getIn(['articles', 'pageCount'])
 export const getButtonsPerPage = ({ pagination }) =>
   pagination.getIn(['articles', 'buttonsPerPage'])
+
+export const getArticleId = ({ pagination }) =>
+  pagination.getIn(['comments', 'articleId'])
+export const getCommentsCurrentPage = ({ pagination }) =>
+  pagination.getIn(['comments', 'current'])
+export const getCommentsLastPage = ({ pagination }) =>
+  pagination.getIn(['comments', 'pageCount'])
 
 /* eslint-disable no-mixed-operators, arrow-parens */
 export const getMinPage = createSelector(
@@ -62,8 +73,8 @@ export const loadArticles = (category, page) => async dispatch => {
     if (articles.length) {
       dispatch({
         type: types.article.SUCCESS,
-        payload: normalize(articles, articleListSchema),
-        meta: {
+        payload: {
+          data: normalize(articles, articleListSchema),
           page,
           category,
           perPage,
@@ -73,23 +84,75 @@ export const loadArticles = (category, page) => async dispatch => {
     }
   } catch (error) {
     console.log(error)
-    dispatch({ type: types.article.ERROR, payload: error })
+    dispatch({ type: types.article.ERROR, payload: { error } })
+  }
+}
+
+export const loadComments = () => async (dispatch, getState) => {
+  const articleId = getArticleId(getState())
+  const currentPage = getCommentsCurrentPage(getState())
+
+  dispatch({ type: types.comment.REQUEST })
+
+  try {
+    const { data: { comments, perPage, total } } = await api.get(`/comments/${articleId}/page/${currentPage}`)
+
+    if (comments) {
+      dispatch({
+        type: types.comment.SUCCESS,
+        payload: {
+          data: normalize(comments, commentListSchema),
+          perPage,
+          total,
+        },
+      })
+    }
+  } catch (error) {
+    console.log(error)
+    dispatch({ type: types.comment.ERROR, payload: { error } })
   }
 }
 
 export default handleActions(
   {
-    [types.article.SUCCESS]: (state, { meta }) => {
-      if (meta) {
+    [types.article.SUCCESS]: (
+      state,
+      {
+        payload: {
+          data: { result }, page, perPage, total,
+        },
+      },
+    ) => {
+      const [articleId] = result
+
+      // list of articles
+      if (page) {
         return state
-          .setIn(['articles', 'current'], meta.page)
-          .setIn(['articles', 'perPage'], meta.perPage)
-          .setIn(
-            ['articles', 'pageCount'],
-            Math.ceil(meta.total / meta.perPage),
-          )
+          .setIn(['articles', 'current'], page)
+          .setIn(['articles', 'perPage'], perPage)
+          .setIn(['articles', 'pageCount'], Math.ceil(total / perPage))
       }
       return state
+        .setIn(['comments', 'articleId'], articleId)
+        .setIn(['comments', 'current'], 1)
+        .setIn(['comments', 'pageCount'], 0)
+    },
+    [types.comment.SUCCESS]: (
+      state,
+      { payload: { data: { entities }, perPage, total } },
+    ) => {
+      if (!isEmpty(entities)) {
+        return state
+          .setIn(
+            ['comments', 'current'],
+            state.getIn(['comments', 'current']) + 1,
+          )
+          .setIn(['comments', 'perPage'], perPage)
+          .setIn(['comments', 'pageCount'], Math.ceil(total / perPage))
+      }
+      return state
+        .setIn(['comments', 'perPage'], perPage)
+        .setIn(['comments', 'pageCount'], Math.ceil(total / perPage))
     },
     '@@router/LOCATION_CHANGE': (state, { payload }) => {
       const routerMatch = payload.pathname.match(/\/(all|dogdrip)\/(\d{1,})/)

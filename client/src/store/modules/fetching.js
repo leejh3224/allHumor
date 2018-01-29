@@ -4,6 +4,7 @@ import types from 'store/actionTypes'
 
 const initialState = fromJS({
   article: false,
+  comment: false,
   add: {
     comment: false,
   },
@@ -12,6 +13,7 @@ const initialState = fromJS({
 export const getFetchingArticle = ({ fetching }) => fetching.get('article')
 export const getFetchingAddComment = ({ fetching }) =>
   fetching.getIn(['add', 'comment'])
+export const getFetchingComment = ({ fetching }) => fetching.get('comment')
 
 export default handleActions(
   {
@@ -22,6 +24,9 @@ export default handleActions(
     [types.comment.ADD_SUCCESS]: state =>
       state.setIn(['add', 'comment'], false),
     [types.comment.ADD_ERROR]: state => state.setIn(['add', 'comment'], false),
+    [types.comment.REQUEST]: state => state.set('comment', true),
+    [types.comment.SUCCESS]: state => state.set('comment', false),
+    [types.comment.ERROR]: state => state.set('comment', false),
   },
   initialState,
 )

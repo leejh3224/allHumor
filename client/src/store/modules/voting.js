@@ -3,15 +3,10 @@ import { createSelector } from 'reselect'
 import { handleActions } from 'redux-actions'
 import types from 'store/actionTypes'
 import api from 'api'
-import { normalize, schema } from 'normalizr'
+import { voteListSchema } from 'store/schema'
+import { normalize } from 'normalizr'
 
 const limit = 25
-const voteSchema = new schema.Entity(
-  'votes',
-  {},
-  { idAttribute: 'userId' }, // 한 게시물 내에서는 유저의 표가 unique하므로
-)
-const voteListSchema = [voteSchema]
 
 const initialState = fromJS({
   articleId: 0,
@@ -44,7 +39,7 @@ export const voteArticle = () => async (dispatch, getState) => {
       })
     } catch (error) {
       console.log(error)
-      dispatch({ type: types.voting.ERROR, payload: error })
+      dispatch({ type: types.voting.ERROR, payload: { error } })
     }
   } else {
     if (myvote.get('counts') === limit) {
@@ -59,14 +54,17 @@ export const voteArticle = () => async (dispatch, getState) => {
       })
     } catch (error) {
       console.log(error)
-      dispatch({ type: types.voting.ERROR, payload: error })
+      dispatch({ type: types.voting.ERROR, payload: { error } })
     }
   }
 }
 
 export default handleActions(
   {
-    [types.article.SUCCESS]: (state, { payload: { entities, result } }) => {
+    [types.article.SUCCESS]: (
+      state,
+      { payload: { data: { entities, result } } },
+    ) => {
       if (result.length === 1) {
         const { votes } = entities.articles[result[0]]
 

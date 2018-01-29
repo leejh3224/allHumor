@@ -12,9 +12,10 @@ export default handleActions(
       state.set('error', payload.error),
     [types.voting.ERROR]: (state, { payload }) =>
       state.set('error', payload.error),
-    [types.reply.ERROR]: (state, { payload }) => {
-      state.set('error', payload.error)
-    },
+    [types.reply.ERROR]: (state, { payload }) =>
+      state.set('error', payload.error),
+    [types.comment.ERROR]: (state, { payload }) =>
+      state.set('error', payload.error),
   },
   initialState,
 )

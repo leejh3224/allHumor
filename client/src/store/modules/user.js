@@ -13,16 +13,19 @@ export const getAvatar = ({ user }) => user.get('avatar')
 export const getDisplayName = ({ user }) => user.get('displayName')
 
 export const setUserProfile = profile => (dispatch) => {
-  dispatch({ type: types.user.SET_USER_PROFILE, payload: profile })
+  dispatch({ type: types.user.SET_USER_PROFILE, payload: { profile } })
 }
 
 export default handleActions(
   {
-    [types.user.SET_USER_PROFILE]: (state, { payload }) =>
+    [types.user.SET_USER_PROFILE]: (
+      state,
+      { payload: { profile: { userId, avatar, displayName } } },
+    ) =>
       state
-        .set('userId', payload.userId)
-        .set('avatar', payload.avatar)
-        .set('displayName', payload.displayName),
+        .set('userId', userId)
+        .set('avatar', avatar)
+        .set('displayName', displayName),
   },
   initialState,
 )
