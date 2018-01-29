@@ -1,6 +1,6 @@
 import React from 'react'
 import { string, bool, func } from 'prop-types'
-import { colors } from 'styles/theme'
+import { colors, zIndex } from 'styles/theme'
 import categories from 'globals/categories'
 import TabLink from './TabLink'
 
@@ -14,7 +14,7 @@ const CategoryGroup = ({ isSticky, activeCategory, loadNewCategory }) => (
       display: 'flex',
       overflowX: 'scroll',
       transition: 'position 0.3s ease-out',
-      zIndex: '10',
+      zIndex: zIndex.categoryGroup,
     }}
   >
     {Object.keys(categories).map(pathName => (

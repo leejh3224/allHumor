@@ -46,7 +46,18 @@ Comment.pre('save', function (next) {
 })
 
 Comment.post('save', async (doc, next) => {
-  const { _id, recipient } = doc
+  const { _id, recipient, parent } = doc
+  if (recipient) {
+    try {
+      await mongoose.model('Comment', Comment).findByIdAndUpdate(parent, {
+        $push: { replies: _id },
+      })
+      console.log('reply added')
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
+  }
   if (!recipient) {
     try {
       await Article.findByIdAndUpdate(doc.articleId, { $push: { comments: _id } })
@@ -59,7 +70,18 @@ Comment.post('save', async (doc, next) => {
 })
 
 Comment.post('remove', async (doc, next) => {
-  const { _id, recipient } = doc
+  const { _id, recipient, parent } = doc
+  if (recipient) {
+    try {
+      await mongoose
+        .model('Comment', Comment)
+        .findByIdAndUpdate(parent, { $pull: { replies: _id } })
+      console.log('reply removed')
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
+  }
   if (!recipient) {
     try {
       await Article.findByIdAndUpdate(doc.articleId, { $pull: { comments: _id } })

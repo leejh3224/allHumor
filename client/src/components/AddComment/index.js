@@ -22,6 +22,7 @@ const AddComment = ({
   <div
     css={{
       marginBottom: spacing.medium,
+      width: '100%',
     }}
   >
     <form onSubmit={e => handleSubmit(e, parentId, from)}>

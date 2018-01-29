@@ -1,8 +1,9 @@
 import React from 'react'
-import { shape, func, string } from 'prop-types'
+import { shape, func, string, bool } from 'prop-types'
 import { spacing, fonts, colors } from 'styles/theme'
 import formatDate from 'utils/formatDate'
-import { AddComment } from 'components'
+import { AddComment, ActionsList } from 'components'
+import WithState from './WithState'
 
 const Reply = ({
   reply,
@@ -13,6 +14,9 @@ const Reply = ({
   parentId,
   showAddComment,
   myUserId,
+  isMenuVisible,
+  handleOpenMenu,
+  handleCloseMenu,
 }) => {
   const {
     _id,
@@ -28,6 +32,7 @@ const Reply = ({
     <div
       css={{
         display: 'flex',
+        position: 'relative',
       }}
     >
       <figure
@@ -127,25 +132,41 @@ const Reply = ({
         )}
       </div>
       {userId === myUserId && (
-        <button
-          className="button-more"
+        <div
           css={{
-            width: 20,
-            height: 30,
-            cursor: 'pointer',
-            ':hover > .ion-android-more-vertical': {
-              color: colors.font,
-            },
+            position: 'absolute',
+            right: 0,
+            top: 0,
           }}
         >
-          <i
-            className="ion-android-more-vertical"
+          <button
+            className="button-more"
             css={{
-              ...fonts.icon,
-              color: colors.grey,
+              width: 20,
+              height: 30,
+              backgroundColor: 'transparent',
+              cursor: 'pointer',
+              ':hover > .ion-android-more-vertical': {
+                color: colors.font,
+              },
             }}
-          />
-        </button>
+            onClick={handleOpenMenu}
+          >
+            <i
+              className="ion-android-more-vertical"
+              css={{
+                ...fonts.icon,
+                color: colors.grey,
+              }}
+            />
+          </button>
+          {isMenuVisible && (
+            <ActionsList
+              actions={['수정', '삭제']}
+              handleCloseMenu={handleCloseMenu}
+            />
+          )}
+        </div>
       )}
     </div>
   )
@@ -160,6 +181,9 @@ Reply.propTypes = {
   parentId: string.isRequired,
   showAddComment: func.isRequired,
   myUserId: string.isRequired,
+  isMenuVisible: bool.isRequired,
+  handleOpenMenu: func.isRequired,
+  handleCloseMenu: func.isRequired,
 }
 
-export default Reply
+export default WithState(Reply)

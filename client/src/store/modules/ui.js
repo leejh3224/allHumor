@@ -24,6 +24,12 @@ export const toggleReplies = id => (dispatch) => {
 export const toggleExpandComment = id => (dispatch) => {
   dispatch({ type: types.ui.TOGGLE_EXPAND_COMMENT, payload: { id } })
 }
+export const startEditComment = id => (dispatch) => {
+  dispatch({ type: types.ui.START_EDIT_COMMENT, payload: { id } })
+}
+export const finishEditComment = id => (dispatch) => {
+  dispatch({ type: types.ui.FINISH_EDIT_COMMENT, payload: { id } })
+}
 export const switchLoginView = () => (dispatch) => {
   dispatch({ type: types.ui.SWITCH_LOGIN_VIEW })
 }
@@ -35,12 +41,16 @@ const commentInitialState = {
   isShowingReply: false,
   isFetchingReply: false,
   isFetchingAddReply: false,
+  isFetchingEditingComment: false,
+  isFetchingRemovingComment: false,
 }
 const replyInitialState = {
   isEditing: false,
   isRemoving: false,
   isAddingReply: false,
   isFetchingAddReply: false,
+  isFetchingEditingComment: false,
+  isFetchingRemovingComment: false,
 }
 
 export default handleActions(
@@ -79,35 +89,44 @@ export default handleActions(
         })))
       return state.set('comments', state.get('comments').merge(uiStates))
     },
-    [types.ui.SHOW_ADD_COMMENT]: (state, { payload: { id } }) => {
+    [types.comment.EDIT_REQUEST]: (state, { payload: { id } }) => {
       const isCommentType = state.get('comments').has(id)
-      return state.setIn(
-        [isCommentType ? 'comments' : 'replies', id, 'isAddingReply'],
-        true,
-      )
+      return state
+        .setIn([isCommentType ? 'comments' : 'replies', id, 'isEditing'], false)
+        .setIn(
+          [
+            isCommentType ? 'comments' : 'replies',
+            id,
+            'isFetchingEditingComment',
+          ],
+          true,
+        )
     },
-    [types.ui.HIDE_ADD_COMMENT]: (state, { payload: { id } }) => {
+    [types.comment.EDIT_SUCCESS]: (state, { payload: { id } }) => {
       const isCommentType = state.get('comments').has(id)
       return state.setIn(
-        [isCommentType ? 'comments' : 'replies', id, 'isAddingReply'],
+        [
+          isCommentType ? 'comments' : 'replies',
+          id,
+          'isFetchingEditingComment',
+        ],
         false,
       )
     },
-    [types.ui.TOGGLE_REPLIES]: (state, { payload: { id } }) => {
-      const prevState = state.getIn(['comments', id, 'isShowingReply'])
-      return state.setIn(['comments', id, 'isShowingReply'], !prevState)
-    },
-    [types.ui.TOGGLE_EXPAND_COMMENT]: (state, { payload: { id } }) => {
+    [types.comment.EDIT_ERROR]: (state, { payload: { id } }) => {
       const isCommentType = state.get('comments').has(id)
-      const prevState = state.getIn([
-        isCommentType ? 'comments' : 'replies',
-        id,
-        'isTruncated',
-      ])
       return state.setIn(
-        [isCommentType ? 'comments' : 'replies', id, 'isTruncated'],
-        !prevState,
+        [
+          isCommentType ? 'comments' : 'replies',
+          id,
+          'isFetchingEditingComment',
+        ],
+        false,
       )
+    },
+    [types.comment.REMOVE_SUCCESS]: (state, { payload }) => {
+      console.log(payload)
+      return state
     },
     [types.reply.REQUEST]: (state, { payload: { id } }) =>
       state.setIn(['comments', id, 'isFetchingReply'], true),
@@ -122,13 +141,6 @@ export default handleActions(
     },
     [types.reply.ERROR]: (state, { payload: { id } }) =>
       state.setIn(['comments', id, 'isFetchingReply'], false),
-    [types.ui.SWITCH_LOGIN_VIEW]: (state) => {
-      const prevView = state.get('loginView')
-      if (prevView === 'login') {
-        return state.set('loginView', 'register')
-      }
-      return state.set('loginView', 'login')
-    },
     [types.reply.ADD_REQUEST]: (state, { payload: { id } }) => {
       const isCommentType = state.get('comments').has(id)
       return state
@@ -160,6 +172,57 @@ export default handleActions(
         [isCommentType ? 'comments' : 'replies', id, 'isFetchingAddReply'],
         false,
       )
+    },
+    [types.ui.SHOW_ADD_COMMENT]: (state, { payload: { id } }) => {
+      const isCommentType = state.get('comments').has(id)
+      return state.setIn(
+        [isCommentType ? 'comments' : 'replies', id, 'isAddingReply'],
+        true,
+      )
+    },
+    [types.ui.HIDE_ADD_COMMENT]: (state, { payload: { id } }) => {
+      const isCommentType = state.get('comments').has(id)
+      return state.setIn(
+        [isCommentType ? 'comments' : 'replies', id, 'isAddingReply'],
+        false,
+      )
+    },
+    [types.ui.TOGGLE_REPLIES]: (state, { payload: { id } }) => {
+      const prevState = state.getIn(['comments', id, 'isShowingReply'])
+      return state.setIn(['comments', id, 'isShowingReply'], !prevState)
+    },
+    [types.ui.TOGGLE_EXPAND_COMMENT]: (state, { payload: { id } }) => {
+      const isCommentType = state.get('comments').has(id)
+      const prevState = state.getIn([
+        isCommentType ? 'comments' : 'replies',
+        id,
+        'isTruncated',
+      ])
+      return state.setIn(
+        [isCommentType ? 'comments' : 'replies', id, 'isTruncated'],
+        !prevState,
+      )
+    },
+    [types.ui.START_EDIT_COMMENT]: (state, { payload: { id } }) => {
+      const isCommentType = state.get('comments').has(id)
+      return state.setIn(
+        [isCommentType ? 'comments' : 'replies', id, 'isEditing'],
+        true,
+      )
+    },
+    [types.ui.FINISH_EDIT_COMMENT]: (state, { payload: { id } }) => {
+      const isCommentType = state.get('comments').has(id)
+      return state.setIn(
+        [isCommentType ? 'comments' : 'replies', id, 'isEditing'],
+        false,
+      )
+    },
+    [types.ui.SWITCH_LOGIN_VIEW]: (state) => {
+      const prevView = state.get('loginView')
+      if (prevView === 'login') {
+        return state.set('loginView', 'register')
+      }
+      return state.set('loginView', 'login')
     },
   },
   initialState,

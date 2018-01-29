@@ -107,6 +107,47 @@ export const loadReplies = commentId => async (dispatch) => {
   }
 }
 
+export const editComment = (commentId, content) => async (dispatch) => {
+  dispatch({ type: types.comment.EDIT_REQUEST, payload: { id: commentId } })
+
+  try {
+    const { data: { comments } } = await api.put(`/comments/${commentId}`, {
+      content,
+    })
+
+    if (comments) {
+      dispatch({
+        type: types.comment.EDIT_SUCCESS,
+        payload: {
+          id: commentId,
+          data: normalize(comments, commentListSchema),
+        },
+      })
+    }
+  } catch (error) {
+    console.log(error)
+    dispatch({ type: types.comment.EDIT_ERROR, payload: { error } })
+  }
+}
+
+export const removeComment = commentId => async (dispatch) => {
+  dispatch({ type: types.comment.REMOVE_REQUEST, payload: { id: commentId } })
+
+  try {
+    const { data: { success } } = await api.delete(`/comments/${commentId}`)
+
+    if (success) {
+      dispatch({
+        type: types.comment.REMOVE_SUCCESS,
+        payload: { id: commentId },
+      })
+    }
+  } catch (error) {
+    console.log(error)
+    dispatch({ type: types.comment.REMOVE_ERROR, payload: { error } })
+  }
+}
+
 export const getRepliesOfComment = ({ comment, ui }, commentId) =>
   comment
     .getIn(['entities', 'replies'])
@@ -160,6 +201,20 @@ export default handleActions(
         }
         return next
       }, fromJS(data)),
+    [types.comment.EDIT_SUCCESS]: (
+      state,
+      { payload: { id, data: { entities: { comments } } } },
+    ) => {
+      const isCommentType = state.getIn(['entities', 'comments']).has(id)
+      return state.setIn(
+        ['entities', isCommentType ? 'comments' : 'replies', id],
+        fromJS(comments[id]),
+      )
+    },
+    [types.comment.REMOVE_SUCCESS]: (state, { payload }) => {
+      console.log(payload)
+      return state
+    },
     [types.reply.SUCCESS]: (state, { payload }) =>
       state.mergeDeep(payload.data),
     [types.reply.ADD_SUCCESS]: (state, { payload: { id, data } }) => {

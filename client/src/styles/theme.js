@@ -98,4 +98,9 @@ const spacing = {
   xlarge: 80,
 }
 
-export { colors, media, fonts, spacing }
+const zIndex = {
+  categoryGroup: 10,
+  actionsList: 7,
+}
+
+export { colors, media, fonts, spacing, zIndex }

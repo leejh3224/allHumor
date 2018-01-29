@@ -58,7 +58,7 @@ export default {
     const { content } = req.body
 
     try {
-      const comment = await Comment.findByIdAndUpdate(id, { content })
+      const comment = await Comment.findByIdAndUpdate(id, { content }, { new: true })
       res.json({
         success: true,
         comments: [comment],
@@ -71,7 +71,7 @@ export default {
       })
     }
   },
-  deleteComment: async (req, res) => {
+  removeComment: async (req, res) => {
     const { id } = req.params // delete 요청은 body를 사용할 수 없음
 
     try {
@@ -126,9 +126,6 @@ export default {
         parent: _id,
         recipient: rest.author,
       }).save()
-      await Comment.findByIdAndUpdate(id, {
-        $push: { replies: reply._id },
-      })
       res.json({
         success: true,
         replies: [reply],
@@ -141,6 +138,4 @@ export default {
       })
     }
   },
-  editReply: () => {},
-  deleteReply: () => {},
 }

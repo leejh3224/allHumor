@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { func, bool, number, shape } from 'prop-types'
+import { func, bool, number, arrayOf, shape } from 'prop-types'
 import { connect } from 'react-redux'
 import { Comments } from 'components'
 import * as commentDucks from 'store/modules/comment'
@@ -15,7 +15,7 @@ class CommentsContainer extends Component {
     isAtTheBottom: bool.isRequired,
     currentPage: number.isRequired,
     lastPage: number.isRequired,
-    comments: shape({}).isRequired,
+    comments: arrayOf(shape({})).isRequired,
   }
   shouldComponentUpdate(nextProps) {
     const {
