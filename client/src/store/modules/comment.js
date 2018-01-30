@@ -49,10 +49,7 @@ export const addComment = content => async (dispatch, getState) => {
   }
 }
 
-export const addReply = (content, parentId, from) => async (
-  dispatch,
-  getState,
-) => {
+export const addReply = (content, from, to) => async (dispatch, getState) => {
   const state = getState()
   const userId = state.user.get('userId')
   const avatar = state.user.get('avatar')
@@ -61,15 +58,12 @@ export const addReply = (content, parentId, from) => async (
   dispatch({ type: types.reply.ADD_REQUEST, payload: { id: from } })
 
   try {
-    const { data: { replies } } = await api.post(
-      `/comments/${parentId}/replies`,
-      {
-        userId,
-        avatar,
-        author,
-        content,
-      },
-    )
+    const { data: { replies } } = await api.post(`/comments/${to}/replies`, {
+      userId,
+      avatar,
+      author,
+      content,
+    })
 
     if (replies) {
       dispatch({
@@ -86,7 +80,7 @@ export const addReply = (content, parentId, from) => async (
   }
 }
 
-export const loadReplies = commentId => async (dispatch) => {
+export const loadReplies = commentId => async dispatch => {
   dispatch({ type: types.reply.REQUEST, payload: { id: commentId } })
 
   try {
@@ -107,7 +101,7 @@ export const loadReplies = commentId => async (dispatch) => {
   }
 }
 
-export const editComment = (commentId, content) => async (dispatch) => {
+export const editComment = (commentId, content) => async dispatch => {
   dispatch({ type: types.comment.EDIT_REQUEST, payload: { id: commentId } })
 
   try {
@@ -130,7 +124,7 @@ export const editComment = (commentId, content) => async (dispatch) => {
   }
 }
 
-export const removeComment = commentId => async (dispatch) => {
+export const removeComment = commentId => async dispatch => {
   dispatch({ type: types.comment.REMOVE_REQUEST, payload: { id: commentId } })
 
   try {
@@ -151,28 +145,29 @@ export const removeComment = commentId => async (dispatch) => {
 export const getRepliesOfComment = ({ comment, ui }, commentId) =>
   comment
     .getIn(['entities', 'replies'])
+    .filter(reply => reply)
     .filter(reply => reply.get('parent') === commentId)
     .map(reply => reply.merge(ui.getIn(['replies', reply.get('_id')])))
     .toJS()
 
 export const getOrderedReplies = createSelector(getRepliesOfComment, replies =>
-  orderBy(Object.values(replies), ['createdAt'], ['desc']))
+  orderBy(Object.values(replies), ['createdAt'], ['desc']),
+)
 
 export const getComments = ({ comment, ui }) =>
   comment
     .getIn(['entities', 'comments'])
+    .filter(c => c)
     .map(c => c.merge(ui.getIn(['comments', c.get('_id')])))
     .toJS()
 
 export const getOrderedComments = createSelector(getComments, comments =>
-  orderBy(Object.values(comments), ['createdAt'], ['desc']))
+  orderBy(Object.values(comments), ['createdAt'], ['desc']),
+)
 
 export default handleActions(
   {
-    [types.article.SUCCESS]: (
-      state,
-      { payload: { data: { entities, result } } },
-    ) => {
+    [types.article.SUCCESS]: (state, { payload: { data: { entities, result } } }) => {
       if (result.length === 1) {
         const articleId = result[0]
         const { comments } = entities.articles[articleId]
@@ -180,10 +175,7 @@ export default handleActions(
 
         return state
           .set('articleId', articleId)
-          .setIn(
-            ['entities', 'comments'],
-            fromJS(normalized.entities.comments) || Map(),
-          )
+          .setIn(['entities', 'comments'], fromJS(normalized.entities.comments) || Map())
       }
       return state
     },
@@ -211,12 +203,11 @@ export default handleActions(
         fromJS(comments[id]),
       )
     },
-    [types.comment.REMOVE_SUCCESS]: (state, { payload }) => {
-      console.log(payload)
-      return state
+    [types.comment.REMOVE_SUCCESS]: (state, { payload: { id } }) => {
+      const isCommentType = state.getIn(['entities', 'comments']).has(id)
+      return state.setIn(['entities', isCommentType ? 'comments' : 'replies', id], undefined)
     },
-    [types.reply.SUCCESS]: (state, { payload }) =>
-      state.mergeDeep(payload.data),
+    [types.reply.SUCCESS]: (state, { payload }) => state.mergeDeep(payload.data),
     [types.reply.ADD_SUCCESS]: (state, { payload: { id, data } }) => {
       const isCommentType = state.getIn(['entities', 'comments']).has(id)
       const replyId = Object.values(data.entities.replies)[0]._id

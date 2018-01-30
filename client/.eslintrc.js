@@ -3,7 +3,6 @@ module.exports = {
   parser: 'babel-eslint',
   rules: {
     semi: 0,
-    'max-len': 0,
     'no-underscore-dangle': 0,
 
     // import
@@ -18,9 +17,14 @@ module.exports = {
     'react/no-typos': 0,
     'react/no-danger': 0,
     'jsx-a11y/anchor-is-valid': 0,
+
+    // to stop prettier to emit errors
+    'arrow-parens': 0,
+    'function-paren-newline': 0,
   },
   env: {
     browser: true,
     jest: true,
+    es6: true,
   },
 }

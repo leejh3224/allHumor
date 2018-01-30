@@ -1,10 +1,18 @@
 import React from 'react'
-import { shape, func, string, bool } from 'prop-types'
-import { spacing, fonts, colors } from 'styles/theme'
-import formatDate from 'utils/formatDate'
-import { AddComment, ActionsList } from 'components'
-import WithState from './WithState'
+import { func, bool, shape, string } from 'prop-types'
+import { spacing } from 'styles/theme'
+import { CommentForm } from 'components'
+
+import CommentItemTemplate from './template'
+import Thumbnail from './Thumbnail'
+import Body from './Body'
+import Header from './Header'
+import Content from './Content'
+import AddReplyButton from './AddReplyButton'
+import ShowReplyButton from './ShowReplyButton'
 import Reply from './Reply'
+import ActionButton from './ActionButton'
+import WithState from './WithState'
 
 const CommentItem = ({
   comment,
@@ -23,248 +31,135 @@ const CommentItem = ({
   startEditComment,
   finishEditComment,
   editComment,
+  removeComment,
 }) => {
   const {
     _id,
-    userId,
-    avatar,
     author,
+    avatar,
     content,
-    replies,
     createdAt,
-    isEditing,
+    replies,
+    userId,
     isAddingReply,
-    isShowingReply,
-    isTruncated,
+    isEditing,
     isFetchingReply,
     isFetchingAddReply,
     isFetchingEditingComment,
+    isTruncated,
+    isShowingReply,
   } = comment
   const repliesList = Object.values(getRepliesOfComment(_id))
   return (
-    <div
-      css={{
-        display: 'flex',
-        position: 'relative',
-      }}
-    >
-      <figure
-        css={{
-          width: 50,
-          height: 50,
-          marginRight: spacing.medium,
-        }}
-      >
-        <img
-          css={{
-            width: 50,
-            height: '100%',
-            borderRadius: '100%',
-          }}
-          src={avatar}
-          alt="아바타"
-        />
-      </figure>
-      {/* eslint-disable no-nested-ternary */}
-      {isEditing ? (
-        <AddComment
-          isEditing={isEditing}
-          oldContent={content}
-          editComment={editComment}
-          from={_id}
-          onCancel={() => finishEditComment(_id)}
-        />
-      ) : isFetchingEditingComment ? '수정 중입니다 ...' : (
-        <div
-          css={{
-            flex: 1,
-          }}
-        >
-          <p
-            css={{
-              ...fonts.xsmall,
-              fontWeight: 700,
-            }}
-          >
-            {author}
-            <span
-              css={{
-                marginLeft: spacing.small,
-                color: colors.grey,
-                fontWeight: 400,
-              }}
-            >
-              {formatDate(createdAt)}
-            </span>
-          </p>
-          <div
-            css={{
-              ...fonts.body,
-              marginTop: spacing.xsmall,
-              marginBottom: spacing.small,
-            }}
-          >
-            {isTruncated ? (
-              <div>
-                <p>{content.slice(0, 399)}</p>
-                <button
-                  css={{ ...fonts.xsmall, fontWeight: 500, cursor: 'pointer' }}
-                  onClick={() => toggleExpandComment(_id)}
-                >
-                  펼치기
-                </button>
-              </div>
-            ) : (
-              <div>
-                <p css={{ marginBottom: spacing.xsmall }}>{content}</p>
-                {content.length >= 400 && (
-                  <button
-                    css={{
-                      display: 'block',
-                      ...fonts.xsmall,
-                      fontWeight: 500,
-                      cursor: 'pointer',
-                    }}
-                    onClick={() => toggleExpandComment(_id)}
-                  >
-                    접기
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
-          {/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */}
-          <div
-            css={{
-              display: 'flex',
-              alignItems: 'center',
-              marginBottom: spacing.small,
-            }}
-          >
-            <button
-              css={{
-                ...fonts.xsmall,
-                cursor: 'pointer',
-                color: colors.grey,
-                padding: `0 ${spacing.xsmall}px`,
-              }}
-              onClick={() => showAddComment(_id)}
-            >
-              답글
-            </button>
-          </div>
-          {replies.length ? (
-            <p
-              css={{
-                ...fonts.xsmall,
-                cursor: 'pointer',
-                fontWeight: 500,
-                marginBottom: spacing.small,
-              }}
-              onClick={() => {
-                if (!isShowingReply) {
-                  loadReplies(_id)
-                }
-                toggleReplies(_id)
-              }}
-            >
-              {isShowingReply
-                ? '답글 숨기기'
-                : `답글 ${
-                    replies.length > 1 ? `${replies.length}개` : ''
-                  } 보기`}
-              <i
-                css={{
-                  marginLeft: spacing.small,
-                }}
-                className={`ion-chevron-${isShowingReply ? 'up' : 'down'}`}
-              />
-            </p>
-          ) : null}
-          {isAddingReply && (
-            <AddComment
-              addComment={addComment}
-              onCancel={() => hideAddComment(_id)}
-              parentId={_id}
-              addReply={addReply}
+    <CommentItemTemplate
+      thumbnail={<Thumbnail avatar={avatar} />}
+      renderBody={(() => {
+        if (isEditing) {
+          return (
+            <CommentForm
+              isEditing={isEditing}
+              oldContent={content}
+              editComment={editComment}
               from={_id}
+              onCancel={() => finishEditComment(_id)}
             />
-          )}
-          {isFetchingAddReply && '불러오는 중 ...'}
-          {isFetchingReply
-            ? isShowingReply && '불러오는 중 ...'
-            : isShowingReply && (
-            <ul>
-              {repliesList.map(reply => (
-                <li
-                  key={reply._id + 1}
-                  css={{
-                        paddingTop: spacing.small,
-                        paddingBottom: spacing.small,
-                      }}
-                >
-                  <Reply
-                    key={reply._id}
-                    reply={reply}
-                    toggleExpandComment={toggleExpandComment}
-                    hideAddComment={hideAddComment}
-                    addComment={addComment}
-                    addReply={addReply}
-                    parentId={_id}
-                    showAddComment={showAddComment}
-                    myUserId={myUserId}
-                  />
-                </li>
-                  ))}
-            </ul>
-              )}
-        </div>
-      )}
-      {userId === myUserId && !isEditing && (
-        <div
-          css={{
-            position: 'absolute',
-            right: 0,
-            top: 0,
-          }}
-        >
-          <button
-            className="button-more"
-            css={{
-              width: 20,
-              height: 30,
-              cursor: 'pointer',
-              ':hover > .ion-android-more-vertical': {
-                color: colors.font,
-              },
-            }}
-            onClick={handleOpenMenu}
-          >
-            <i
-              className="ion-android-more-vertical"
-              css={{
-                ...fonts.icon,
-                color: colors.grey,
-              }}
-            />
-          </button>
-          {isMenuVisible && (
-            <ActionsList
-              actions={[
-                {
-                  name: '수정',
-                  onClick: () => startEditComment(_id),
-                },
-                {
-                  name: '삭제',
-                },
-              ]}
-              handleCloseMenu={handleCloseMenu}
-            />
-          )}
-        </div>
-      )}
-    </div>
+          )
+        }
+
+        if (isFetchingEditingComment) {
+          return <p>수정 중입니다 ...</p>
+        }
+
+        return (
+          <Body
+            header={<Header author={author} createdAt={createdAt} />}
+            content={
+              <Content
+                id={_id}
+                content={content}
+                isTruncated={isTruncated}
+                toggleExpandComment={toggleExpandComment}
+              />
+            }
+            addReplyButton={<AddReplyButton id={_id} showAddComment={showAddComment} />}
+            showReplyButton={
+              replies &&
+              replies.length > 0 && (
+                <ShowReplyButton
+                  id={_id}
+                  isShowingReply={isShowingReply}
+                  loadReplies={loadReplies}
+                  toggleReplies={toggleReplies}
+                  replyCount={replies.length}
+                />
+              )
+            }
+          />
+        )
+      })()}
+      form={
+        isAddingReply && (
+          <CommentForm
+            addComment={addComment}
+            addReply={addReply}
+            onCancel={() => hideAddComment(_id)}
+            from={_id}
+            to={_id}
+          />
+        )
+      }
+      loadingAddReply={isFetchingAddReply && <p>불러오는 중 ...</p>}
+      renderRepliesList={
+        isFetchingReply
+          ? isShowingReply && <p>불러오는 중...</p>
+          : isShowingReply && (
+          <ul>
+            {repliesList.map(reply => (
+              <li
+                key={reply._id + 1}
+                css={{
+                      paddingTop: spacing.small,
+                      paddingBottom: spacing.small,
+                    }}
+              >
+                <Reply
+                  key={reply._id}
+                  reply={reply}
+                  toggleExpandComment={toggleExpandComment}
+                  hideAddComment={hideAddComment}
+                  addComment={addComment}
+                  addReply={addReply}
+                  showAddComment={showAddComment}
+                  myUserId={myUserId}
+                  startEditComment={startEditComment}
+                  finishEditComment={finishEditComment}
+                  editComment={editComment}
+                  removeComment={removeComment}
+                  parentId={_id}
+                />
+              </li>
+                ))}
+          </ul>
+            )
+      }
+      renderActionButton={(() => {
+        if (userId === myUserId) {
+          return (
+            !isEditing && (
+              <ActionButton
+                id={_id}
+                handleOpenMenu={handleOpenMenu}
+                handleCloseMenu={handleCloseMenu}
+                isMenuVisible={isMenuVisible}
+                startEditComment={startEditComment}
+                removeComment={removeComment}
+              />
+            )
+          )
+        }
+        return null
+      })()}
+    />
   )
 }
 
@@ -285,6 +180,7 @@ CommentItem.propTypes = {
   startEditComment: func.isRequired,
   finishEditComment: func.isRequired,
   editComment: func.isRequired,
+  removeComment: func.isRequired,
 }
 
 export default WithState(CommentItem)

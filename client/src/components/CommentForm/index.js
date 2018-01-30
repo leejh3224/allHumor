@@ -11,13 +11,8 @@ const baseButtonStyle = {
   },
 }
 
-const AddComment = ({
-  content,
-  onCancel,
-  handleInputChange,
-  handleSubmit,
-  parentId,
-  from,
+const CommentForm = ({
+  content, onCancel, handleInputChange, handleSubmit, from, to,
 }) => (
   <div
     css={{
@@ -25,7 +20,7 @@ const AddComment = ({
       width: '100%',
     }}
   >
-    <form onSubmit={e => handleSubmit(e, parentId, from)}>
+    <form onSubmit={e => handleSubmit(e, from, to)}>
       <textarea
         type="text"
         placeholder="댓글"
@@ -70,19 +65,19 @@ const AddComment = ({
   </div>
 )
 
-AddComment.defaultProps = {
-  parentId: '',
+CommentForm.defaultProps = {
+  from: null,
+  to: null,
   onCancel: () => {},
-  from: '',
 }
 
-AddComment.propTypes = {
+CommentForm.propTypes = {
   content: string.isRequired,
   onCancel: func,
   handleInputChange: func.isRequired,
   handleSubmit: func.isRequired,
-  parentId: string,
   from: string,
+  to: string,
 }
 
-export default WithState(AddComment)
+export default WithState(CommentForm)

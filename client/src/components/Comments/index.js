@@ -1,14 +1,10 @@
 import React from 'react'
 import { arrayOf, shape, func, bool } from 'prop-types'
 import { spacing, media, fonts } from 'styles/theme'
-import { AddComment, CommentItem } from 'components'
+import { CommentForm, CommentItem } from 'components'
 
 const Comments = ({
-  comments,
-  addComment,
-  fetchingAddComment,
-  fetchingComment,
-  ...props
+  comments, addComment, fetchingAddComment, fetchingComment, ...props
 }) => (
   <section
     css={{
@@ -29,7 +25,7 @@ const Comments = ({
     >
       댓글 {comments.length}개
     </p>
-    <AddComment addComment={addComment} />
+    <CommentForm addComment={addComment} />
     <ul>
       {fetchingAddComment && '로딩 중입니다 ...'}
       {comments.map(comment => (
@@ -41,12 +37,7 @@ const Comments = ({
             paddingBottom: spacing.small,
           }}
         >
-          <CommentItem
-            {...props}
-            key={comment._id}
-            comment={comment}
-            addComment={addComment}
-          />
+          <CommentItem {...props} key={comment._id} comment={comment} addComment={addComment} />
         </li>
       ))}
     </ul>

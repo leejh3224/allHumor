@@ -12,25 +12,25 @@ const initialState = fromJS({
 
 export const getLoginView = ({ ui }) => ui.get('loginView')
 
-export const showAddComment = id => (dispatch) => {
+export const showAddComment = id => dispatch => {
   dispatch({ type: types.ui.SHOW_ADD_COMMENT, payload: { id } })
 }
-export const hideAddComment = id => (dispatch) => {
+export const hideAddComment = id => dispatch => {
   dispatch({ type: types.ui.HIDE_ADD_COMMENT, payload: { id } })
 }
-export const toggleReplies = id => (dispatch) => {
+export const toggleReplies = id => dispatch => {
   dispatch({ type: types.ui.TOGGLE_REPLIES, payload: { id } })
 }
-export const toggleExpandComment = id => (dispatch) => {
+export const toggleExpandComment = id => dispatch => {
   dispatch({ type: types.ui.TOGGLE_EXPAND_COMMENT, payload: { id } })
 }
-export const startEditComment = id => (dispatch) => {
+export const startEditComment = id => dispatch => {
   dispatch({ type: types.ui.START_EDIT_COMMENT, payload: { id } })
 }
-export const finishEditComment = id => (dispatch) => {
+export const finishEditComment = id => dispatch => {
   dispatch({ type: types.ui.FINISH_EDIT_COMMENT, payload: { id } })
 }
-export const switchLoginView = () => (dispatch) => {
+export const switchLoginView = () => dispatch => {
   dispatch({ type: types.ui.SWITCH_LOGIN_VIEW })
 }
 
@@ -55,18 +55,18 @@ const replyInitialState = {
 
 export default handleActions(
   {
-    [types.article.SUCCESS]: (
-      state,
-      { payload: { data: { entities, result } } },
-    ) => {
+    [types.article.SUCCESS]: (state, { payload: { data: { entities, result } } }) => {
       if (result.length === 1) {
         const articleId = result[0]
         const { comments } = entities.articles[articleId]
         const normalized = normalize(comments, commentListSchema)
         const uiStates = fromJS(normalized.entities.comments || {}).map(comment =>
-          fromJS(Object.assign({}, commentInitialState, {
-            isTruncated: comment.get('content').length >= 400,
-          })))
+          fromJS(
+            Object.assign({}, commentInitialState, {
+              isTruncated: comment.get('content').length >= 400,
+            }),
+          ),
+        )
 
         return state.set('comments', uiStates)
       }
@@ -74,53 +74,41 @@ export default handleActions(
     },
     [types.comment.SUCCESS]: (state, { payload: { data: { entities } } }) => {
       const uiStates = fromJS(entities.comments || {}).map(comment =>
-        fromJS(Object.assign({}, commentInitialState, {
-          isTruncated: comment.get('content').length >= 400,
-        })))
+        fromJS(
+          Object.assign({}, commentInitialState, {
+            isTruncated: comment.get('content').length >= 400,
+          }),
+        ),
+      )
       return state.set('comments', state.get('comments').merge(uiStates))
     },
-    [types.comment.ADD_SUCCESS]: (
-      state,
-      { payload: { data: { entities } } },
-    ) => {
+    [types.comment.ADD_SUCCESS]: (state, { payload: { data: { entities } } }) => {
       const uiStates = fromJS(entities.comments || {}).map(comment =>
-        fromJS(Object.assign({}, commentInitialState, {
-          isTruncated: comment.get('content').length >= 400,
-        })))
+        fromJS(
+          Object.assign({}, commentInitialState, {
+            isTruncated: comment.get('content').length >= 400,
+          }),
+        ),
+      )
       return state.set('comments', state.get('comments').merge(uiStates))
     },
     [types.comment.EDIT_REQUEST]: (state, { payload: { id } }) => {
       const isCommentType = state.get('comments').has(id)
       return state
         .setIn([isCommentType ? 'comments' : 'replies', id, 'isEditing'], false)
-        .setIn(
-          [
-            isCommentType ? 'comments' : 'replies',
-            id,
-            'isFetchingEditingComment',
-          ],
-          true,
-        )
+        .setIn([isCommentType ? 'comments' : 'replies', id, 'isFetchingEditingComment'], true)
     },
     [types.comment.EDIT_SUCCESS]: (state, { payload: { id } }) => {
       const isCommentType = state.get('comments').has(id)
       return state.setIn(
-        [
-          isCommentType ? 'comments' : 'replies',
-          id,
-          'isFetchingEditingComment',
-        ],
+        [isCommentType ? 'comments' : 'replies', id, 'isFetchingEditingComment'],
         false,
       )
     },
     [types.comment.EDIT_ERROR]: (state, { payload: { id } }) => {
       const isCommentType = state.get('comments').has(id)
       return state.setIn(
-        [
-          isCommentType ? 'comments' : 'replies',
-          id,
-          'isFetchingEditingComment',
-        ],
+        [isCommentType ? 'comments' : 'replies', id, 'isFetchingEditingComment'],
         false,
       )
     },
@@ -132,9 +120,12 @@ export default handleActions(
       state.setIn(['comments', id, 'isFetchingReply'], true),
     [types.reply.SUCCESS]: (state, { payload: { id, data: { entities } } }) => {
       const uiStates = fromJS(entities.replies).map(reply =>
-        fromJS(Object.assign({}, replyInitialState, {
-          isTruncated: reply.get('content').length >= 400,
-        })))
+        fromJS(
+          Object.assign({}, replyInitialState, {
+            isTruncated: reply.get('content').length >= 400,
+          }),
+        ),
+      )
       return state
         .setIn(['comments', id, 'isFetchingReply'], false)
         .set('replies', state.get('replies').merge(uiStates))
@@ -144,48 +135,34 @@ export default handleActions(
     [types.reply.ADD_REQUEST]: (state, { payload: { id } }) => {
       const isCommentType = state.get('comments').has(id)
       return state
-        .setIn(
-          [isCommentType ? 'comments' : 'replies', id, 'isFetchingAddReply'],
-          true,
-        )
-        .setIn(
-          [isCommentType ? 'comments' : 'replies', id, 'isAddingReply'],
-          false,
-        )
+        .setIn([isCommentType ? 'comments' : 'replies', id, 'isFetchingAddReply'], true)
+        .setIn([isCommentType ? 'comments' : 'replies', id, 'isAddingReply'], false)
     },
     [types.reply.ADD_SUCCESS]: (state, { payload: { id, data } }) => {
       const isCommentType = state.get('comments').has(id)
       const uiStates = fromJS(data.entities.replies).map(reply =>
-        fromJS(Object.assign({}, replyInitialState, {
-          isTruncated: reply.get('content').length >= 400,
-        })))
+        fromJS(
+          Object.assign({}, replyInitialState, {
+            isTruncated: reply.get('content').length >= 400,
+          }),
+        ),
+      )
       return state
         .set('replies', state.get('replies').merge(uiStates))
-        .setIn(
-          [isCommentType ? 'comments' : 'replies', id, 'isFetchingAddReply'],
-          false,
-        )
+        .setIn([isCommentType ? 'comments' : 'replies', id, 'isFetchingAddReply'], false)
+        .setIn([isCommentType ? 'comments' : 'replies', id, 'isShowingReply'], true)
     },
     [types.reply.ADD_ERROR]: (state, { payload: { id } }) => {
       const isCommentType = state.get('comments').has(id)
-      return state.setIn(
-        [isCommentType ? 'comments' : 'replies', id, 'isFetchingAddReply'],
-        false,
-      )
+      return state.setIn([isCommentType ? 'comments' : 'replies', id, 'isFetchingAddReply'], false)
     },
     [types.ui.SHOW_ADD_COMMENT]: (state, { payload: { id } }) => {
       const isCommentType = state.get('comments').has(id)
-      return state.setIn(
-        [isCommentType ? 'comments' : 'replies', id, 'isAddingReply'],
-        true,
-      )
+      return state.setIn([isCommentType ? 'comments' : 'replies', id, 'isAddingReply'], true)
     },
     [types.ui.HIDE_ADD_COMMENT]: (state, { payload: { id } }) => {
       const isCommentType = state.get('comments').has(id)
-      return state.setIn(
-        [isCommentType ? 'comments' : 'replies', id, 'isAddingReply'],
-        false,
-      )
+      return state.setIn([isCommentType ? 'comments' : 'replies', id, 'isAddingReply'], false)
     },
     [types.ui.TOGGLE_REPLIES]: (state, { payload: { id } }) => {
       const prevState = state.getIn(['comments', id, 'isShowingReply'])
@@ -193,31 +170,18 @@ export default handleActions(
     },
     [types.ui.TOGGLE_EXPAND_COMMENT]: (state, { payload: { id } }) => {
       const isCommentType = state.get('comments').has(id)
-      const prevState = state.getIn([
-        isCommentType ? 'comments' : 'replies',
-        id,
-        'isTruncated',
-      ])
-      return state.setIn(
-        [isCommentType ? 'comments' : 'replies', id, 'isTruncated'],
-        !prevState,
-      )
+      const prevState = state.getIn([isCommentType ? 'comments' : 'replies', id, 'isTruncated'])
+      return state.setIn([isCommentType ? 'comments' : 'replies', id, 'isTruncated'], !prevState)
     },
     [types.ui.START_EDIT_COMMENT]: (state, { payload: { id } }) => {
       const isCommentType = state.get('comments').has(id)
-      return state.setIn(
-        [isCommentType ? 'comments' : 'replies', id, 'isEditing'],
-        true,
-      )
+      return state.setIn([isCommentType ? 'comments' : 'replies', id, 'isEditing'], true)
     },
     [types.ui.FINISH_EDIT_COMMENT]: (state, { payload: { id } }) => {
       const isCommentType = state.get('comments').has(id)
-      return state.setIn(
-        [isCommentType ? 'comments' : 'replies', id, 'isEditing'],
-        false,
-      )
+      return state.setIn([isCommentType ? 'comments' : 'replies', id, 'isEditing'], false)
     },
-    [types.ui.SWITCH_LOGIN_VIEW]: (state) => {
+    [types.ui.SWITCH_LOGIN_VIEW]: state => {
       const prevView = state.get('loginView')
       if (prevView === 'login') {
         return state.set('loginView', 'register')

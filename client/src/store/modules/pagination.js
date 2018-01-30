@@ -70,7 +70,7 @@ export const loadArticles = (category, page) => async dispatch => {
   try {
     const { data: { articles, total, perPage } } = await api.get(`/articles/${category}/${page}`)
 
-    if (articles.length) {
+    if (articles) {
       dispatch({
         type: types.article.SUCCESS,
         payload: {

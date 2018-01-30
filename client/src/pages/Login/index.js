@@ -171,9 +171,9 @@ const Login = ({ view, switchLoginView, history }) => (
         }}
       >
         {view === 'login' ? '처음이신가요?' : '이미 계정이 있으신가요?'}
-        {/* eslint-disable jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
         <a
           onClick={switchLoginView}
+          onKeyPress={() => {}}
           css={{
             color: colors.white,
             fontWeight: 700,
@@ -181,13 +181,13 @@ const Login = ({ view, switchLoginView, history }) => (
             textDecoration: 'underline',
             cursor: 'pointer',
           }}
+          role="button"
+          tabIndex="0"
         >
           {view === 'login' ? '가입하기' : '로그인하기'}
         </a>
       </p>
-      <p css={{ color: colors.white, ...fonts.xsmall }}>
-        회원가입을 하게 되면 약관에 동의한
-      </p>
+      <p css={{ color: colors.white, ...fonts.xsmall }}>회원가입을 하게 되면 약관에 동의한</p>
       <p css={{ color: colors.white, ...fonts.xsmall }}>것으로 간주됩니다.</p>
     </div>
   </div>

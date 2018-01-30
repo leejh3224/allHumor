@@ -77,7 +77,7 @@ export default {
     try {
       // workaround for "Remove hook not triggered when removing documents"\
       // https://github.com/Automattic/mongoose/issues/1241
-      await Comment.findByIdAndRemove(id, (err, doc) => {
+      Comment.findByIdAndRemove(id, (err, doc) => {
         doc.remove()
       })
 

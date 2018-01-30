@@ -23,17 +23,18 @@ const WithStateHoc = WrappedComponent =>
         content: props.isEditing ? props.oldContent : '',
       }
     }
-    handleInputChange = (e) => {
+    handleInputChange = e => {
       const { value } = e.target
       this.setState(prev => ({ ...prev, content: value }))
     }
-    handleSubmit = (e, parentId, from) => {
+    handleSubmit = (e, from, to) => {
       const { content } = this.state
       const {
         addReply, addComment, editComment, isEditing,
       } = this.props
 
       e.preventDefault()
+
       if (!content.trim().length) {
         return
       }
@@ -44,11 +45,12 @@ const WithStateHoc = WrappedComponent =>
         return
       }
 
-      if (parentId.length) {
-        addReply(content, parentId, from)
+      if (from && to) {
+        addReply(content, from, to)
         this.reset()
         return
       }
+
       addComment(content)
       this.reset()
     }
