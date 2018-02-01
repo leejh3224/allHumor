@@ -1,18 +1,20 @@
 import React from 'react'
-import { string, bool, func } from 'prop-types'
+import { string, bool, func, arrayOf, shape } from 'prop-types'
 import { colors, zIndex } from 'styles/theme'
-import categories from 'globals/categories'
 import TabLink from './TabLink'
 
-const CategoryGroup = ({ isSticky, activeCategory, loadNewCategory }) => (
+const CategoryGroup = ({
+  isSticky, activeCategory, loadNewCategory, categories,
+}) => (
   <nav
     css={{
       position: isSticky ? 'fixed' : 'static',
       top: 0,
-      width: '100%',
       backgroundColor: colors.primary,
+      width: '100%',
       display: 'flex',
-      overflowX: 'scroll',
+      flexWrap: 'nowrap',
+      overflowX: 'auto',
       transition: 'position 0.3s ease-out',
       zIndex: zIndex.categoryGroup,
     }}
@@ -23,6 +25,7 @@ const CategoryGroup = ({ isSticky, activeCategory, loadNewCategory }) => (
         to={`/${pathName}/1`}
         active={pathName === activeCategory}
         onClick={() => loadNewCategory(pathName)}
+        flex={Object.keys(categories).length < 4 ? 1 : '0 0 auto'}
       >
         {categories[pathName]}
       </TabLink>
@@ -34,6 +37,7 @@ CategoryGroup.propTypes = {
   isSticky: bool.isRequired,
   activeCategory: string.isRequired,
   loadNewCategory: func.isRequired,
+  categories: arrayOf(shape()).isRequired,
 }
 
 export default CategoryGroup

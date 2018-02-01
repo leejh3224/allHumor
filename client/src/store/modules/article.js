@@ -11,7 +11,7 @@ const initialState = fromJS({
   },
 })
 
-export const loadArticle = id => async (dispatch) => {
+export const loadArticle = id => async dispatch => {
   dispatch({ type: types.article.REQUEST })
 
   try {
@@ -36,8 +36,7 @@ export const getArticles = ({ article }) =>
 
 export default handleActions(
   {
-    [types.article.SUCCESS]: (state, { payload: { data } }) =>
-      state.merge(data),
+    [types.article.SUCCESS]: (state, { payload: { data } }) => state.merge(data),
   },
   initialState,
 )

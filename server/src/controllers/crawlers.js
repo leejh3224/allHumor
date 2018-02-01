@@ -1,8 +1,8 @@
 import axios from 'axios'
 import cheerio from 'cheerio'
-import getArticles from 'utils/getArticles'
 import Article from 'models/Article'
-import extractRawArticle from 'utils/extractRawArticle'
+import parseRawHtml from 'utils/parseRawHtml'
+import removeDuplicate from 'utils/removeDuplicate'
 
 export default {
   crawlDogdrip: async (req, res) => {
@@ -28,35 +28,11 @@ export default {
         urls.push(el.attribs.href)
       })
 
-      const [fromDB = { articleIds: [] }] = await Article.aggregate([
-        {
-          $match: { site: 'dogdrip' },
-        },
-        {
-          $group: { _id: null, articleIds: { $push: '$articleId' } },
-        },
-        {
-          $project: { _id: 0, articleIds: 1 },
-        },
-      ])
+      const withoutDuplicate = await removeDuplicate(urls, 'dogdrip')
+      const articles = await Promise.all(withoutDuplicate.map(url => parseRawHtml(url)))
+      const truthy = articles.filter(article => article)
 
-      const urlsWithoutDuplicate = urls
-        .map((url) => {
-          const getArticleId = str => str.replace(/[http|https]{1,}:\/\/www.[\w.]{1,}\//, '')
-          const hasCrawled = fromDB.articleIds.includes(getArticleId(url))
-
-          if (hasCrawled) {
-            return null
-          }
-
-          return url
-        })
-        .filter(url => url)
-
-      const rawArticles = await Promise.all(urlsWithoutDuplicate.map(url => extractRawArticle(url)))
-      const articles = await Promise.all(rawArticles.map(rawArticle => getArticles(rawArticle, 'http://www.dogdrip.net')))
-
-      await Article.insertMany(articles.filter(article => article))
+      await Article.insertMany(truthy)
 
       console.log('articles saved!')
       res.json({

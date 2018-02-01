@@ -22,23 +22,22 @@ const initialState = fromJS({
     current: 1,
     pageCount: 0,
   },
+  search: {
+    perPage: 0,
+    current: 1,
+    pageCount: 0,
+  },
 })
 
-export const getCategory = ({ pagination }) =>
-  pagination.getIn(['articles', 'category'])
-export const getCurrentPage = ({ pagination }) =>
-  pagination.getIn(['articles', 'current'])
-export const getLastPage = ({ pagination }) =>
-  pagination.getIn(['articles', 'pageCount'])
+export const getCategory = ({ pagination }) => pagination.getIn(['articles', 'category'])
+export const getCurrentPage = ({ pagination }) => pagination.getIn(['articles', 'current'])
+export const getLastPage = ({ pagination }) => pagination.getIn(['articles', 'pageCount'])
 export const getButtonsPerPage = ({ pagination }) =>
   pagination.getIn(['articles', 'buttonsPerPage'])
 
-export const getArticleId = ({ pagination }) =>
-  pagination.getIn(['comments', 'articleId'])
-export const getCommentsCurrentPage = ({ pagination }) =>
-  pagination.getIn(['comments', 'current'])
-export const getCommentsLastPage = ({ pagination }) =>
-  pagination.getIn(['comments', 'pageCount'])
+export const getArticleId = ({ pagination }) => pagination.getIn(['comments', 'articleId'])
+export const getCommentsCurrentPage = ({ pagination }) => pagination.getIn(['comments', 'current'])
+export const getCommentsLastPage = ({ pagination }) => pagination.getIn(['comments', 'pageCount'])
 
 /* eslint-disable no-mixed-operators, arrow-parens */
 export const getMinPage = createSelector(
@@ -58,10 +57,8 @@ export const getMaxPage = createSelector(
     return lastPage < 5 * N ? lastPage : 5 * N
   },
 )
-export const getRangeMinMax = createSelector(
-  getMinPage,
-  getMaxPage,
-  (min, max) => range(min, max + 1),
+export const getRangeMinMax = createSelector(getMinPage, getMaxPage, (min, max) =>
+  range(min, max + 1),
 )
 
 export const loadArticles = (category, page) => async dispatch => {
@@ -95,7 +92,9 @@ export const loadComments = () => async (dispatch, getState) => {
   dispatch({ type: types.comment.REQUEST })
 
   try {
-    const { data: { comments, perPage, total } } = await api.get(`/comments/${articleId}/page/${currentPage}`)
+    const { data: { comments, perPage, total } } = await api.get(
+      `/comments/${articleId}/page/${currentPage}`,
+    )
 
     if (comments) {
       dispatch({
@@ -115,14 +114,11 @@ export const loadComments = () => async (dispatch, getState) => {
 
 export default handleActions(
   {
-    [types.article.SUCCESS]: (
-      state,
-      {
-        payload: {
-          data: { result }, page, perPage, total,
-        },
+    [types.article.SUCCESS]: (state, {
+      payload: {
+        data: { result }, page, perPage, total,
       },
-    ) => {
+    }) => {
       const [articleId] = result
 
       // list of articles
@@ -137,16 +133,10 @@ export default handleActions(
         .setIn(['comments', 'current'], 1)
         .setIn(['comments', 'pageCount'], 0)
     },
-    [types.comment.SUCCESS]: (
-      state,
-      { payload: { data: { entities }, perPage, total } },
-    ) => {
+    [types.comment.SUCCESS]: (state, { payload: { data: { entities }, perPage, total } }) => {
       if (!isEmpty(entities)) {
         return state
-          .setIn(
-            ['comments', 'current'],
-            state.getIn(['comments', 'current']) + 1,
-          )
+          .setIn(['comments', 'current'], state.getIn(['comments', 'current']) + 1)
           .setIn(['comments', 'perPage'], perPage)
           .setIn(['comments', 'pageCount'], Math.ceil(total / perPage))
       }
@@ -171,9 +161,7 @@ export default handleActions(
             .setIn(['articles', 'current'], parseInt(nextPage, 10))
         }
       }
-      return state
-        .setIn(['articles', 'category'], 'all')
-        .setIn(['articles', 'current'], 1)
+      return state.setIn(['articles', 'category'], 'all').setIn(['articles', 'current'], 1)
     },
   },
   initialState,

@@ -6,16 +6,11 @@ import PreviewItemTemplate from './template'
 import Thumbnail from './Thumbnail'
 import Header from './Header'
 import Footer from './Footer'
+import ListDecoration from './ListDecoration'
 
-const PreviewItem = ({ article }) => {
+const PreviewItem = ({ article, listStyle, rank }) => {
   const {
-    _id,
-    thumbnail,
-    title,
-    author,
-    uploadDate,
-    voteCount,
-    commentCount,
+    _id, thumbnail, title, author, uploadDate, voteCount, commentCount,
   } = article
   return (
     <Link
@@ -25,14 +20,16 @@ const PreviewItem = ({ article }) => {
       to={`/article/${_id}`}
     >
       <PreviewItemTemplate
+        decorator={listStyle === 'popularity' ? <ListDecoration rank={rank} /> : null}
         thumbnail={
           <Thumbnail
-            url={`../../../article/${thumbnail || 'images/noimage.jpg'}`}
+            url={`../../../article/${
+              thumbnail === 'video' ? 'images/video.png' : thumbnail || 'images/noimage.jpg'
+            }`}
+            small={listStyle === 'popularity'}
           />
         }
-        header={
-          <Header title={title} author={author} date={formatDate(uploadDate)} />
-        }
+        header={<Header title={title} author={author} date={formatDate(uploadDate)} />}
         footer={<Footer voteCount={voteCount} commentCount={commentCount} />}
       />
     </Link>
@@ -40,15 +37,9 @@ const PreviewItem = ({ article }) => {
 }
 
 PreviewItem.propTypes = {
-  article: shape({
-    _id: string.isRequired,
-    thumbnail: string,
-    title: string.isRequired,
-    author: string.isRequired,
-    uploadDate: string.isRequired,
-    voteCount: number.isRequired,
-    commentCount: number.isRequired,
-  }).isRequired,
+  article: shape({}).isRequired,
+  listStyle: string.isRequired,
+  rank: number.isRequired,
 }
 
 export default PreviewItem

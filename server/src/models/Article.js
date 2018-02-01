@@ -30,6 +30,8 @@ const Article = new Schema(
   { timestamps: true },
 )
 
+Article.index({ author: 'text', title: 'text', content: 'text' })
+
 Article.post('remove', async (doc, next) => {
   const { _id } = doc
   try {

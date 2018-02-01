@@ -10,12 +10,16 @@ import { withRouter } from 'react-router-dom'
 import { PreviewItem } from 'components'
 
 class PreviewListContainer extends Component {
+  static defaultProps = {
+    order: '',
+  }
   static propTypes = {
     loadArticles: func.isRequired,
     fetching: bool.isRequired,
     articles: objectOf(object).isRequired,
     category: string.isRequired,
     currentPage: number.isRequired,
+    order: string,
   }
   componentDidMount() {
     const { loadArticles, category, currentPage } = this.props
@@ -23,19 +27,19 @@ class PreviewListContainer extends Component {
     loadArticles(category, currentPage)
   }
   render() {
-    const { fetching, articles } = this.props
+    const { fetching, articles, order } = this.props
 
-    const sorted = orderBy(articles, 'uploadDate', 'desc')
+    const sorted = orderBy(articles, order === 'popularity' ? 'voteCount' : 'uploadDate', 'desc')
 
     if (fetching) {
       return <p>loading ...</p>
     }
-    /* eslint-disable no-underscore-dangle */
+
     return (
       <ul>
         {sorted.length
-          ? sorted.map(article => (
-            <PreviewItem key={article._id} article={article} />
+          ? sorted.map((article, index) => (
+            <PreviewItem key={article._id} article={article} listStyle={order} rank={index + 1} />
             ))
           : '네트워크 연결이 불안정합니다.'}
       </ul>

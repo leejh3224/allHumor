@@ -1,19 +1,23 @@
 import React from 'react'
-import { string, bool, func } from 'prop-types'
-import { spacing, fonts } from 'styles/theme'
+import { string, number, func, bool } from 'prop-types'
+import { fonts } from 'styles/theme'
 
 const Content = ({
-  id, content, isTruncated, toggleExpandComment,
+  content,
+  marginBottom,
+  moreButtonText,
+  onClickShowMoreButton,
+  isLongContent,
 }) => (
   <div>
     <p
       css={{
-        marginBottom: isTruncated ? 0 : spacing.xsmall,
+        marginBottom,
       }}
     >
-      {isTruncated ? content.slice(0, 399) : content}
+      {content}
     </p>
-    {content.length >= 400 && (
+    {isLongContent && (
       <button
         css={{
           display: 'block',
@@ -21,19 +25,20 @@ const Content = ({
           fontWeight: 500,
           cursor: 'pointer',
         }}
-        onClick={() => toggleExpandComment(id)}
+        onClick={onClickShowMoreButton}
       >
-        {isTruncated ? '접기' : '펼치기'}
+        {moreButtonText}
       </button>
     )}
   </div>
 )
 
 Content.propTypes = {
-  id: string.isRequired,
   content: string.isRequired,
-  isTruncated: bool.isRequired,
-  toggleExpandComment: func.isRequired,
+  marginBottom: number.isRequired,
+  moreButtonText: string.isRequired,
+  onClickShowMoreButton: func.isRequired,
+  isLongContent: bool.isRequired,
 }
 
 export default Content

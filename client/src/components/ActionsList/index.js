@@ -1,5 +1,5 @@
 import React from 'react'
-import { arrayOf, shape, func } from 'prop-types'
+import { arrayOf, shape } from 'prop-types'
 import { spacing, colors, fonts, zIndex } from 'styles/theme'
 
 const listStyle = {
@@ -17,7 +17,7 @@ const listStyle = {
   zIndex: zIndex.actionsList,
 }
 
-const ActionsList = ({ actions, handleCloseMenu }) => (
+const ActionsList = ({ actions }) => (
   <ul
     css={{
       display: 'flex',
@@ -32,16 +32,7 @@ const ActionsList = ({ actions, handleCloseMenu }) => (
     }}
   >
     {actions.map(({ name, onClick }) => (
-      <li
-        css={listStyle}
-        onClick={() => {
-          onClick()
-          handleCloseMenu()
-        }}
-        onKeyPress={() => {}}
-        role="menuitem"
-        key={name}
-      >
+      <li css={listStyle} onClick={onClick} onKeyPress={() => {}} role="menuitem" key={name}>
         {name}
       </li>
     ))}
@@ -50,7 +41,6 @@ const ActionsList = ({ actions, handleCloseMenu }) => (
 
 ActionsList.propTypes = {
   actions: arrayOf(shape({})).isRequired,
-  handleCloseMenu: func.isRequired,
 }
 
 export default ActionsList

@@ -11,12 +11,13 @@ const colorMap = {
   dogdrip: colors.primary,
 }
 
-const ArticleMeta = ({ site, author, uploadDate }) => (
+const ArticleMeta = ({
+  site, author, uploadDate, originalArticleUrl,
+}) => (
   <div
     css={{
       display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
+      flexDirection: 'column',
       padding: spacing.medium,
       paddingTop: 0,
 
@@ -29,28 +30,45 @@ const ArticleMeta = ({ site, author, uploadDate }) => (
   >
     <div
       css={{
-        ...fonts.small,
         display: 'flex',
+        justifyContent: 'space-between',
         alignItems: 'center',
+        marginBottom: spacing.small,
       }}
     >
-      <span
+      <div
         css={{
-          display: 'inline-block',
-          color: colorMap[site],
-          border: `1px solid ${colors.primary}`,
-          borderRadius: 10,
-          lineHeight: 1.15,
-          padding: spacing.xsmall,
-          marginRight: spacing.small,
-          ...fonts.xsmall,
+          ...fonts.small,
+          display: 'flex',
+          alignItems: 'center',
         }}
       >
-        {toKorean[site]}
-      </span>
-      {author}
+        <span
+          css={{
+            display: 'inline-block',
+            color: colorMap[site],
+            border: `1px solid ${colors.primary}`,
+            borderRadius: 10,
+            lineHeight: 1.15,
+            padding: spacing.xsmall,
+            marginRight: spacing.small,
+            ...fonts.xsmall,
+          }}
+        >
+          {toKorean[site]}
+        </span>
+        <span>{author}</span>
+      </div>
+      <p css={{ ...fonts.small }}>{formatDate(uploadDate)}</p>
     </div>
-    <p css={{ ...fonts.small }}>{formatDate(uploadDate)}</p>
+    <span
+      css={{
+        ...fonts.xsmall,
+        textAlign: 'right',
+      }}
+    >
+      원본 <a href={originalArticleUrl}>{originalArticleUrl}</a>
+    </span>
   </div>
 )
 
@@ -58,6 +76,7 @@ ArticleMeta.propTypes = {
   site: string.isRequired,
   author: string.isRequired,
   uploadDate: string.isRequired,
+  originalArticleUrl: string.isRequired,
 }
 
 export default ArticleMeta

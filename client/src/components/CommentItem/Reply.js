@@ -1,5 +1,6 @@
 import React from 'react'
-import { shape, func, string, bool } from 'prop-types'
+import { shape, func, string } from 'prop-types'
+import { spacing } from 'styles/theme'
 import { CommentForm } from 'components'
 
 import CommentItemTemplate from './template'
@@ -9,7 +10,7 @@ import Header from './Header'
 import Content from './Content'
 import AddReplyButton from './AddReplyButton'
 import ActionButton from './ActionButton'
-import WithState from './WithState'
+import WithMenuState from './WithMenuState'
 
 const Reply = ({
   reply,
@@ -20,9 +21,6 @@ const Reply = ({
   showAddComment,
   myUserId,
   parentId,
-  isMenuVisible,
-  handleOpenMenu,
-  handleCloseMenu,
   editComment,
   startEditComment,
   finishEditComment,
@@ -40,43 +38,87 @@ const Reply = ({
     isEditing,
     isFetchingEditingComment,
     isFetchingAddReply,
+    isFetchingRemovingComment,
   } = reply
+
+  const renderBody = () => {
+    if (isEditing) {
+      return (
+        <CommentForm
+          isEditing={isEditing}
+          oldContent={content}
+          editComment={editComment}
+          from={_id}
+          onCancel={() => finishEditComment(_id)}
+        />
+      )
+    }
+
+    if (isFetchingEditingComment) {
+      return <p>수정 중입니다 ...</p>
+    }
+
+    if (isFetchingRemovingComment) {
+      return <p>삭제하는 중입니다 ...</p>
+    }
+
+    return (
+      <Body
+        header={<Header author={author} createdAt={createdAt} />}
+        content={
+          <Content
+            content={isTruncated ? content.slice(0, 399) : content}
+            moreButtonText={isTruncated ? '접기' : '펼치기'}
+            onClickShowMoreButton={() => toggleExpandComment(_id)}
+            marginBottom={isTruncated ? 0 : spacing.xsmall}
+            isLongContent={content.length >= 400}
+          />
+        }
+        addReplyButton={<AddReplyButton showAddComment={() => showAddComment(_id)} />}
+      />
+    )
+  }
+
+  const renderActionButton = () => {
+    const isAuthor = userId === myUserId
+    const inAction = isEditing || isFetchingRemovingComment
+
+    if (isAuthor && !inAction) {
+      return (
+        <WithMenuState>
+          {({ isMenuVisible, handleOpenMenu, handleCloseMenu }) => (
+            <ActionButton
+              isMenuVisible={isMenuVisible}
+              onClickActionButton={isMenuVisible ? handleCloseMenu : handleOpenMenu}
+              actions={[
+                {
+                  name: '수정',
+                  onClick: () => {
+                    startEditComment(_id)
+                    handleCloseMenu()
+                  },
+                },
+                {
+                  name: '삭제',
+                  onClick: () => {
+                    removeComment(_id)
+                    handleCloseMenu()
+                  },
+                },
+              ]}
+            />
+          )}
+        </WithMenuState>
+      )
+    }
+    return null
+  }
+
   return (
     <CommentItemTemplate
       thumbnail={<Thumbnail avatar={avatar} small />}
-      renderBody={(() => {
-        if (isEditing) {
-          return (
-            <CommentForm
-              isEditing={isEditing}
-              oldContent={content}
-              editComment={editComment}
-              from={_id}
-              onCancel={() => finishEditComment(_id)}
-            />
-          )
-        }
-
-        if (isFetchingEditingComment) {
-          return <p>수정 중입니다 ...</p>
-        }
-
-        return (
-          <Body
-            header={<Header author={author} createdAt={createdAt} />}
-            content={
-              <Content
-                id={_id}
-                content={content}
-                isTruncated={isTruncated}
-                toggleExpandComment={toggleExpandComment}
-              />
-            }
-            addReplyButton={<AddReplyButton id={_id} showAddComment={showAddComment} />}
-          />
-        )
-      })()}
-      form={
+      renderBody={renderBody()}
+      renderForm={
         isAddingReply && (
           <CommentForm
             addComment={addComment}
@@ -88,23 +130,7 @@ const Reply = ({
         )
       }
       loadingAddReply={isFetchingAddReply && <p>불러오는 중 ...</p>}
-      renderActionButton={(() => {
-        if (userId === myUserId) {
-          return (
-            !isEditing && (
-              <ActionButton
-                id={_id}
-                handleOpenMenu={handleOpenMenu}
-                handleCloseMenu={handleCloseMenu}
-                isMenuVisible={isMenuVisible}
-                startEditComment={startEditComment}
-                removeComment={removeComment}
-              />
-            )
-          )
-        }
-        return null
-      })()}
+      renderActionButton={renderActionButton()}
     />
   )
 }
@@ -118,13 +144,10 @@ Reply.propTypes = {
   showAddComment: func.isRequired,
   myUserId: string.isRequired,
   parentId: string.isRequired,
-  isMenuVisible: bool.isRequired,
-  handleOpenMenu: func.isRequired,
-  handleCloseMenu: func.isRequired,
   startEditComment: func.isRequired,
   finishEditComment: func.isRequired,
   editComment: func.isRequired,
   removeComment: func.isRequired,
 }
 
-export default WithState(Reply)
+export default Reply

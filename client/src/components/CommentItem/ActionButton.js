@@ -1,16 +1,9 @@
 import React from 'react'
-import { string, func, bool } from 'prop-types'
+import { arrayOf, shape, func, bool } from 'prop-types'
 import { fonts, colors } from 'styles/theme'
 import { ActionsList } from 'components'
 
-const ActionButton = ({
-  id,
-  handleOpenMenu,
-  handleCloseMenu,
-  isMenuVisible,
-  startEditComment,
-  removeComment,
-}) => (
+const ActionButton = ({ isMenuVisible, onClickActionButton, actions }) => (
   <div
     css={{
       position: 'absolute',
@@ -28,7 +21,7 @@ const ActionButton = ({
           color: colors.font,
         },
       }}
-      onClick={isMenuVisible ? handleCloseMenu : handleOpenMenu}
+      onClick={onClickActionButton}
     >
       <i
         className="ion-android-more-vertical"
@@ -38,31 +31,14 @@ const ActionButton = ({
         }}
       />
     </button>
-    {isMenuVisible && (
-      <ActionsList
-        actions={[
-          {
-            name: '수정',
-            onClick: () => startEditComment(id),
-          },
-          {
-            name: '삭제',
-            onClick: () => removeComment(id),
-          },
-        ]}
-        handleCloseMenu={handleCloseMenu}
-      />
-    )}
+    {isMenuVisible && <ActionsList actions={actions} />}
   </div>
 )
 
 ActionButton.propTypes = {
-  id: string.isRequired,
-  handleOpenMenu: func.isRequired,
-  handleCloseMenu: func.isRequired,
   isMenuVisible: bool.isRequired,
-  startEditComment: func.isRequired,
-  removeComment: func.isRequired,
+  onClickActionButton: func.isRequired,
+  actions: arrayOf(shape()).isRequired,
 }
 
 export default ActionButton

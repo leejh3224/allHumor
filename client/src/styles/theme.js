@@ -29,9 +29,9 @@ const screenSize = {
 const media = {
   between(smallKey, largeKey, excludeLarge = false) {
     if (excludeLarge) {
-      return `@media (min-width: ${
-        screenSize[smallKey].min
-      }px) and (max-width: ${screenSize[largeKey].min - 1}px)`
+      return `@media (min-width: ${screenSize[smallKey].min}px) and (max-width: ${screenSize[
+        largeKey
+      ].min - 1}px)`
     }
     if (screenSize[largeKey].max === Infinity) {
       return `@media (min-width: ${screenSize[smallKey].min}px)`
@@ -69,13 +69,12 @@ const fonts = {
     fontWeight: 700,
     lineHeight: '140%',
 
-    [media.lessThan('medium')]: {
+    [media.between('medium', 'mediumLarge')]: {
       fontSize: 20,
     },
-  },
-  body: {
-    fontSize: 16,
-    lineHeight: '140%',
+    [media.lessThan('medium')]: {
+      fontSize: 18,
+    },
   },
   small: {
     fontSize: 18,
@@ -84,6 +83,10 @@ const fonts = {
     [media.lessThan('medium')]: {
       fontSize: 16,
     },
+  },
+  body: {
+    fontSize: 16,
+    lineHeight: '140%',
   },
   xsmall: {
     fontSize: 13,

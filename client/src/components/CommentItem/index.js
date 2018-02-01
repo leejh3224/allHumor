@@ -1,5 +1,5 @@
 import React from 'react'
-import { func, bool, shape, string } from 'prop-types'
+import { func, shape, string, arrayOf } from 'prop-types'
 import { spacing } from 'styles/theme'
 import { CommentForm } from 'components'
 
@@ -12,11 +12,11 @@ import AddReplyButton from './AddReplyButton'
 import ShowReplyButton from './ShowReplyButton'
 import Reply from './Reply'
 import ActionButton from './ActionButton'
-import WithState from './WithState'
+import WithMenuState from './WithMenuState'
 
 const CommentItem = ({
   comment,
-  getRepliesOfComment,
+  repliesList,
   toggleReplies,
   showAddComment,
   hideAddComment,
@@ -25,9 +25,6 @@ const CommentItem = ({
   toggleExpandComment,
   loadReplies,
   myUserId,
-  isMenuVisible,
-  handleOpenMenu,
-  handleCloseMenu,
   startEditComment,
   finishEditComment,
   editComment,
@@ -39,65 +36,147 @@ const CommentItem = ({
     avatar,
     content,
     createdAt,
-    replies,
     userId,
+    replies,
     isAddingReply,
-    isEditing,
-    isFetchingReply,
     isFetchingAddReply,
-    isFetchingEditingComment,
     isTruncated,
-    isShowingReply,
   } = comment
-  const repliesList = Object.values(getRepliesOfComment(_id))
-  return (
-    <CommentItemTemplate
-      thumbnail={<Thumbnail avatar={avatar} />}
-      renderBody={(() => {
-        if (isEditing) {
-          return (
-            <CommentForm
-              isEditing={isEditing}
-              oldContent={content}
-              editComment={editComment}
-              from={_id}
-              onCancel={() => finishEditComment(_id)}
+  const { isEditing, isFetchingEditingComment, isFetchingRemovingComment } = comment
+  const { isShowingReply, isFetchingReply } = comment
+
+  const renderBody = () => {
+    if (isEditing) {
+      return (
+        <CommentForm
+          isEditing={isEditing}
+          oldContent={content}
+          editComment={editComment}
+          from={_id}
+          onCancel={() => finishEditComment(_id)}
+        />
+      )
+    }
+
+    if (isFetchingEditingComment) {
+      return <p>수정하는 중입니다 ...</p>
+    }
+
+    if (isFetchingRemovingComment) {
+      return <p>삭제하는 중입니다 ...</p>
+    }
+
+    return (
+      <Body
+        header={<Header author={author} createdAt={createdAt} />}
+        content={
+          <Content
+            content={isTruncated ? content.slice(0, 399) : content}
+            moreButtonText={isTruncated ? '접기' : '펼치기'}
+            onClickShowMoreButton={() => toggleExpandComment(_id)}
+            marginBottom={isTruncated ? 0 : spacing.xsmall}
+            isLongContent={content.length >= 400}
+          />
+        }
+        addReplyButton={<AddReplyButton showAddComment={() => showAddComment(_id)} />}
+        showReplyButton={
+          replies &&
+          replies.length > 0 && (
+            <ShowReplyButton
+              isShowingReply={isShowingReply}
+              onClickShowReply={() => {
+                if (!isShowingReply) {
+                  loadReplies(_id)
+                }
+                return toggleReplies(_id)
+              }}
+              // repliesList는 loadReply 함수 호출 후 숫자가 제대로 표시됨
+              // 그러므로 처음에는 replies.length를 보여줌
+              replyCount={repliesList.length || replies.length}
             />
           )
         }
+      />
+    )
+  }
 
-        if (isFetchingEditingComment) {
-          return <p>수정 중입니다 ...</p>
-        }
-
-        return (
-          <Body
-            header={<Header author={author} createdAt={createdAt} />}
-            content={
-              <Content
-                id={_id}
-                content={content}
-                isTruncated={isTruncated}
+  const renderRepliesList = () => {
+    if (isShowingReply) {
+      return isFetchingReply ? (
+        <p>불러오는 중 ...</p>
+      ) : (
+        <ul>
+          {repliesList.map(reply => (
+            <li
+              key={reply._id + 1}
+              css={{
+                paddingTop: spacing.small,
+                paddingBottom: spacing.small,
+              }}
+            >
+              <Reply
+                key={reply._id}
+                reply={reply}
                 toggleExpandComment={toggleExpandComment}
+                hideAddComment={hideAddComment}
+                addComment={addComment}
+                addReply={addReply}
+                showAddComment={showAddComment}
+                myUserId={myUserId}
+                startEditComment={startEditComment}
+                finishEditComment={finishEditComment}
+                editComment={editComment}
+                removeComment={removeComment}
+                parentId={_id}
               />
-            }
-            addReplyButton={<AddReplyButton id={_id} showAddComment={showAddComment} />}
-            showReplyButton={
-              replies &&
-              replies.length > 0 && (
-                <ShowReplyButton
-                  id={_id}
-                  isShowingReply={isShowingReply}
-                  loadReplies={loadReplies}
-                  toggleReplies={toggleReplies}
-                  replyCount={replies.length}
-                />
-              )
-            }
-          />
-        )
-      })()}
-      form={
+            </li>
+          ))}
+        </ul>
+      )
+    }
+    return null
+  }
+
+  const renderActionButton = () => {
+    const isAuthor = userId === myUserId
+    const inAction = isEditing || isFetchingRemovingComment
+
+    if (isAuthor && !inAction) {
+      return (
+        <WithMenuState>
+          {({ isMenuVisible, handleOpenMenu, handleCloseMenu }) => (
+            <ActionButton
+              isMenuVisible={isMenuVisible}
+              onClickActionButton={isMenuVisible ? handleCloseMenu : handleOpenMenu}
+              actions={[
+                {
+                  name: '수정',
+                  onClick: () => {
+                    startEditComment(_id)
+                    handleCloseMenu()
+                  },
+                },
+                {
+                  name: '삭제',
+                  onClick: () => {
+                    removeComment(_id)
+                    handleCloseMenu()
+                  },
+                },
+              ]}
+            />
+          )}
+        </WithMenuState>
+      )
+    }
+    return null
+  }
+
+  return (
+    <CommentItemTemplate
+      thumbnail={<Thumbnail avatar={avatar} />}
+      renderBody={renderBody()}
+      renderForm={
         isAddingReply && (
           <CommentForm
             addComment={addComment}
@@ -109,63 +188,15 @@ const CommentItem = ({
         )
       }
       loadingAddReply={isFetchingAddReply && <p>불러오는 중 ...</p>}
-      renderRepliesList={
-        isFetchingReply
-          ? isShowingReply && <p>불러오는 중...</p>
-          : isShowingReply && (
-          <ul>
-            {repliesList.map(reply => (
-              <li
-                key={reply._id + 1}
-                css={{
-                      paddingTop: spacing.small,
-                      paddingBottom: spacing.small,
-                    }}
-              >
-                <Reply
-                  key={reply._id}
-                  reply={reply}
-                  toggleExpandComment={toggleExpandComment}
-                  hideAddComment={hideAddComment}
-                  addComment={addComment}
-                  addReply={addReply}
-                  showAddComment={showAddComment}
-                  myUserId={myUserId}
-                  startEditComment={startEditComment}
-                  finishEditComment={finishEditComment}
-                  editComment={editComment}
-                  removeComment={removeComment}
-                  parentId={_id}
-                />
-              </li>
-                ))}
-          </ul>
-            )
-      }
-      renderActionButton={(() => {
-        if (userId === myUserId) {
-          return (
-            !isEditing && (
-              <ActionButton
-                id={_id}
-                handleOpenMenu={handleOpenMenu}
-                handleCloseMenu={handleCloseMenu}
-                isMenuVisible={isMenuVisible}
-                startEditComment={startEditComment}
-                removeComment={removeComment}
-              />
-            )
-          )
-        }
-        return null
-      })()}
+      renderRepliesList={renderRepliesList()}
+      renderActionButton={renderActionButton()}
     />
   )
 }
 
 CommentItem.propTypes = {
   comment: shape().isRequired,
-  getRepliesOfComment: func.isRequired,
+  repliesList: arrayOf(shape()).isRequired,
   toggleReplies: func.isRequired,
   showAddComment: func.isRequired,
   hideAddComment: func.isRequired,
@@ -174,13 +205,10 @@ CommentItem.propTypes = {
   toggleExpandComment: func.isRequired,
   loadReplies: func.isRequired,
   myUserId: string.isRequired,
-  isMenuVisible: bool.isRequired,
-  handleOpenMenu: func.isRequired,
-  handleCloseMenu: func.isRequired,
   startEditComment: func.isRequired,
   finishEditComment: func.isRequired,
   editComment: func.isRequired,
   removeComment: func.isRequired,
 }
 
-export default WithState(CommentItem)
+export default CommentItem

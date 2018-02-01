@@ -4,7 +4,7 @@ import { element, func, node } from 'prop-types'
 const CommentItemTemplate = ({
   thumbnail,
   renderBody,
-  form,
+  renderForm,
   loadingAddReply,
   renderRepliesList,
   renderActionButton,
@@ -25,7 +25,7 @@ const CommentItemTemplate = ({
         marginLeft: 70,
       }}
     >
-      {form}
+      {renderForm}
       {loadingAddReply}
       {renderRepliesList}
     </div>
@@ -33,14 +33,13 @@ const CommentItemTemplate = ({
 )
 
 CommentItemTemplate.defaultProps = {
-  form: null,
   loadingAddReply: null,
 }
 
 CommentItemTemplate.propTypes = {
   thumbnail: element.isRequired,
   renderBody: func.isRequired,
-  form: element,
+  renderForm: element.isRequired,
   loadingAddReply: node,
   renderRepliesList: func.isRequired,
   renderActionButton: func.isRequired,

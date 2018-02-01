@@ -8,12 +8,19 @@ import Content from './Content'
 
 const ArticleContent = ({
   article: {
-    title, site, author, uploadDate, content,
+    articleId, title, site, author, uploadDate, content,
   },
 }) => (
   <ArticleContentTemplate
     title={<Title title={title} />}
-    articleMeta={<ArticleMeta site={site} author={author} uploadDate={uploadDate} />}
+    articleMeta={
+      <ArticleMeta
+        site={site}
+        author={author}
+        uploadDate={uploadDate}
+        originalArticleUrl={`http://www.dogdrip.net/${articleId}`}
+      />
+    }
     content={<Content content={content} />}
   />
 )

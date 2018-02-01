@@ -4,17 +4,23 @@ import mongoose from 'mongoose'
 import omit from 'lodash/omit'
 
 export default {
-  getArticlesByCategory: async (req, res) => {
+  getArticles: async (req, res) => {
     const { category, page } = req.params
     const PER_PAGE = 10
+    const { keyword } = req.query
 
     // find all for category all
-    const findQuery = category === 'all' ? {} : { site: category }
+    let findQuery = category === 'all' ? {} : { site: category }
+
+    if (keyword) {
+      findQuery = Object.assign(findQuery, { $text: { $search: keyword } })
+    }
 
     // aggregation
     const match = {
       $match: findQuery,
     }
+
     const lookupForVotes = {
       $lookup: {
         from: 'votes',
@@ -29,6 +35,9 @@ export default {
         commentCount: { $size: '$comments' },
       },
     }
+    const sort = {
+      $sort: { uploadDate: -1 },
+    }
     const excludeFieldVotes = {
       $project: {
         votes: false,
@@ -41,21 +50,19 @@ export default {
     const limit = {
       $limit: PER_PAGE,
     }
-    const sort = {
-      $sort: { uploadDate: -1 },
-    }
+    const pipeline = [
+      match,
+      lookupForVotes,
+      addFieldVoteCounts,
+      sort,
+      excludeFieldVotes,
+      skip,
+      limit,
+    ].filter(pipe => pipe)
 
     try {
       const total = await Article.find(findQuery).count()
-      let articles = await Article.aggregate([
-        match,
-        lookupForVotes,
-        addFieldVoteCounts,
-        excludeFieldVotes,
-        skip,
-        limit,
-        sort,
-      ])
+      let articles = await Article.aggregate(pipeline)
 
       articles = articles.map(article => omit(article, ['__v']))
 

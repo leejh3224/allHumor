@@ -36,7 +36,6 @@ export const switchLoginView = () => dispatch => {
 
 const commentInitialState = {
   isEditing: false,
-  isRemoving: false,
   isAddingReply: false,
   isShowingReply: false,
   isFetchingReply: false,
@@ -46,7 +45,6 @@ const commentInitialState = {
 }
 const replyInitialState = {
   isEditing: false,
-  isRemoving: false,
   isAddingReply: false,
   isFetchingAddReply: false,
   isFetchingEditingComment: false,
@@ -112,9 +110,23 @@ export default handleActions(
         false,
       )
     },
-    [types.comment.REMOVE_SUCCESS]: (state, { payload }) => {
-      console.log(payload)
-      return state
+    [types.comment.REMOVE_REQUEST]: (state, { payload: { id } }) => {
+      const isCommentType = state.get('comments').has(id)
+      return state.setIn(
+        [isCommentType ? 'comments' : 'replies', id, 'isFetchingRemovingComment'],
+        true,
+      )
+    },
+    [types.comment.REMOVE_SUCCESS]: (state, { payload: { id } }) => {
+      const isCommentType = state.get('comments').has(id)
+      return state.setIn([isCommentType ? 'comments' : 'replies', id], undefined)
+    },
+    [types.comment.REMOVE_ERROR]: (state, { payload: { id } }) => {
+      const isCommentType = state.get('comments').has(id)
+      return state.setIn(
+        [isCommentType ? 'comments' : 'replies', id, 'isFetchingRemovingComment'],
+        false,
+      )
     },
     [types.reply.REQUEST]: (state, { payload: { id } }) =>
       state.setIn(['comments', id, 'isFetchingReply'], true),

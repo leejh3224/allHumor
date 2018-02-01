@@ -4,6 +4,7 @@ module.exports = {
   rules: {
     semi: 0,
     'no-underscore-dangle': 0,
+    'no-return-assign': 0,
 
     // import
     'import/no-extraneous-dependencies': 0,

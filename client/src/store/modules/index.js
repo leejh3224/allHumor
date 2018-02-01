@@ -8,6 +8,7 @@ import voting from './voting'
 import comment from './comment'
 import user from './user'
 import ui from './ui'
+import search from './search'
 
 const rootReducer = combineReducers({
   router: routerReducer,
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
   comment,
   user,
   ui,
+  search,
 })
 
 export default rootReducer

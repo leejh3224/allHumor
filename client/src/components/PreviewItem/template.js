@@ -2,7 +2,9 @@ import React from 'react'
 import { element } from 'prop-types'
 import { colors, spacing, media } from 'styles/theme'
 
-const PreviewItemTemplate = ({ thumbnail, header, footer }) => (
+const PreviewItemTemplate = ({
+  thumbnail, header, footer, decorator,
+}) => (
   <article
     css={{
       display: 'flex',
@@ -14,10 +16,11 @@ const PreviewItemTemplate = ({ thumbnail, header, footer }) => (
       },
 
       [media.lessThan('medium')]: {
-        padding: spacing.small,
+        padding: spacing.xsmall,
       },
     }}
   >
+    {decorator}
     {thumbnail}
     <div
       css={{
@@ -32,10 +35,15 @@ const PreviewItemTemplate = ({ thumbnail, header, footer }) => (
   </article>
 )
 
+PreviewItemTemplate.defaultProps = {
+  decorator: null,
+}
+
 PreviewItemTemplate.propTypes = {
   thumbnail: element.isRequired,
   header: element.isRequired,
   footer: element.isRequired,
+  decorator: element,
 }
 
 export default PreviewItemTemplate

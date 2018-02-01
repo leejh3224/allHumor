@@ -1,26 +1,29 @@
-import React, { Component } from 'react'
+import { Component } from 'react'
+import { func } from 'prop-types'
 
-const StickyOnScrollHoc = WrappedComponent =>
-  class StickyOnScroll extends Component {
-    state = {
-      isSticky: false,
-    }
-    componentWillMount() {
-      window.addEventListener('scroll', this.handleScroll)
-    }
-    componentWillUnmount() {
-      window.removeEventListener('scroll', this.handleScroll)
-    }
-    handleScroll = () => {
-      if (window.scrollY >= 70) {
-        this.setState({ isSticky: true })
-      } else {
-        this.setState({ isSticky: false })
-      }
-    }
-    render() {
-      return <WrappedComponent {...this.state} {...this.props} />
+class StickyOnScroll extends Component {
+  static propTypes = {
+    children: func.isRequired,
+  }
+  state = {
+    isSticky: false,
+  }
+  componentWillMount() {
+    window.addEventListener('scroll', this.handleScroll)
+  }
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.handleScroll)
+  }
+  handleScroll = () => {
+    if (window.scrollY >= 70) {
+      this.setState({ isSticky: true })
+    } else {
+      this.setState({ isSticky: false })
     }
   }
+  render() {
+    return this.props.children({ ...this.state })
+  }
+}
 
-export default StickyOnScrollHoc
+export default StickyOnScroll

@@ -46,4 +46,10 @@ export default {
     START_EDIT_COMMENT: 'ui/START_EDIT_COMMENT',
     FINISH_EDIT_COMMENT: 'ui/FINISH_EDIT_COMMENT',
   },
+  search: {
+    CHANGE_INPUT: 'search/CHANGE_INPUT',
+    REQUEST: 'search/SEARCH_REQUEST',
+    SUCCESS: 'search/SEARCH_SUCCESS',
+    ERROR: 'search/SEARCH_ERROR',
+  },
 }

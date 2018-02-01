@@ -1,10 +1,8 @@
 import React from 'react'
-import { string, bool, func, number } from 'prop-types'
+import { bool, func, number } from 'prop-types'
 import { spacing, fonts } from 'styles/theme'
 
-const ShowReplyButton = ({
-  id, isShowingReply, loadReplies, toggleReplies, replyCount,
-}) => (
+const ShowReplyButton = ({ onClickShowReply, replyCount, isShowingReply }) => (
   <span
     css={{
       ...fonts.xsmall,
@@ -12,12 +10,7 @@ const ShowReplyButton = ({
       fontWeight: 500,
       marginBottom: spacing.small,
     }}
-    onClick={() => {
-      if (!isShowingReply) {
-        loadReplies(id)
-      }
-      toggleReplies(id)
-    }}
+    onClick={onClickShowReply}
     onKeyPress={() => {}}
     aria-label="open"
     role="button"
@@ -34,10 +27,8 @@ const ShowReplyButton = ({
 )
 
 ShowReplyButton.propTypes = {
-  id: string.isRequired,
   isShowingReply: bool.isRequired,
-  loadReplies: func.isRequired,
-  toggleReplies: func.isRequired,
+  onClickShowReply: func.isRequired,
   replyCount: number.isRequired,
 }
 

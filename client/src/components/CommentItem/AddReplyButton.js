@@ -1,8 +1,8 @@
 import React from 'react'
-import { func, string } from 'prop-types'
+import { func } from 'prop-types'
 import { spacing, fonts, colors } from 'styles/theme'
 
-const AddReplyButton = ({ id, showAddComment }) => (
+const AddReplyButton = ({ showAddComment }) => (
   <button
     css={{
       ...fonts.xsmall,
@@ -10,14 +10,13 @@ const AddReplyButton = ({ id, showAddComment }) => (
       color: colors.grey,
       padding: `0 ${spacing.xsmall}px`,
     }}
-    onClick={() => showAddComment(id)}
+    onClick={showAddComment}
   >
     답글
   </button>
 )
 
 AddReplyButton.propTypes = {
-  id: string.isRequired,
   showAddComment: func.isRequired,
 }
 

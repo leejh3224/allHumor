@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { string, bool, func } from 'prop-types'
+import { string, bool, func, arrayOf, shape } from 'prop-types'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import { compose } from 'recompose'
@@ -11,15 +11,16 @@ class CategoryGroupContainer extends Component {
     category: string.isRequired,
     isSticky: bool.isRequired,
     loadArticles: func.isRequired,
+    categories: arrayOf(shape()).isRequired,
   }
-  loadNewCategory = (newCategory) => {
+  loadNewCategory = newCategory => {
     const { category, loadArticles } = this.props
     if (category !== newCategory) {
       loadArticles(newCategory, 1)
     }
   }
   render() {
-    const { category, isSticky } = this.props
+    const { category, isSticky, categories } = this.props
     const { loadNewCategory } = this
     const activeCategory = category
     return (
@@ -27,6 +28,7 @@ class CategoryGroupContainer extends Component {
         isSticky={isSticky}
         activeCategory={activeCategory}
         loadNewCategory={loadNewCategory}
+        categories={categories}
       />
     )
   }

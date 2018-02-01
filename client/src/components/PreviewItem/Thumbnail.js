@@ -1,18 +1,19 @@
 import React from 'react'
-import { string } from 'prop-types'
+import { string, bool } from 'prop-types'
 import { spacing, media } from 'styles/theme'
 
-const Thumbnail = ({ url }) => (
+const Thumbnail = ({ url, small }) => (
   <figure>
     <img
       css={{
-        width: 120,
+        width: small ? 100 : 120,
         height: 150,
-        marginRight: spacing.medium,
+        marginRight: spacing.small,
 
         [media.greaterThan('small')]: {
           width: 180,
           height: 220,
+          marginRight: spacing.medium,
         },
       }}
       src={url}
@@ -23,6 +24,7 @@ const Thumbnail = ({ url }) => (
 
 Thumbnail.propTypes = {
   url: string.isRequired,
+  small: bool.isRequired,
 }
 
 export default Thumbnail

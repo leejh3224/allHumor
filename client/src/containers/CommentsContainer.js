@@ -23,8 +23,7 @@ class CommentsContainer extends Component {
     } = this.props
     const haveMoreToLoad = comments.length >= 20
     const reachedLastPage = currentPage !== lastPage
-    const touchingBottom =
-      nextProps.isAtTheBottom !== isAtTheBottom && !isAtTheBottom
+    const touchingBottom = nextProps.isAtTheBottom !== isAtTheBottom && !isAtTheBottom
 
     if (haveMoreToLoad && reachedLastPage && touchingBottom) {
       const throttled = throttle(nextProps.loadComments, 500)
@@ -35,20 +34,14 @@ class CommentsContainer extends Component {
   render() {
     const { getRepliesOfCommentThunk } = this.props
 
-    return (
-      <Comments
-        {...this.props}
-        getRepliesOfComment={getRepliesOfCommentThunk}
-      />
-    )
+    return <Comments {...this.props} getRepliesOfCommentById={getRepliesOfCommentThunk} />
   }
 }
 
 export default connect(
   state => ({
     comments: commentDucks.getOrderedComments(state),
-    getRepliesOfCommentThunk: commentId =>
-      commentDucks.getOrderedReplies(state, commentId),
+    getRepliesOfCommentThunk: commentId => commentDucks.getOrderedReplies(state, commentId),
     fetchingAddComment: fetchingDucks.getFetchingAddComment(state),
     fetchingComment: fetchingDucks.getFetchingComment(state),
     myUserId: userDucks.getUserId(state),
