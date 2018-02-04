@@ -44,7 +44,7 @@ const Routes = props => (
       />
       <Route
         exact
-        path="/article/:id"
+        path="/:id"
         render={routerProps => <Article {...props} {...routerProps} />}
       />
       <Route

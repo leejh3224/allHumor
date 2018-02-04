@@ -17,7 +17,7 @@ export const loadArticle = id => async dispatch => {
   try {
     const { data: { articles } } = await api.get(`/articles/${id}`)
 
-    if (articles.length) {
+    if (articles) {
       dispatch({
         type: types.article.SUCCESS,
         payload: {

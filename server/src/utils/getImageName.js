@@ -1,4 +1,4 @@
 import head from 'lodash/head'
+import uuidv4 from 'uuid/v4'
 
-// returns full match
-export default string => head(string.match(/[\w]{0,}.(gif|jpe?g|tiff|png)?$/i))
+export default src => uuidv4() + head(src.match(/.(gif|jpe?g|tiff|png)?$/i))

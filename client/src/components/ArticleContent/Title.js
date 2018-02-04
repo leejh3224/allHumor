@@ -4,7 +4,6 @@ import { spacing, fonts, media } from 'styles/theme'
 
 const Title = ({ title }) => (
   <h1
-    className="title"
     css={{
       ...fonts.large,
       padding: spacing.medium,

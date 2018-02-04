@@ -12,8 +12,8 @@ import { isAuthenticated, logout } from 'utils/auth'
 import categories from 'globals/categories'
 
 const Article = ({ location: { pathname } }) => {
-  const idRegex = /(article)\/([\w]{0,})/
-  const articleId = idRegex.exec(pathname)[2]
+  const idRegex = /[^/]+/
+  const articleId = idRegex.exec(pathname)[0]
   return (
     <StickyOnScroll>
       {({ isSticky }) => (

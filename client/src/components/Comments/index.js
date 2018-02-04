@@ -20,6 +20,10 @@ const Comments = ({
         marginRight: 'auto',
         marginLeft: 'auto',
       },
+
+      [media.lessThan('medium')]: {
+        padding: spacing.small,
+      },
     }}
   >
     <p

@@ -1,13 +1,18 @@
 import React from 'react'
 import { fonts, spacing } from 'styles/theme'
-import { SearchForm, PreviewItem } from 'components'
+import { SearchForm, PreviewItem, ImageLink } from 'components'
 import { SearchPageContainer, PreviewListContainer } from 'containers'
 
 const Search = () => (
   <SearchPageContainer>
     {({
- keyword, handleInputChange, handleSubmit, searchResult,
-}) => {
+      keyword,
+      handleInputChange,
+      handleSubmit,
+      searchResult,
+      fetchingSearchResult,
+      isSubmitted,
+    }) => {
       const results = Object.values(searchResult)
       return (
         <div>
@@ -16,34 +21,74 @@ const Search = () => (
             handleInputChange={handleInputChange}
             handleSubmit={handleSubmit}
           />
-          <div>
-            <h1
-              css={{
-                ...fonts.header,
-                padding: spacing.medium,
-              }}
-            >
-              {results.length
-                ? `총 ${results.length}건의 검색 결과가 있습니다.`
-                : '검색 결과가 존재하지 않습니다.'}
-            </h1>
-          </div>
-          {results.length ? results.map(article => <PreviewItem article={article} />) : null}
-          <div
-            css={{
-              marginTop: spacing.medium,
-            }}
-          >
-            <h1
-              css={{
-                ...fonts.header,
-                paddingLeft: spacing.medium,
-              }}
-            >
-              인기 게시물
-            </h1>
-            <PreviewListContainer order="popularity" />
-          </div>
+          {fetchingSearchResult ? (
+            '검색결과를 불러오는 중...'
+          ) : (
+            <div>
+              <div>
+                <h1
+                  css={{
+                    ...fonts.header,
+                    padding: isSubmitted ? spacing.medium : 0,
+                    paddingBottom: 0,
+                  }}
+                >
+                  {(() => {
+                    if (isSubmitted) {
+                      if (results.length) {
+                        return `총 ${results.length}건의 검색 결과가 있습니다.`
+                      }
+                      return '검색 결과가 존재하지 않습니다.'
+                    }
+                    return null
+                  })()}
+                </h1>
+                {results.length ? results.map(article => <PreviewItem article={article} />) : null}
+              </div>
+              <div
+                css={{
+                  marginTop: spacing.medium,
+                }}
+              >
+                <h1
+                  css={{
+                    ...fonts.header,
+                    paddingLeft: spacing.medium,
+                  }}
+                >
+                  게시판 바로가기
+                </h1>
+                <div
+                  css={{
+                    width: '100%',
+                    display: 'flex',
+                    flexWrap: 'nowrap',
+                    overflowX: 'auto',
+                  }}
+                >
+                  <ImageLink width={150} height={150} name="유머" imageName="humor.png" />
+                  <ImageLink width={150} height={150} name="비트코인" imageName="bitcoin.jpg" />
+                  <ImageLink width={150} height={150} name="축구" imageName="soccer.png" />
+                  <ImageLink width={150} height={150} name="아이돌" imageName="idol.jpg" />
+                </div>
+              </div>
+              <div
+                css={{
+                  marginTop: spacing.medium,
+                }}
+              >
+                <h1
+                  css={{
+                    ...fonts.header,
+                    paddingLeft: spacing.medium,
+                  }}
+                >
+                  인기 게시물
+                </h1>
+                <PreviewListContainer theme="popularity" />
+              </div>
+            </div>
+          )}
         </div>
       )
     }}

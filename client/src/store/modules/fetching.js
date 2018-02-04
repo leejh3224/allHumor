@@ -14,6 +14,7 @@ const initialState = fromJS({
 export const getFetchingArticle = ({ fetching }) => fetching.get('article')
 export const getFetchingAddComment = ({ fetching }) => fetching.getIn(['add', 'comment'])
 export const getFetchingComment = ({ fetching }) => fetching.get('comment')
+export const getFetchingSearchResult = ({ fetching }) => fetching.get('search')
 
 export default handleActions(
   {

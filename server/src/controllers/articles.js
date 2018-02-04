@@ -64,7 +64,7 @@ export default {
       const total = await Article.find(findQuery).count()
       let articles = await Article.aggregate(pipeline)
 
-      articles = articles.map(article => omit(article, ['__v']))
+      articles = articles.map(article => omit(article, ['__v', 'site', 'content']))
 
       res.json({
         articles,

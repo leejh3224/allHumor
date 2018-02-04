@@ -42,10 +42,7 @@ class ArticleContentContainer extends Component {
 
     if (!isEmpty(articleContent)) {
       return [
-        <ArticleContent
-          key="article_content"
-          article={articleContent[articleId]}
-        />,
+        <ArticleContent key="article_content" article={articleContent[articleId]} />,
         <Voting
           key="article_votes"
           counts={voteCount}

@@ -11,7 +11,7 @@ import { PreviewItem } from 'components'
 
 class PreviewListContainer extends Component {
   static defaultProps = {
-    order: '',
+    theme: '',
   }
   static propTypes = {
     loadArticles: func.isRequired,
@@ -19,7 +19,7 @@ class PreviewListContainer extends Component {
     articles: objectOf(object).isRequired,
     category: string.isRequired,
     currentPage: number.isRequired,
-    order: string,
+    theme: string,
   }
   componentDidMount() {
     const { loadArticles, category, currentPage } = this.props
@@ -27,9 +27,9 @@ class PreviewListContainer extends Component {
     loadArticles(category, currentPage)
   }
   render() {
-    const { fetching, articles, order } = this.props
+    const { fetching, articles, theme } = this.props
 
-    const sorted = orderBy(articles, order === 'popularity' ? 'voteCount' : 'uploadDate', 'desc')
+    const sorted = orderBy(articles, theme === 'popularity' ? 'voteCount' : 'uploadDate', 'desc')
 
     if (fetching) {
       return <p>loading ...</p>
@@ -39,9 +39,9 @@ class PreviewListContainer extends Component {
       <ul>
         {sorted.length
           ? sorted.map((article, index) => (
-            <PreviewItem key={article._id} article={article} listStyle={order} rank={index + 1} />
+            <PreviewItem key={article._id} article={article} listStyle={theme} rank={index + 1} />
             ))
-          : '네트워크 연결이 불안정합니다.'}
+          : '아이템이 존재하지 않습니다.'}
       </ul>
     )
   }

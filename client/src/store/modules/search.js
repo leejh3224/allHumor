@@ -12,11 +12,13 @@ const initialState = fromJS({
       articles: {},
     },
   },
+  isSubmitted: false,
 })
 
 export const getKeyword = ({ search }) => search.get('keyword')
 export const getResult = ({ search }) =>
   (search.getIn(['result', 'entities', 'articles']) || Map()).toJS()
+export const getIsSubmitted = ({ search }) => search.get('isSubmitted')
 
 export const handleInputChange = e => dispatch => {
   dispatch({ type: types.search.CHANGE_INPUT, payload: { keyword: e.target.value } })
@@ -48,6 +50,7 @@ export const handleSubmit = e => async (dispatch, getState) => {
 export default handleActions(
   {
     [types.search.CHANGE_INPUT]: (state, { payload: { keyword } }) => state.set('keyword', keyword),
+    [types.search.REQUEST]: state => state.set('isSubmitted', true),
     [types.search.SUCCESS]: (state, { payload: { data } }) => state.set('result', fromJS(data)),
   },
   initialState,

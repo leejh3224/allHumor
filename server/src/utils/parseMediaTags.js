@@ -5,22 +5,24 @@ const parseMediaTags = async (content, site, articleId) => {
   let thumbnail = null
   let parsedContent = null
 
-  const imgSrcRegex = /(<img src=")([http:|https:]{1,}[/\w?.=:]{0,})/
+  const imgSrcRegex = /(<img.*?src=")(https?:\/\/[/\w-\s_.가-힇()@[\]:=?]+)/
   const videoSrcRegex = /<iframe/
   const imgSrcRegexGlobal = new RegExp(imgSrcRegex, 'g')
   const hasImages = imgSrcRegex.test(content)
   const hasVideos = videoSrcRegex.test(content)
   const urls = []
 
-  if (hasVideos) {
-    thumbnail = 'video'
-  }
-
   if (hasImages) {
     // from list of img tags, get url only
-    content.match(imgSrcRegexGlobal).forEach(src => urls.push(imgSrcRegex.exec(src)[2]))
+    content.match(imgSrcRegexGlobal).forEach((src) => {
+      if (/[가-힇\s]+/.test(src)) {
+        const encoded = encodeURI(imgSrcRegex.exec(src)[2])
+        return urls.push(encoded)
+      }
+      return urls.push(imgSrcRegex.exec(src)[2])
+    })
 
-    if (urls.length > 2) {
+    if (urls.length >= 3) {
       return [thumbnail, parsedContent] // for the sake of response speed
     }
 
@@ -34,6 +36,10 @@ const parseMediaTags = async (content, site, articleId) => {
       matched =>
         `<img src="images/${site}/${articleId}_${getImageName(matched)}" style="max-width: 100%;"`,
     )
+  }
+
+  if (hasVideos) {
+    thumbnail = 'video'
   }
 
   return [thumbnail, parsedContent || content]

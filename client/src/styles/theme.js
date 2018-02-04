@@ -1,5 +1,10 @@
 // import Color from 'color'
 
+export const lighten = (color, alpha) => {
+  const [h, s, l] = color.match(/\d{1,}/g)
+  return `hsla(${h}, ${s}%, ${l}%, ${1 - alpha})`
+}
+
 const colors = {
   primary: 'hsla(204, 70%, 53%, 1)', // skyblue
   primaryDarker: 'hsla(204, 70%, 23%, 1)',
@@ -18,6 +23,9 @@ const colors = {
   facebook: 'hsla(221, 44%, 42%, 1)',
   twitter: 'hsla(205, 65%, 62%, 1)',
   google: 'hsla(2, 73%, 59%, 1)',
+
+  // site
+  kickoff: 'hsla(103, 52%, 35%, 1)',
 }
 
 const screenSize = {

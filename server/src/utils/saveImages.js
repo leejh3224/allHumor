@@ -6,7 +6,7 @@ import imagemin from 'imagemin'
 import imageminGiflossy from 'imagemin-giflossy'
 import fs from 'fs'
 
-const imagePath = '/Users/leejunhyung/Google 드라이브/allhumor/client/public/article/images'
+const imagePath = '/Users/leejunhyung/Google 드라이브/allhumor/client/public/images'
 
 export default function (sources, site, id) {
   return Promise.all(sources.map(async (src) => {
@@ -30,7 +30,7 @@ export default function (sources, site, id) {
           plugins: [
             imageminGiflossy({
               lossy: 30,
-              colors: 180,
+              colors: 256,
               resize: `${newWidth}x${newHeight}`,
             }),
           ],
@@ -57,7 +57,6 @@ export default function (sources, site, id) {
       return `images/${site}/${id}_${imageName}` // 프론트에서 이미지를 보여주기 좋은 형식으로 변환
     } catch (error) {
       console.log(chalk`{cyan [file saving error]} ${error}`)
-
       return null
     }
   }))

@@ -5,10 +5,14 @@ import formatDate from 'utils/formatDate'
 
 const toKorean = {
   dogdrip: '개드립',
+  kickoff: '킥오프',
+  ddengle: '땡글',
 }
 
 const colorMap = {
   dogdrip: colors.primary,
+  kickoff: colors.kickoff,
+  ddengle: colors.black,
 }
 
 const ArticleMeta = ({
@@ -47,7 +51,7 @@ const ArticleMeta = ({
           css={{
             display: 'inline-block',
             color: colorMap[site],
-            border: `1px solid ${colors.primary}`,
+            border: `1px solid ${colorMap[site]}`,
             borderRadius: 10,
             lineHeight: 1.15,
             padding: spacing.xsmall,

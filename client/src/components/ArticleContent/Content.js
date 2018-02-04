@@ -12,6 +12,10 @@ const Content = ({ content }) => (
           marginRight: 'auto',
           marginLeft: 'auto',
         },
+
+        [media.lessThan('medium')]: {
+          padding: spacing.small,
+        },
       }}
     dangerouslySetInnerHTML={{ __html: content }}
   />

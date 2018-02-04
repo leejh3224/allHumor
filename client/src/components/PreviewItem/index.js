@@ -17,17 +17,19 @@ const PreviewItem = ({ article, listStyle, rank }) => {
       css={{
         textDecoration: 'none',
       }}
-      to={`/article/${_id}`}
+      to={`/${_id}`}
     >
       <PreviewItemTemplate
         decorator={listStyle === 'popularity' ? <ListDecoration rank={rank} /> : null}
         thumbnail={
-          <Thumbnail
-            url={`../../../article/${
-              thumbnail === 'video' ? 'images/video.png' : thumbnail || 'images/noimage.jpg'
-            }`}
-            small={listStyle === 'popularity'}
-          />
+          listStyle !== 'simple' && (
+            <Thumbnail
+              url={`../../../${
+                thumbnail === 'video' ? 'images/video.png' : thumbnail || 'images/noimage.jpg'
+              }`}
+              small={listStyle === 'popularity'}
+            />
+          )
         }
         header={<Header title={title} author={author} date={formatDate(uploadDate)} />}
         footer={<Footer voteCount={voteCount} commentCount={commentCount} />}
