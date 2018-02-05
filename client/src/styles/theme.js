@@ -26,6 +26,7 @@ const colors = {
 
   // site
   kickoff: 'hsla(103, 52%, 35%, 1)',
+  instiz: 'hsla(108, 100%, 37%, 1)',
 }
 
 const screenSize = {

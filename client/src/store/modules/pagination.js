@@ -116,7 +116,7 @@ export default handleActions(
   {
     [types.article.SUCCESS]: (state, {
       payload: {
-        data: { result }, page, perPage, total,
+        data: { result }, page, perPage, total, category,
       },
     }) => {
       const [articleId] = result
@@ -126,6 +126,7 @@ export default handleActions(
         return state
           .setIn(['articles', 'current'], page)
           .setIn(['articles', 'perPage'], perPage)
+          .setIn(['articles', 'category'], category)
           .setIn(['articles', 'pageCount'], Math.ceil(total / perPage))
       }
       return state

@@ -8,9 +8,14 @@ export default {
     const { category, page } = req.params
     const PER_PAGE = 10
     const { keyword } = req.query
-
-    // find all for category all
-    let findQuery = category === 'all' ? {} : { site: category }
+    const sitesByCategories = {
+      all: ['dogdrip', 'ddengle', 'instiz', 'kickoff'],
+      humor: ['dogdrip'],
+      bitcoin: ['ddengle'],
+      soccer: ['kickoff'],
+      idol: ['instiz'],
+    }
+    let findQuery = { site: { $in: sitesByCategories[category] } }
 
     if (keyword) {
       findQuery = Object.assign(findQuery, { $text: { $search: keyword } })
@@ -64,7 +69,7 @@ export default {
       const total = await Article.find(findQuery).count()
       let articles = await Article.aggregate(pipeline)
 
-      articles = articles.map(article => omit(article, ['__v', 'site', 'content']))
+      articles = articles.map(article => omit(article, '__v'))
 
       res.json({
         articles,

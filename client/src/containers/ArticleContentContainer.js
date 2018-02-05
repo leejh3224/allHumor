@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import history from 'utils/history'
 import { func, string, shape, number, bool } from 'prop-types'
 import { connect } from 'react-redux'
-import { ArticleContent, Voting } from 'components'
+import { ArticleContent } from 'components'
 import isEmpty from 'lodash/isEmpty'
 import * as articleDucks from 'store/modules/article'
 import * as votingDucks from 'store/modules/voting'
@@ -41,16 +41,16 @@ class ArticleContentContainer extends Component {
     const { handleVoting, votingMouseDown, votingMouseUp } = this
 
     if (!isEmpty(articleContent)) {
-      return [
-        <ArticleContent key="article_content" article={articleContent[articleId]} />,
-        <Voting
-          key="article_votes"
+      return (
+        <ArticleContent
+          key="article_content"
+          article={articleContent[articleId]}
           counts={voteCount}
           handleVoting={handleVoting}
           votingMouseDown={votingMouseDown}
           votingMouseUp={votingMouseUp}
-        />,
-      ]
+        />
+      )
     }
     return 'loading...'
   }

@@ -2,21 +2,25 @@ import React from 'react'
 import { element } from 'prop-types'
 import { colors, media, spacing } from 'styles/theme'
 
-const ArticleContentTemplate = ({ title, articleMeta, content }) => (
+const ArticleContentTemplate = ({
+  title, articleMeta, content, voting, navigation,
+}) => (
   <div>
     <div
       css={{
-          backgroundColor: colors.lighterGrey,
+        backgroundColor: colors.lighterGrey,
 
-          [media.greaterThan('medium')]: {
-            marginBottom: spacing.large,
-          },
-        }}
+        [media.greaterThan('medium')]: {
+          marginBottom: spacing.large,
+        },
+      }}
     >
       {title}
       {articleMeta}
     </div>
     {content}
+    {voting}
+    {navigation}
   </div>
 )
 
@@ -24,6 +28,8 @@ ArticleContentTemplate.propTypes = {
   title: element.isRequired,
   articleMeta: element.isRequired,
   content: element.isRequired,
+  voting: element.isRequired,
+  navigation: element.isRequired,
 }
 
 export default ArticleContentTemplate

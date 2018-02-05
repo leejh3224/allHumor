@@ -7,6 +7,7 @@ const Footer = ({ voteCount, commentCount }) => (
     css={{
       display: 'flex',
       alignItems: 'center',
+      justifyContent: 'flex-end',
     }}
   >
     <div

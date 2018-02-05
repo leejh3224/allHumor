@@ -1,9 +1,11 @@
 import React from 'react'
-import { arrayOf, shape, func, bool } from 'prop-types'
-import { fonts, colors } from 'styles/theme'
-import { ActionsList } from 'components'
+import { arrayOf, shape, func, bool, string } from 'prop-types'
+import { fonts, lighten } from 'styles/theme'
+import ActionsList from './ActionsList'
 
-const ActionButton = ({ isMenuVisible, onClickActionButton, actions }) => (
+const ActionButton = ({
+  iconColor, isMenuVisible, onClickActionButton, actions,
+}) => (
   <div
     css={{
       position: 'absolute',
@@ -16,9 +18,10 @@ const ActionButton = ({ isMenuVisible, onClickActionButton, actions }) => (
       css={{
         width: 20,
         height: 30,
+        backgroundColor: 'transparent',
         cursor: 'pointer',
         ':hover > .ion-android-more-vertical': {
-          color: colors.font,
+          color: iconColor,
         },
       }}
       onClick={onClickActionButton}
@@ -27,7 +30,7 @@ const ActionButton = ({ isMenuVisible, onClickActionButton, actions }) => (
         className="ion-android-more-vertical"
         css={{
           ...fonts.icon,
-          color: colors.grey,
+          color: lighten(iconColor, 0.5),
         }}
       />
     </button>
@@ -36,6 +39,7 @@ const ActionButton = ({ isMenuVisible, onClickActionButton, actions }) => (
 )
 
 ActionButton.propTypes = {
+  iconColor: string.isRequired,
   isMenuVisible: bool.isRequired,
   onClickActionButton: func.isRequired,
   actions: arrayOf(shape()).isRequired,

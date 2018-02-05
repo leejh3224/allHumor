@@ -15,6 +15,7 @@ class CategoryGroupContainer extends Component {
   }
   loadNewCategory = newCategory => {
     const { category, loadArticles } = this.props
+    console.log(category, newCategory)
     if (category !== newCategory) {
       loadArticles(newCategory, 1)
     }

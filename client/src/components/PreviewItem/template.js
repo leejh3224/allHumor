@@ -29,7 +29,7 @@ const PreviewItemTemplate = ({
         width: '100%',
       }}
     >
-      {header}
+      {header && header}
       {footer}
     </div>
   </article>

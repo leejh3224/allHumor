@@ -1,7 +1,8 @@
 import React from 'react'
 import { shape, func, string } from 'prop-types'
 import { spacing } from 'styles/theme'
-import { CommentForm } from 'components'
+import { CommentForm, ActionButton } from 'components'
+import WithMenuState from 'components/WithMenuState'
 
 import CommentItemTemplate from './template'
 import Thumbnail from './Thumbnail'
@@ -9,8 +10,6 @@ import Body from './Body'
 import Header from './Header'
 import Content from './Content'
 import AddReplyButton from './AddReplyButton'
-import ActionButton from './ActionButton'
-import WithMenuState from './WithMenuState'
 
 const Reply = ({
   reply,

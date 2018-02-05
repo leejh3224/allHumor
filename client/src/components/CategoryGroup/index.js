@@ -13,6 +13,7 @@ const CategoryGroup = ({
       backgroundColor: colors.primary,
       width: '100%',
       display: 'flex',
+      justifyContent: 'space-around',
       flexWrap: 'nowrap',
       overflowX: 'auto',
       transition: 'position 0.3s ease-out',
@@ -25,7 +26,7 @@ const CategoryGroup = ({
         to={`/${pathName}/1`}
         active={pathName === activeCategory}
         onClick={() => loadNewCategory(pathName)}
-        flex={Object.keys(categories).length < 4 ? 1 : '0 0 auto'}
+        flex="0 0 auto"
       >
         {categories[pathName]}
       </TabLink>

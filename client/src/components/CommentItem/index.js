@@ -1,7 +1,8 @@
 import React from 'react'
 import { func, shape, string, arrayOf } from 'prop-types'
-import { spacing } from 'styles/theme'
-import { CommentForm } from 'components'
+import { spacing, colors } from 'styles/theme'
+import { CommentForm, ActionButton } from 'components'
+import WithMenuState from 'components/WithMenuState'
 
 import CommentItemTemplate from './template'
 import Thumbnail from './Thumbnail'
@@ -11,8 +12,6 @@ import Content from './Content'
 import AddReplyButton from './AddReplyButton'
 import ShowReplyButton from './ShowReplyButton'
 import Reply from './Reply'
-import ActionButton from './ActionButton'
-import WithMenuState from './WithMenuState'
 
 const CommentItem = ({
   comment,
@@ -146,6 +145,7 @@ const CommentItem = ({
         <WithMenuState>
           {({ isMenuVisible, handleOpenMenu, handleCloseMenu }) => (
             <ActionButton
+              iconColor={colors.black}
               isMenuVisible={isMenuVisible}
               onClickActionButton={isMenuVisible ? handleCloseMenu : handleOpenMenu}
               actions={[

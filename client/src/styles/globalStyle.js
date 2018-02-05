@@ -16,9 +16,6 @@ export default injectGlobal`
     padding: 0;
     border: 0;
   }
-  button {
-    background: #fff;
-  }
   input:focus {
     outline: 0;
   }

@@ -7,12 +7,14 @@ const toKorean = {
   dogdrip: '개드립',
   kickoff: '킥오프',
   ddengle: '땡글',
+  instiz: '인스티즈',
 }
 
 const colorMap = {
   dogdrip: colors.primary,
   kickoff: colors.kickoff,
   ddengle: colors.black,
+  instiz: colors.instiz,
 }
 
 const ArticleMeta = ({

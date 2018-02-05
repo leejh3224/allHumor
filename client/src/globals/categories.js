@@ -1,10 +1,9 @@
 const categories = {
   all: '전체',
-  dogdrip: '개드립',
-  todayHumor: '오유',
-  dc: '디씨',
-  pann: '네이트판',
-  instiz: '인스티즈',
+  humor: '유머',
+  bitcoin: '비트코인',
+  soccer: '축구',
+  idol: '아이돌',
 }
 
 export default categories

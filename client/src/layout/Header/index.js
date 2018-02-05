@@ -2,6 +2,8 @@ import React from 'react'
 import { bool, func } from 'prop-types'
 import { Link, withRouter } from 'react-router-dom'
 import { colors, spacing, fonts } from 'styles/theme'
+import { ActionButton } from 'components'
+import WithMenuState from 'components/WithMenuState'
 import { compose } from 'recompose'
 
 const baseLinkStyle = {
@@ -10,7 +12,7 @@ const baseLinkStyle = {
   ...fonts.header,
 }
 
-const Header = ({ isLoggedIn, logout, loadNewest }) => (
+const Header = ({ isLoggedIn, loadNewest, logout }) => (
   <header
     css={{
       position: 'relative',
@@ -21,6 +23,7 @@ const Header = ({ isLoggedIn, logout, loadNewest }) => (
       css={{
         display: 'flex',
         justifyContent: 'space-between',
+        alignItems: 'center',
         padding: spacing.medium,
       }}
     >
@@ -35,18 +38,51 @@ const Header = ({ isLoggedIn, logout, loadNewest }) => (
         ALL유머
       </Link>
       {isLoggedIn ? (
-        <Link
-          to="/"
-          css={{ ...baseLinkStyle }}
-          onClick={(e) => {
-            e.preventDefault()
-            logout()
+        // <Link
+        //   to="/"
+        //   css={{ ...baseLinkStyle }}
+        //   onClick={(e) => {
+        //     e.preventDefault()
+        //     logout()
+        //   }}
+        // >
+        //   로그아웃
+        // </Link>
+        <div
+          css={{
+            display: 'flex',
+            alignItems: 'center',
+            position: 'relative',
+            width: 50,
           }}
         >
-          로그아웃
-        </Link>
+          <Link to="/search">
+            <i
+              className="ion-ios-search-strong"
+              css={{
+                color: colors.white,
+                ...fonts.icon,
+              }}
+            />
+          </Link>
+          <WithMenuState>
+            {({ isMenuVisible, handleOpenMenu, handleCloseMenu }) => (
+              <ActionButton
+                iconColor={colors.white}
+                isMenuVisible={isMenuVisible}
+                onClickActionButton={isMenuVisible ? handleCloseMenu : handleOpenMenu}
+                actions={[
+                  {
+                    name: '로그아웃',
+                    onClick: logout,
+                  },
+                ]}
+              />
+            )}
+          </WithMenuState>
+        </div>
       ) : (
-        <Link to="/login" css={{ ...baseLinkStyle }}>
+        <Link to="/login" css={baseLinkStyle}>
           로그인
         </Link>
       )}
@@ -61,8 +97,8 @@ Header.defaultProps = {
 
 Header.propTypes = {
   isLoggedIn: bool,
-  logout: func,
   loadNewest: func.isRequired,
+  logout: func,
 }
 
 export default compose(withRouter)(Header)

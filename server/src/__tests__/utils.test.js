@@ -3,6 +3,8 @@ import app from 'app'
 import db from 'models'
 // import sharp from 'sharp'
 // import fs from 'fs'
+import ffmpeg from 'fluent-ffmpeg'
+import axios from 'axios'
 
 const env = process.env.NODE_ENV
 const { port } = config[env]
@@ -36,3 +38,20 @@ afterAll(() => {
 //       .toFile(`${__dirname}/t-out.jpeg`)
 //   }
 // })
+
+test('convert gif buffer to mp4', async () => {
+  try {
+    const { data } = await axios.get(
+      'https://media2.giphy.com/media/3o7WIQ7Fm2ysfSR3O0/giphy.gif',
+      {
+        responseType: 'stream',
+      },
+    )
+
+    ffmpeg()
+      .input(data)
+      .output('./example.mp4')
+  } catch (error) {
+    console.log(error)
+  }
+})
