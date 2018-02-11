@@ -1,41 +1,32 @@
 import React, { Component } from 'react'
-import { func, bool, number, arrayOf, shape } from 'prop-types'
+import { func, bool, arrayOf, shape } from 'prop-types'
 import { connect } from 'react-redux'
-import throttle from 'lodash/throttle'
 
 import * as commentDucks from 'store/modules/comment'
 import * as fetchingDucks from 'store/modules/fetching'
 import * as uiDucks from 'store/modules/ui'
 import * as userDucks from 'store/modules/user'
-import * as paginationDucks from 'store/modules/pagination'
 import Base from './base'
+import InfiniteScroll from './infinite-scroll'
 
 class CommentList extends Component {
   static propTypes = {
     getRepliesOfCommentThunk: func.isRequired,
     isAtTheBottom: bool.isRequired,
-    currentPage: number.isRequired,
-    lastPage: number.isRequired,
     comments: arrayOf(shape({})).isRequired,
   }
-  shouldComponentUpdate(nextProps) {
-    const {
-      comments, currentPage, lastPage, isAtTheBottom,
-    } = this.props
-    const haveMoreToLoad = comments.length >= 20
-    const reachedLastPage = currentPage !== lastPage
-    const touchingBottom = nextProps.isAtTheBottom !== isAtTheBottom && !isAtTheBottom
-
-    if (haveMoreToLoad && reachedLastPage && touchingBottom) {
-      const throttled = throttle(nextProps.loadComments, 500)
-      throttled()
-    }
-    return true
-  }
   render() {
-    const { getRepliesOfCommentThunk } = this.props
+    const { getRepliesOfCommentThunk, isAtTheBottom } = this.props
 
-    return <Base {...this.props} getRepliesOfCommentById={getRepliesOfCommentThunk} />
+    return (
+      <div>
+        <Base {...this.props} getRepliesOfCommentById={getRepliesOfCommentThunk} />
+        <InfiniteScroll
+          isAtTheBottom={isAtTheBottom}
+          haveMoreToLoad={this.props.comments.length >= 20}
+        />
+      </div>
+    )
   }
 }
 
@@ -46,8 +37,6 @@ export default connect(
     fetchingAddComment: fetchingDucks.getFetchingAddComment(state),
     fetchingComment: fetchingDucks.getFetchingComment(state),
     myUserId: userDucks.getUserId(state),
-    currentPage: paginationDucks.getCommentsCurrentPage(state),
-    lastPage: paginationDucks.getCommentsLastPage(state),
   }),
-  { ...commentDucks, ...uiDucks, ...paginationDucks },
+  { ...commentDucks, ...uiDucks },
 )(CommentList)

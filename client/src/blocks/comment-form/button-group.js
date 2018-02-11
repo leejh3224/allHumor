@@ -1,5 +1,5 @@
 import React from 'react'
-import { func, string } from 'prop-types'
+import { func } from 'prop-types'
 
 import { fonts, spacing, colors } from 'styles/theme'
 
@@ -11,7 +11,7 @@ const baseButtonStyle = {
   },
 }
 
-const ButtonGroup = ({ onCancel, submitButtonText }) => (
+const ButtonGroup = ({ onCancel }) => (
   <div
     css={{
       display: 'flex',
@@ -33,19 +33,19 @@ const ButtonGroup = ({ onCancel, submitButtonText }) => (
       css={{
         backgroundColor: colors.primary,
         color: colors.white,
-        borderRadius: 3,
-        padding: `${spacing.small}px ${spacing.medium}px`,
+        borderRadius: 6,
+        padding: `${spacing.small}px ${spacing.large}px`,
+        boxShadow: `0 2px 6px ${colors.grey}`,
         ...baseButtonStyle,
       }}
     >
-      {submitButtonText}
+      저장
     </button>
   </div>
 )
 
 ButtonGroup.propTypes = {
   onCancel: func.isRequired,
-  submitButtonText: string.isRequired,
 }
 
 export default ButtonGroup

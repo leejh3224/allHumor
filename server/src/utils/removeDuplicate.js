@@ -17,7 +17,7 @@ export default async (links) => {
   ])
 
   const getArticleId = (link) => {
-    const queryStringRegex = /(no|postNum)=?(\d+)/
+    const queryStringRegex = /(no|postNum|document_srl)=?(\d+)/
     const routeParamsRegex = /\/(\d+)/
 
     if (queryStringRegex.test(link)) {

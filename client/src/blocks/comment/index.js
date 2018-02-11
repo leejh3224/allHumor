@@ -90,10 +90,10 @@ class Comment extends Component {
       <CommentTemplate
         thumbnail={<Thumbnail avatar={avatar} />}
         body={<Body comment={comment} repliesList={repliesList} />}
-        renderForm={isAddingReply && <CommentForm from={_id} parent={parent} />}
+        form={isAddingReply && <CommentForm from={_id} parent={parent} />}
         loadingAddReply={isFetchingAddReply && <p>불러오는 중 ...</p>}
-        renderRepliesList={renderRepliesList()}
-        renderEllipsisButton={renderEllipsisButton()}
+        renderRepliesList={renderRepliesList}
+        renderEllipsisButton={renderEllipsisButton}
       />
     )
   }

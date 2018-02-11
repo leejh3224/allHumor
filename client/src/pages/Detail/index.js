@@ -2,10 +2,11 @@ import React from 'react'
 import { shape, string } from 'prop-types'
 
 import StickyOnScroll from 'pages/StickyOnScroll'
-import ScrollToBottomDetector from 'pages/ScrollToBottomDetector'
-import { Article, CommentList } from 'blocks'
+import ScrollDetector from 'pages/ScrollDetector'
+import { Header } from 'layout'
+import { Article, CommentList, CommentForm } from 'blocks'
 import { MainWrapper } from 'components'
-import { CategoryGroupContainer, HeaderContainer } from 'containers'
+import { CategoryGroupContainer } from 'containers'
 import WithAuth0 from 'pages/WithAuth0'
 import { isAuthenticated, logout } from 'utils/auth'
 import categories from 'globals/categories'
@@ -16,18 +17,28 @@ const Detail = ({ location: { pathname } }) => {
   return (
     <StickyOnScroll>
       {({ isSticky }) => (
-        <ScrollToBottomDetector>
+        <ScrollDetector>
           {({ isAtTheBottom }) => (
             <MainWrapper>
-              <HeaderContainer isLoggedIn={isAuthenticated()} logout={logout} />
+              <Header isLoggedIn={isAuthenticated()} logout={logout} />
               <CategoryGroupContainer isSticky={isSticky} categories={categories} />
               <section css={{ paddingTop: isSticky ? 50 : 0 }}>
                 <Article articleId={articleId} isLoggedIn={isAuthenticated()} />
               </section>
               <CommentList isLoggedIn={isAuthenticated()} isAtTheBottom={isAtTheBottom} />
+              <div css={{ paddingBottom: 144 }} />
+              <div
+                css={{
+                  position: 'fixed',
+                  bottom: 0,
+                  width: '100%',
+                }}
+              >
+                <CommentForm />
+              </div>
             </MainWrapper>
           )}
-        </ScrollToBottomDetector>
+        </ScrollDetector>
       )}
     </StickyOnScroll>
   )

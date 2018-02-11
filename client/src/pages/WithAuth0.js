@@ -21,9 +21,6 @@ const WithAuth0 = WrappedComponent =>
         })
       }
     }
-    componentWillReceiveProps() {
-      console.log('path change')
-    }
     render() {
       return <WrappedComponent {...this.props} {...this.state} />
     }

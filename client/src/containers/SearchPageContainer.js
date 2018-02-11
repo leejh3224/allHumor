@@ -27,8 +27,8 @@ export default connect(
     searchResult: searchDucks.getResult(state),
     fetchingSearchResult: fetchingDucks.getFetchingSearchResult(state),
     isSubmitted: searchDucks.getIsSubmitted(state),
-    category: paginationDucks.getCategory(state),
-    currentPage: paginationDucks.getCurrentPage(state),
+    category: paginationDucks.getArticlesCategory(state),
+    currentPage: paginationDucks.getArticlesCurrentPage(state),
   }),
   { ...searchDucks, ...paginationDucks },
 )(SearchPageContainer)

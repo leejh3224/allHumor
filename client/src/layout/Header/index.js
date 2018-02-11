@@ -1,88 +1,38 @@
-import React from 'react'
+import React, { Component } from 'react'
 import { bool, func } from 'prop-types'
-import { Link, withRouter } from 'react-router-dom'
-import { compose } from 'recompose'
+import { withRouter } from 'react-router-dom'
+import { connect } from 'react-redux'
 
-import { colors, spacing, fonts } from 'styles/theme'
-import { EllipsisButton } from 'blocks'
+import * as paginationDucks from 'store/modules/pagination'
+import HeaderTemplate from './template'
+import Logo from './logo'
+import Right from './right'
 
-const baseLinkStyle = {
-  color: colors.white,
-  textDecoration: 'none',
-  ...fonts.header,
+class Header extends Component {
+  static propTypes = {
+    loadArticles: func.isRequired,
+  }
+  loadNewFeed = () => {
+    this.props.loadArticles()
+  }
+  render() {
+    return (
+      <HeaderTemplate
+        logo={<Logo onClick={this.loadNewFeed} />}
+        right={<Right isLoggedIn={this.props.isLoggedIn} />}
+      />
+    )
+  }
 }
-
-const Header = ({ isLoggedIn, loadNewest, logout }) => (
-  <header
-    css={{
-      position: 'relative',
-      backgroundColor: colors.primary,
-    }}
-  >
-    <nav
-      css={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: spacing.medium,
-      }}
-    >
-      <Link
-        to="/"
-        onClick={loadNewest}
-        css={{
-          fontStyle: 'italic',
-          ...baseLinkStyle,
-        }}
-      >
-        ALL유머
-      </Link>
-      {isLoggedIn ? (
-        <div
-          css={{
-            display: 'flex',
-            alignItems: 'center',
-            position: 'relative',
-            width: 50,
-          }}
-        >
-          <Link to="/search">
-            <i
-              className="ion-ios-search-strong"
-              css={{
-                color: colors.white,
-                ...fonts.icon,
-              }}
-            />
-          </Link>
-          <EllipsisButton
-            iconColor={colors.white}
-            actions={[
-              {
-                name: '로그아웃',
-                onClick: logout,
-              },
-            ]}
-          />
-        </div>
-      ) : (
-        <Link to="/login" css={baseLinkStyle}>
-          로그인
-        </Link>
-      )}
-    </nav>
-  </header>
-)
 
 Header.defaultProps = {
   isLoggedIn: false,
-  logout: () => {},
+  // logout: () => {},
 }
 
 Header.propTypes = {
   isLoggedIn: bool,
-  loadNewest: func.isRequired,
-  logout: func,
+  // logout: func,
 }
 
-export default compose(withRouter)(Header)
+export default connect(null, paginationDucks)(withRouter(Header))

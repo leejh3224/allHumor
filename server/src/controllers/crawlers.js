@@ -135,6 +135,8 @@ export default {
 
       // 필요없는 부분은 삭제
       $('tbody #topboard').remove()
+      // 각 게시물 카테고리 태그
+      $('tbody tr #subject .texthead').remove()
 
       $('tbody tr #subject a').each((i, el) => {
         urls.push(`https://www.instiz.net${el.attribs.href.replace(/../, '')}`)

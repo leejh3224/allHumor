@@ -1,10 +1,8 @@
 import { fromJS } from 'immutable'
 import { handleActions } from 'redux-actions'
-import { createSelector } from 'reselect'
 import api from 'api'
 import { articleListSchema, commentListSchema } from 'store/schema'
 import { normalize } from 'normalizr'
-import range from 'lodash/range'
 import types from 'store/actionTypes'
 import isEmpty from 'lodash/isEmpty'
 
@@ -12,9 +10,8 @@ const initialState = fromJS({
   articles: {
     category: 'all',
     perPage: 0,
-    current: 0,
-    pageCount: -1,
-    buttonsPerPage: 5,
+    current: 1,
+    pageCount: 0,
   },
   comments: {
     articleId: 0,
@@ -29,47 +26,25 @@ const initialState = fromJS({
   },
 })
 
-export const getCategory = ({ pagination }) => pagination.getIn(['articles', 'category'])
-export const getCurrentPage = ({ pagination }) => pagination.getIn(['articles', 'current'])
-export const getLastPage = ({ pagination }) => pagination.getIn(['articles', 'pageCount'])
-export const getButtonsPerPage = ({ pagination }) =>
-  pagination.getIn(['articles', 'buttonsPerPage'])
+export const getArticlesCategory = ({ pagination }) => pagination.getIn(['articles', 'category'])
+export const getArticlesCurrentPage = ({ pagination }) => pagination.getIn(['articles', 'current'])
+export const getArticlesLastPage = ({ pagination }) => pagination.getIn(['articles', 'pageCount'])
 
 export const getArticleId = ({ pagination }) => pagination.getIn(['comments', 'articleId'])
 export const getCommentsCurrentPage = ({ pagination }) => pagination.getIn(['comments', 'current'])
 export const getCommentsLastPage = ({ pagination }) => pagination.getIn(['comments', 'pageCount'])
 
-/* eslint-disable no-mixed-operators, arrow-parens */
-export const getMinPage = createSelector(
-  getCurrentPage,
-  getButtonsPerPage,
-  (currentPage, buttonsPerPage) => {
-    const N = Math.ceil(currentPage / buttonsPerPage)
-    return 5 * N - 4
-  },
-)
-export const getMaxPage = createSelector(
-  getCurrentPage,
-  getLastPage,
-  getButtonsPerPage,
-  (currentPage, lastPage, buttonsPerPage) => {
-    const N = Math.ceil(currentPage / buttonsPerPage)
-    return lastPage < 5 * N ? lastPage : 5 * N
-  },
-)
-export const getRangeMinMax = createSelector(getMinPage, getMaxPage, (min, max) =>
-  range(min, max + 1),
-)
-
 export const loadArticles = (category, page) => async (dispatch, getState) => {
   dispatch({ type: types.article.REQUEST })
 
   const state = getState()
-  const categoryInStore = getCategory(state)
-  const currentPageInStore = getCurrentPage(state)
+  const categoryInStore = getArticlesCategory(state)
+  const currentPageInStore = getArticlesCurrentPage(state)
 
   try {
-    const { data: { articles, total, perPage } } = await api.get(`/articles/${category || categoryInStore}/${page || currentPageInStore}`)
+    const { data: { articles, total, perPage } } = await api.get(
+      `/articles/${category || categoryInStore}/${page || currentPageInStore}`,
+    )
 
     if (articles) {
       dispatch({
@@ -118,11 +93,14 @@ export const loadComments = () => async (dispatch, getState) => {
 
 export default handleActions(
   {
-    [types.article.SUCCESS]: (state, {
-      payload: {
-        data: { result }, page, perPage, total, category,
+    [types.article.SUCCESS]: (
+      state,
+      {
+        payload: {
+          data: { result }, page, perPage, total, category,
+        },
       },
-    }) => {
+    ) => {
       const [articleId] = result
 
       // list of articles

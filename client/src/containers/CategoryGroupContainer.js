@@ -39,7 +39,7 @@ export default compose(
   withRouter,
   connect(
     state => ({
-      category: paginationDucks.getCategory(state),
+      category: paginationDucks.getArticlesCategory(state),
     }),
     {
       loadArticles: paginationDucks.loadArticles,

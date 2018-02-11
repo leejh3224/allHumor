@@ -42,7 +42,10 @@ export default handleActions(
         const id = data.result[0]
         return state.setIn(['entities', 'articles', id], fromJS(data.entities.articles[id]))
       }
-      return state.merge(data)
+      return state.setIn(
+        ['entities', 'articles'],
+        fromJS(data.entities.articles).merge(state.getIn(['entities', 'articles'])),
+      )
     },
   },
   initialState,

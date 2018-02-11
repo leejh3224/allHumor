@@ -1,8 +1,9 @@
 import React from 'react'
 import { arrayOf, shape, func, bool } from 'prop-types'
 
-import { spacing } from 'styles/theme'
 import { Comment } from 'blocks'
+import { RocketIcon } from 'components/icons'
+import { fonts, colors, spacing } from 'styles/theme'
 import wrapperStyle from './wrapperStyle'
 import Header from './header'
 
@@ -17,18 +18,12 @@ const Base = ({
 }) => (
   <div>
     <Header commentCount={comments.length} />
-    <ul css={wrapperStyle}>
-      {fetchingAddComment && '로딩 중입니다 ...'}
-      {comments.map(comment => {
-        const repliesList = Object.values(getRepliesOfCommentById(comment._id))
-        return (
-          <li
-            key={comment._id}
-            css={{
-              paddingTop: spacing.small,
-              paddingBottom: spacing.small,
-            }}
-          >
+    {comments.length ? (
+      <ul css={wrapperStyle}>
+        {fetchingAddComment && '로딩 중입니다 ...'}
+        {comments.map(comment => {
+          const repliesList = Object.values(getRepliesOfCommentById(comment._id))
+          return (
             <Comment
               {...props}
               key={comment._id}
@@ -36,10 +31,39 @@ const Base = ({
               addComment={addComment}
               repliesList={repliesList}
             />
-          </li>
-        )
-      })}
-    </ul>
+          )
+        })}
+      </ul>
+    ) : (
+      <div
+        css={{
+          ...wrapperStyle,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <RocketIcon cssProps={{ marginTop: spacing.large }} />
+        <h1
+          css={{
+            ...fonts.header,
+            color: colors.grey,
+          }}
+        >
+          아직 댓글이 없습니다.
+        </h1>
+        <h1
+          css={{
+            ...fonts.header,
+            color: colors.grey,
+            marginBottom: spacing.large,
+          }}
+        >
+          첫 댓글을 달아주세요!
+        </h1>
+      </div>
+    )}
     {comments.length && fetchingComment ? '불러오는 중입니다 ...' : null}
   </div>
 )

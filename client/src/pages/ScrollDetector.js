@@ -3,7 +3,7 @@ import { func } from 'prop-types'
 
 // copyed from
 // http://blog.sodhanalibrary.com/2016/08/detect-when-user-scrolls-to-bottom-of.html#.Wm73pFPFI3g
-class ScrollToBottomDetector extends Component {
+class ScrollDetector extends Component {
   static propTypes = {
     children: func.isRequired,
   }
@@ -41,4 +41,4 @@ class ScrollToBottomDetector extends Component {
   }
 }
 
-export default ScrollToBottomDetector
+export default ScrollDetector

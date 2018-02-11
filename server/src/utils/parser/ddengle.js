@@ -8,8 +8,9 @@ export default async (url, $) => {
   let content = $('.xe_content').html()
   const date = $('.fr .date').text()
   const title = $('.np_18px a').text()
+  const domain = 'https://www.ddengle.com'
 
-  content = sanitizeHtml(content)
+  content = sanitizeHtml(content).replace(/"\/files\/attach/g, `"${domain}/files/attach`)
 
   const [thumbnail, parsedContent] = await parseMediaTags(content, site, articleId)
 
