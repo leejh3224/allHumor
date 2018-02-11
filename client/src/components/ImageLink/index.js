@@ -5,14 +5,18 @@ import ImageLinkTemplate from './template'
 import Overlay from './Overlay'
 import Background from './Background'
 
-const ImageLink = ({ name, imageName }) => (
-  <ImageLinkTemplate
-    width={150}
-    height={150}
-    overlay={<Overlay name={name} />}
-    background={<Background src={`${process.env.PUBLIC_URL}images/${imageName}`} />}
-  />
-)
+const ImageLink = ({ name, imageName }) => {
+  const [boardName] = imageName.match(/^\w+/)
+  return (
+    <ImageLinkTemplate
+      to={`/${boardName}/1`}
+      width={150}
+      height={150}
+      overlay={<Overlay name={name} />}
+      background={<Background src={`${process.env.PUBLIC_URL}images/${imageName}`} />}
+    />
+  )
+}
 
 ImageLink.propTypes = {
   name: string.isRequired,

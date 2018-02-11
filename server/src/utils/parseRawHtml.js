@@ -1,16 +1,15 @@
 import cheerio from 'cheerio'
 import axios from 'axios'
-import parser from 'utils/parser'
+import Parser from 'utils/parser'
 
-export default async (url, site) => {
+export default async (url) => {
   try {
     const { data } = await axios.get(url)
     const $ = cheerio.load(data, {
       decodeEntities: false,
     })
-
-    const article = await parser({ url, html: $, site })
-
+    const parser = new Parser({ domain: url, html: $ })
+    const article = await parser.getResult()
     return article
   } catch (error) {
     console.log(error)

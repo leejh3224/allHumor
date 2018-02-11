@@ -25,7 +25,6 @@ export default {
     const match = {
       $match: findQuery,
     }
-
     const lookupForVotes = {
       $lookup: {
         from: 'votes',
@@ -46,7 +45,6 @@ export default {
     const excludeFieldVotes = {
       $project: {
         votes: false,
-        comments: false,
       },
     }
     const skip = {

@@ -1,9 +1,10 @@
 import { Component } from 'react'
-import { func } from 'prop-types'
+import { func, number } from 'prop-types'
 
 class StickyOnScroll extends Component {
   static propTypes = {
     children: func.isRequired,
+    threshold: number.isRequired,
   }
   state = {
     isSticky: false,
@@ -15,7 +16,7 @@ class StickyOnScroll extends Component {
     window.removeEventListener('scroll', this.handleScroll)
   }
   handleScroll = () => {
-    if (window.scrollY >= 70) {
+    if (window.scrollY >= this.props.threshold) {
       this.setState({ isSticky: true })
     } else {
       this.setState({ isSticky: false })

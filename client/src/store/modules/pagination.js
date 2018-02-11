@@ -13,7 +13,7 @@ const initialState = fromJS({
     category: 'all',
     perPage: 0,
     current: 0,
-    pageCount: 0,
+    pageCount: -1,
     buttonsPerPage: 5,
   },
   comments: {
@@ -61,11 +61,15 @@ export const getRangeMinMax = createSelector(getMinPage, getMaxPage, (min, max) 
   range(min, max + 1),
 )
 
-export const loadArticles = (category, page) => async dispatch => {
+export const loadArticles = (category, page) => async (dispatch, getState) => {
   dispatch({ type: types.article.REQUEST })
 
+  const state = getState()
+  const categoryInStore = getCategory(state)
+  const currentPageInStore = getCurrentPage(state)
+
   try {
-    const { data: { articles, total, perPage } } = await api.get(`/articles/${category}/${page}`)
+    const { data: { articles, total, perPage } } = await api.get(`/articles/${category || categoryInStore}/${page || currentPageInStore}`)
 
     if (articles) {
       dispatch({

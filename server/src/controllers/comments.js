@@ -116,7 +116,7 @@ export default {
       const {
         userId, avatar, author, content,
       } = req.body
-      const { _id, articleId, ...rest } = await Comment.findById(id).lean()
+      const { _id, articleId, ...parent } = await Comment.findById(id).lean()
       const reply = await new Comment({
         articleId,
         userId,
@@ -124,7 +124,7 @@ export default {
         author,
         content,
         parent: _id,
-        recipient: rest.author,
+        recipient: parent.author,
       }).save()
       res.json({
         success: true,

@@ -6,13 +6,14 @@ export const lighten = (color, alpha) => {
 }
 
 const colors = {
-  primary: 'hsla(204, 70%, 53%, 1)', // skyblue
+  primary: 'hsla(200, 100%, 50%, 1)',
+  skyblue: 'hsla(200, 90%, 77%, 1)',
   primaryDarker: 'hsla(204, 70%, 23%, 1)',
   divider: 'hsla(0, 0%, 75%, 1)',
   grey: 'hsla(0, 0%, 55%, 1)', // for icon
   lightGrey: 'hsla(0, 0%, 85%, 1)',
   lighterGrey: 'hsla(0, 0%, 95%, 1)',
-  font: 'hsla(0, 0%, 10%, 1)',
+  font: 'hsla(0, 0%, 20%, 1)',
   black: 'hsla(0, 0%, 0%, 1)',
   white: 'hsla(360, 100%, 100%, 1)',
 
@@ -62,7 +63,7 @@ const fonts = {
     fontSize: 55,
   },
   large: {
-    fontSize: 30,
+    fontSize: 24,
     fontWeight: 700,
     lineHeight: '140%',
   },
@@ -85,17 +86,13 @@ const fonts = {
       fontSize: 18,
     },
   },
-  small: {
-    fontSize: 18,
-    fontWeight: 400,
-
-    [media.lessThan('medium')]: {
-      fontSize: 16,
-    },
-  },
   body: {
     fontSize: 16,
     lineHeight: '140%',
+  },
+  small: {
+    fontSize: 14,
+    fontWeight: 400,
   },
   xsmall: {
     fontSize: 13,

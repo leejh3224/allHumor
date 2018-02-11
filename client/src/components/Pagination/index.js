@@ -53,54 +53,51 @@ const Pagination = ({
   loadLastPage,
   loadNextPage,
   loadPrevPage,
-}) => (
-  <div
-    css={{
-      display: 'flex',
-      justifyContent: 'center',
-      margin: spacing.medium,
+}) =>
+  (lastPage ? (
+    <div
+      css={{
+        display: 'flex',
+        justifyContent: 'center',
+        margin: spacing.medium,
 
-      [media.lessThan('medium')]: {
-        margin: spacing.small,
-      },
-    }}
-  >
-    <Link to={`/${category}/1`} css={LongButtonStyle} onClick={loadFirstPage}>
-      처음
-    </Link>
-    <Link
-      to={`/${category}/${currentPage <= buttonsPerPage ? 1 : minPage - 1}`}
-      css={buttonStyle}
-      onClick={loadPrevPage}
+        [media.lessThan('medium')]: {
+          margin: spacing.small,
+        },
+      }}
     >
-      <i className="ion-ios-arrow-left" />
-    </Link>
-    {rangeMinMax.map(page => (
-      <Link
-        to={`/${category}/${page}`}
-        key={page}
-        onClick={() => loadArticles(category, page)}
-        css={css(buttonStyle, currentPage === page && activeStyle)}
-      >
-        {page}
+      <Link to={`/${category}/1`} css={LongButtonStyle} onClick={loadFirstPage}>
+        처음
       </Link>
-    ))}
-    <Link
-      to={`/${category}/${maxPage === lastPage ? lastPage : maxPage + 1}`}
-      css={buttonStyle}
-      onClick={loadNextPage}
-    >
-      <i className="ion-ios-arrow-right" />
-    </Link>
-    <Link
-      to={`/${category}/${lastPage}`}
-      css={LastButtonStyle}
-      onClick={loadLastPage}
-    >
-      마지막
-    </Link>
-  </div>
-)
+      <Link
+        to={`/${category}/${currentPage <= buttonsPerPage ? 1 : minPage - 1}`}
+        css={buttonStyle}
+        onClick={loadPrevPage}
+      >
+        <i className="ion-ios-arrow-left" />
+      </Link>
+      {rangeMinMax.map(page => (
+        <Link
+          to={`/${category}/${page}`}
+          key={page}
+          onClick={() => loadArticles(category, page)}
+          css={css(buttonStyle, currentPage === page && activeStyle)}
+        >
+          {page}
+        </Link>
+      ))}
+      <Link
+        to={`/${category}/${maxPage === lastPage ? lastPage : maxPage + 1}`}
+        css={buttonStyle}
+        onClick={loadNextPage}
+      >
+        <i className="ion-ios-arrow-right" />
+      </Link>
+      <Link to={`/${category}/${lastPage}`} css={LastButtonStyle} onClick={loadLastPage}>
+        마지막
+      </Link>
+    </div>
+  ) : null)
 
 Pagination.propTypes = {
   buttonsPerPage: number.isRequired,

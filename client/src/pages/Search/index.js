@@ -1,7 +1,8 @@
 import React from 'react'
 import { fonts, spacing } from 'styles/theme'
-import { SearchForm, PreviewItem, ImageLink } from 'components'
-import { SearchPageContainer, PreviewListContainer } from 'containers'
+import { SearchForm, ImageLink } from 'components'
+import WithAuth0 from 'pages/WithAuth0'
+import { SearchPageContainer } from 'containers'
 
 const Search = () => (
   <SearchPageContainer>
@@ -43,7 +44,7 @@ const Search = () => (
                     return null
                   })()}
                 </h1>
-                {results.length ? results.map(article => <PreviewItem article={article} />) : null}
+                {results.length ? results.map(<div />) : null}
               </div>
               <div
                 css={{
@@ -72,21 +73,6 @@ const Search = () => (
                   <ImageLink width={150} height={150} name="아이돌" imageName="idol.jpg" />
                 </div>
               </div>
-              <div
-                css={{
-                  marginTop: spacing.medium,
-                }}
-              >
-                <h1
-                  css={{
-                    ...fonts.header,
-                    paddingLeft: spacing.medium,
-                  }}
-                >
-                  인기 게시물
-                </h1>
-                <PreviewListContainer theme="popularity" />
-              </div>
             </div>
           )}
         </div>
@@ -97,4 +83,4 @@ const Search = () => (
 
 Search.propTypes = {}
 
-export default Search
+export default WithAuth0(Search)

@@ -49,7 +49,7 @@ export const addComment = content => async (dispatch, getState) => {
   }
 }
 
-export const addReply = (content, from, to) => async (dispatch, getState) => {
+export const addReply = (content, from, parent) => async (dispatch, getState) => {
   const state = getState()
   const userId = state.user.get('userId')
   const avatar = state.user.get('avatar')
@@ -58,7 +58,7 @@ export const addReply = (content, from, to) => async (dispatch, getState) => {
   dispatch({ type: types.reply.ADD_REQUEST, payload: { id: from } })
 
   try {
-    const { data: { replies } } = await api.post(`/comments/${to}/replies`, {
+    const { data: { replies } } = await api.post(`/comments/${parent}/replies`, {
       userId,
       avatar,
       author,

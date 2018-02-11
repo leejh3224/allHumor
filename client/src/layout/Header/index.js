@@ -1,10 +1,10 @@
 import React from 'react'
 import { bool, func } from 'prop-types'
 import { Link, withRouter } from 'react-router-dom'
-import { colors, spacing, fonts } from 'styles/theme'
-import { ActionButton } from 'components'
-import WithMenuState from 'components/WithMenuState'
 import { compose } from 'recompose'
+
+import { colors, spacing, fonts } from 'styles/theme'
+import { EllipsisButton } from 'blocks'
 
 const baseLinkStyle = {
   color: colors.white,
@@ -38,16 +38,6 @@ const Header = ({ isLoggedIn, loadNewest, logout }) => (
         ALL유머
       </Link>
       {isLoggedIn ? (
-        // <Link
-        //   to="/"
-        //   css={{ ...baseLinkStyle }}
-        //   onClick={(e) => {
-        //     e.preventDefault()
-        //     logout()
-        //   }}
-        // >
-        //   로그아웃
-        // </Link>
         <div
           css={{
             display: 'flex',
@@ -65,21 +55,15 @@ const Header = ({ isLoggedIn, loadNewest, logout }) => (
               }}
             />
           </Link>
-          <WithMenuState>
-            {({ isMenuVisible, handleOpenMenu, handleCloseMenu }) => (
-              <ActionButton
-                iconColor={colors.white}
-                isMenuVisible={isMenuVisible}
-                onClickActionButton={isMenuVisible ? handleCloseMenu : handleOpenMenu}
-                actions={[
-                  {
-                    name: '로그아웃',
-                    onClick: logout,
-                  },
-                ]}
-              />
-            )}
-          </WithMenuState>
+          <EllipsisButton
+            iconColor={colors.white}
+            actions={[
+              {
+                name: '로그아웃',
+                onClick: logout,
+              },
+            ]}
+          />
         </div>
       ) : (
         <Link to="/login" css={baseLinkStyle}>

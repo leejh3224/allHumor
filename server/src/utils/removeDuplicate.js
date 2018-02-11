@@ -1,9 +1,12 @@
 import Article from 'models/Article'
 
-export default async (urls, site) => {
+export default async (links) => {
+  const domainNameRegex = /^(https?:\/\/www.)([\w-_]+)/
+  const domainName = links[0].match(domainNameRegex)[2]
+
   const [fromDB = { articleIds: [] }] = await Article.aggregate([
     {
-      $match: { site },
+      $match: { site: domainName },
     },
     {
       $group: { _id: null, articleIds: { $push: '$articleId' } },
@@ -13,16 +16,19 @@ export default async (urls, site) => {
     },
   ])
 
-  return urls
-    .map((url) => {
-      const getArticleId = str => str.replace(/[http|https]{1,}:\/\/www.[\w.]{1,}\//, '')
-      const hasCrawled = fromDB.articleIds.includes(getArticleId(url))
+  const getArticleId = (link) => {
+    const queryStringRegex = /(no|postNum)=?(\d+)/
+    const routeParamsRegex = /\/(\d+)/
 
-      if (hasCrawled) {
-        return null
-      }
+    if (queryStringRegex.test(link)) {
+      return link.match(queryStringRegex)[2]
+    }
+    return link.match(routeParamsRegex)[1]
+  }
 
-      return url
-    })
-    .filter(url => url)
+  return links.filter((link) => {
+    const articleId = getArticleId(link)
+    const isSaved = fromDB.articleIds.includes(articleId)
+    return !isSaved
+  })
 }

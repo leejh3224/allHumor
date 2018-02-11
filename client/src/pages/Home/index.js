@@ -1,29 +1,28 @@
 import React from 'react'
+
 import StickyOnScroll from 'pages/StickyOnScroll'
-import {
-  PreviewListContainer,
-  PaginationContainer,
-  CategoryGroupContainer,
-  HeaderContainer,
-} from 'containers'
+import { PreviewFeedList } from 'blocks'
+import { MainWrapper } from 'components'
+import { PaginationContainer, CategoryGroupContainer, HeaderContainer } from 'containers'
 import { isAuthenticated, logout } from 'utils/auth'
 import categories from 'globals/categories'
+import WithAuth0 from 'pages/WithAuth0'
 
 const Home = () => (
   <StickyOnScroll>
     {({ isSticky }) => (
-      <div>
+      <MainWrapper>
         <HeaderContainer isLoggedIn={isAuthenticated()} logout={logout} />
         <CategoryGroupContainer isSticky={isSticky} categories={categories} />
         <section css={{ paddingTop: isSticky ? 50 : 0 }}>
-          <PreviewListContainer />
+          <PreviewFeedList />
         </section>
         <PaginationContainer />
-      </div>
+      </MainWrapper>
     )}
   </StickyOnScroll>
 )
 
 Home.propTypes = {}
 
-export default Home
+export default WithAuth0(Home)

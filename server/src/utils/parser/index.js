@@ -1,16 +1,19 @@
-import dogdrip from 'utils/parser/dogdrip'
-import kickoff from 'utils/parser/kickoff'
-import ddengle from 'utils/parser/ddengle'
-import instiz from 'utils/parser/instiz'
+import getParser from './getParser'
 
-const options = {
-  dogdrip,
-  kickoff,
-  ddengle,
-  instiz,
-}
+export default class Parser {
+  constructor({ domain, html }) {
+    const domainNameRegex = /^(https?:\/\/www.)([\w-_]+)/
+    const domainName = domain.match(domainNameRegex)[2]
+    const withoutDash = domainName.replace(/-/, '')
 
-export default async ({ url, html, site }) => {
-  const result = await options[site](url, html)
-  return result
+    this.domain = domain
+    this.html = html
+    this.domainName = withoutDash
+  }
+  async getResult() {
+    const { domainName, domain, html } = this
+    const parser = getParser(domainName)
+    const result = await parser(domain, html)
+    return result
+  }
 }

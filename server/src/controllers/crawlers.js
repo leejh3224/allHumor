@@ -8,7 +8,6 @@ export default {
   crawlDogdrip: async (req, res) => {
     const { boardName = 'dogdrip', page = 1 } = req.params
     const dogdripUrl = `http://www.dogdrip.net/index.php?mid=${boardName}&page=${page}`
-    const siteName = 'dogdrip'
 
     try {
       const { data } = await axios.get(dogdripUrl)
@@ -29,8 +28,8 @@ export default {
         urls.push(el.attribs.href)
       })
 
-      const withoutDuplicate = await removeDuplicate(urls, siteName)
-      const articles = await Promise.all(withoutDuplicate.map(url => parseRawHtml(url, siteName)))
+      const withoutDuplicate = await removeDuplicate(urls)
+      const articles = await Promise.all(withoutDuplicate.map(url => parseRawHtml(url)))
       const truthy = articles.filter(article => article)
 
       await Article.insertMany(truthy)
@@ -51,7 +50,6 @@ export default {
     const { page = 1 } = req.params
     // condition I = 이미지 게시글
     const kickoffUrl = `http://www.kick-off.co.kr/pub/overseas.aspx?pageNum=${page}&condition=I`
-    const siteName = req.url.match(/^\/crawlers\/(\w{0,})/)[1]
 
     try {
       const { data } = await axios.get(kickoffUrl)
@@ -68,8 +66,8 @@ export default {
         urls.push(`http://www.kick-off.co.kr${el.attribs.href}`)
       })
 
-      const withoutDuplicate = await removeDuplicate(urls, siteName)
-      const articles = await Promise.all(withoutDuplicate.map(url => parseRawHtml(url, siteName)))
+      const withoutDuplicate = await removeDuplicate(urls)
+      const articles = await Promise.all(withoutDuplicate.map(url => parseRawHtml(url)))
       const truthy = articles.filter(article => article)
 
       await Article.insertMany(truthy)
@@ -87,7 +85,6 @@ export default {
   crawlDdengle: async (req, res) => {
     const { boardName = 'board_vote_all', page = 1 } = req.params
     const ddengleUrl = `https://www.ddengle.com/index.php?mid=${boardName}&page=${page}`
-    const siteName = 'ddengle'
 
     try {
       const { data } = await axios.get(ddengleUrl)
@@ -104,8 +101,8 @@ export default {
         urls.push(el.attribs.href)
       })
 
-      const withoutDuplicate = await removeDuplicate(urls, siteName)
-      const articles = await Promise.all(withoutDuplicate.map(url => parseRawHtml(url, siteName)))
+      const withoutDuplicate = await removeDuplicate(urls)
+      const articles = await Promise.all(withoutDuplicate.map(url => parseRawHtml(url)))
       const truthy = articles.filter(article => article)
 
       await Article.insertMany(truthy)
@@ -124,7 +121,6 @@ export default {
     const { page = 1 } = req.params
     // 인스티즤 예인영상 게시판
     const instizUrl = `https://www.instiz.net/bbs/list.php?id=fanclip&page=${page}`
-    const siteName = 'instiz'
 
     try {
       const { data } = await axios.get(instizUrl)
@@ -144,8 +140,8 @@ export default {
         urls.push(`https://www.instiz.net${el.attribs.href.replace(/../, '')}`)
       })
 
-      const withoutDuplicate = await removeDuplicate(urls, siteName)
-      const articles = await Promise.all(withoutDuplicate.map(url => parseRawHtml(url, siteName)))
+      const withoutDuplicate = await removeDuplicate(urls)
+      const articles = await Promise.all(withoutDuplicate.map(url => parseRawHtml(url)))
       const truthy = articles.filter(article => article)
 
       await Article.insertMany(truthy)

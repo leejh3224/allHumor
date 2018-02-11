@@ -1,9 +1,9 @@
 import React from 'react'
-import { number, element } from 'prop-types'
+import { number, element, string } from 'prop-types'
 import { Link } from 'react-router-dom'
 
 const ImageLinkTemplate = ({
-  width, height, overlay, background,
+  to, width, height, overlay, background,
 }) => (
   <Link
     css={{
@@ -17,7 +17,7 @@ const ImageLinkTemplate = ({
         display: 'flex',
       },
     }}
-    to="/"
+    to={to}
   >
     {overlay}
     {background}
@@ -25,6 +25,7 @@ const ImageLinkTemplate = ({
 )
 
 ImageLinkTemplate.propTypes = {
+  to: string.isRequired,
   width: number.isRequired,
   height: number.isRequired,
   overlay: element.isRequired,
