@@ -1,11 +1,13 @@
 import { fromJS, Map } from 'immutable'
 import { handleActions } from 'redux-actions'
-import types from 'store/actionTypes'
-import { commentListSchema, replyListSchema } from 'store/schema'
 import { normalize } from 'normalizr'
 import { createSelector } from 'reselect'
-import api from 'api'
 import orderBy from 'lodash/orderBy'
+
+import types from 'store/actionTypes'
+import { commentListSchema, replyListSchema } from 'store/schema'
+import api from 'api'
+import { getParentId, getCommentId } from './addReply'
 
 const initialState = fromJS({
   articleId: 0,
@@ -49,16 +51,18 @@ export const addComment = content => async (dispatch, getState) => {
   }
 }
 
-export const addReply = (content, from, parent) => async (dispatch, getState) => {
+export const addReply = content => async (dispatch, getState) => {
   const state = getState()
   const userId = state.user.get('userId')
   const avatar = state.user.get('avatar')
   const author = state.user.get('displayName')
+  const commentId = getCommentId(state)
+  const parentId = getParentId(state)
 
-  dispatch({ type: types.reply.ADD_REQUEST, payload: { id: from } })
+  dispatch({ type: types.reply.ADD_REQUEST, payload: { id: commentId } })
 
   try {
-    const { data: { replies } } = await api.post(`/comments/${parent}/replies`, {
+    const { data: { replies } } = await api.post(`/comments/${parentId}/replies`, {
       userId,
       avatar,
       author,
@@ -69,14 +73,14 @@ export const addReply = (content, from, parent) => async (dispatch, getState) =>
       dispatch({
         type: types.reply.ADD_SUCCESS,
         payload: {
-          id: from,
+          id: commentId,
           data: normalize(replies, replyListSchema),
         },
       })
     }
   } catch (error) {
     console.log(error)
-    dispatch({ type: types.reply.ADD_ERROR, payload: { id: from, error } })
+    dispatch({ type: types.reply.ADD_ERROR, payload: { id: commentId, error } })
   }
 }
 

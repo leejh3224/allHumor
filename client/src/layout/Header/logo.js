@@ -1,30 +1,26 @@
 import React from 'react'
-import { func } from 'prop-types'
-import { Link } from 'react-router-dom'
+import { func, string } from 'prop-types'
 
-import { colors, fonts } from 'styles/theme'
+import { fonts } from 'styles/theme'
+import { BaseStyleLink } from 'components'
 
-const baseLinkStyle = {
-  color: colors.white,
-  textDecoration: 'none',
-  ...fonts.header,
-}
-
-const Logo = ({ onClick }) => (
-  <Link
-    to="/"
+const Logo = ({ to, onClick, text }) => (
+  <BaseStyleLink
+    to={to}
     onClick={onClick}
-    css={{
-        fontStyle: 'italic',
-        ...baseLinkStyle,
-      }}
+    cssProps={{
+      fontFamily: 'Helvetica',
+      ...fonts.large,
+    }}
   >
-      ALL유머
-  </Link>
+    {text}
+  </BaseStyleLink>
 )
 
 Logo.propTypes = {
+  to: string.isRequired,
   onClick: func.isRequired,
+  text: string.isRequired,
 }
 
 export default Logo

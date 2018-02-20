@@ -1,10 +1,13 @@
 import { fromJS, Map } from 'immutable'
 import { handleActions } from 'redux-actions'
+import { normalize } from 'normalizr'
+import values from 'lodash/values'
+import { createSelector } from 'reselect'
+
 import api from 'api'
 import types from 'store/actionTypes'
 import { articleListSchema } from 'store/schema'
-import { normalize } from 'normalizr'
-import values from 'lodash/values'
+import { getArticlesCategory } from 'store/modules/pagination'
 
 const initialState = fromJS({
   entities: {
@@ -18,7 +21,7 @@ export const loadArticle = id => async dispatch => {
   try {
     const { data: { articles } } = await api.get(`/articles/${id}`)
 
-    if (articles) {
+    if (articles.length) {
       dispatch({
         type: types.article.SUCCESS,
         payload: {
@@ -34,6 +37,12 @@ export const loadArticle = id => async dispatch => {
 
 export const getArticles = ({ article }) =>
   values((article.getIn(['entities', 'articles']) || Map()).toJS())
+
+export const getArticlesByCategory = createSelector(
+  getArticles,
+  getArticlesCategory,
+  (articles, category) => articles.filter(article => article.category === category),
+)
 
 export default handleActions(
   {

@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import { func, shape, string, arrayOf } from 'prop-types'
 
-import { spacing, colors } from 'styles/theme'
-import { CommentForm, EllipsisButton } from 'blocks'
+import { colors } from 'styles/theme'
+import { EllipsisButton } from 'blocks'
 import CommentTemplate from './template'
 import Thumbnail from './thumbnail'
 import Body from './body'
@@ -11,20 +11,18 @@ class Comment extends Component {
   static propTypes = {
     comment: shape().isRequired,
     repliesList: arrayOf(shape()).isRequired,
-    parent: string.isRequired,
     myUserId: string.isRequired,
     startEditComment: func.isRequired,
     removeComment: func.isRequired,
   }
   render() {
     const {
-      comment, repliesList, myUserId, startEditComment, removeComment, parent,
+      comment, repliesList, myUserId, startEditComment, removeComment,
     } = this.props
     const {
       _id,
       avatar,
       userId,
-      isAddingReply,
       isFetchingAddReply,
       isEditing,
       isFetchingRemovingComment,
@@ -37,26 +35,19 @@ class Comment extends Component {
         return isFetchingReply ? (
           <p>불러오는 중 ...</p>
         ) : (
-          <ul>
-            {repliesList.map(reply => (
-              <li
-                key={reply._id + 1}
-                css={{
-                  paddingTop: spacing.small,
-                  paddingBottom: spacing.small,
-                }}
-              >
+          repliesList && (
+            <ul>
+              {repliesList.map(reply => (
                 <Comment
                   key={reply._id}
                   comment={reply}
                   myUserId={myUserId}
                   startEditComment={startEditComment}
                   removeComment={removeComment}
-                  parent={_id}
                 />
-              </li>
-            ))}
-          </ul>
+              ))}
+            </ul>
+          )
         )
       }
       return null
@@ -90,7 +81,6 @@ class Comment extends Component {
       <CommentTemplate
         thumbnail={<Thumbnail avatar={avatar} />}
         body={<Body comment={comment} repliesList={repliesList} />}
-        form={isAddingReply && <CommentForm from={_id} parent={parent} />}
         loadingAddReply={isFetchingAddReply && <p>불러오는 중 ...</p>}
         renderRepliesList={renderRepliesList}
         renderEllipsisButton={renderEllipsisButton}

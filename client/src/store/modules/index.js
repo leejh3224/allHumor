@@ -10,6 +10,7 @@ import user from './user'
 import ui from './ui'
 import search from './search'
 import nextArticle from './nextArticle'
+import addReply from './addReply'
 
 const rootReducer = combineReducers({
   router: routerReducer,
@@ -23,6 +24,7 @@ const rootReducer = combineReducers({
   ui,
   search,
   nextArticle,
+  addReply,
 })
 
 export default rootReducer

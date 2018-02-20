@@ -39,8 +39,6 @@ export default {
   },
   ui: {
     SWITCH_LOGIN_VIEW: 'ui/SWITCH_LOGIN_VIEW',
-    SHOW_ADD_COMMENT: 'ui/SHOW_ADD_COMMENT',
-    HIDE_ADD_COMMENT: 'ui/HIDE_ADD_COMMENT',
     TOGGLE_REPLIES: 'ui/TOGGLE_REPLIES',
     TOGGLE_EXPAND_COMMENT: 'ui/TOGGLE_EXPAND_COMMENT',
     START_EDIT_COMMENT: 'ui/START_EDIT_COMMENT',
@@ -51,5 +49,9 @@ export default {
     REQUEST: 'search/SEARCH_REQUEST',
     SUCCESS: 'search/SEARCH_SUCCESS',
     ERROR: 'search/SEARCH_ERROR',
+  },
+  addReply: {
+    START_ADD_REPLY: 'addReply/START_ADD_REPLY',
+    FINISH_ADD_REPLY: 'addReply/FINISH_ADD_REPLY',
   },
 }

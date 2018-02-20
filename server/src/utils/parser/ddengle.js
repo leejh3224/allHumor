@@ -1,5 +1,6 @@
 import sanitizeHtml from 'utils/sanitizeHtml'
 import parseMediaTags from 'utils/parseMediaTags'
+import getCategoryBySite from 'utils/getCategoryBySite'
 
 export default async (url, $) => {
   const articleId = url.match(/\d+$/)[0]
@@ -20,6 +21,7 @@ export default async (url, $) => {
       author,
       content: parsedContent,
       thumbnail,
+      category: getCategoryBySite(site),
       site,
       title,
       uploadDate: new Date(date),

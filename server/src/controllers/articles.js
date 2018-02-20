@@ -8,14 +8,7 @@ export default {
     const { category, page } = req.params
     const PER_PAGE = 10
     const { keyword } = req.query
-    const sitesByCategories = {
-      all: ['dogdrip', 'ddengle', 'instiz', 'kickoff'],
-      humor: ['dogdrip'],
-      bitcoin: ['ddengle'],
-      soccer: ['kickoff'],
-      idol: ['instiz'],
-    }
-    let findQuery = { site: { $in: sitesByCategories[category] } }
+    let findQuery = { category }
 
     if (keyword) {
       findQuery = Object.assign(findQuery, { $text: { $search: keyword } })
@@ -36,7 +29,6 @@ export default {
     const addFieldVoteCounts = {
       $addFields: {
         voteCount: { $sum: '$votes.counts' },
-        commentCount: { $size: '$comments' },
       },
     }
     const sort = {

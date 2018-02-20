@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { shape, arrayOf } from 'prop-types'
 
-import { CommentForm } from 'blocks'
+import { EditComment } from 'blocks'
 import BodyTemplate from './template'
 import Header from './header'
 import Text from './text'
@@ -29,7 +29,7 @@ class Body extends Component {
     } = this.props.comment
 
     if (isEditing) {
-      return <CommentForm isEditing={isEditing} oldContent={content} from={_id} />
+      return <EditComment commentId={_id} oldText={content} />
     }
 
     if (isFetchingEditingComment) {

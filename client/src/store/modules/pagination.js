@@ -8,7 +8,7 @@ import isEmpty from 'lodash/isEmpty'
 
 const initialState = fromJS({
   articles: {
-    category: 'all',
+    category: 'humor',
     perPage: 0,
     current: 1,
     pageCount: 0,
@@ -128,13 +128,13 @@ export default handleActions(
         .setIn(['comments', 'pageCount'], Math.ceil(total / perPage))
     },
     '@@router/LOCATION_CHANGE': (state, { payload }) => {
-      const routerMatch = payload.pathname.match(/\/(all|dogdrip)\/(\d{1,})/)
+      const routerMatch = payload.pathname.match(/\/(humor|soccer|bitcoin|idol)/)
       const oldCategory = state.getIn(['articles', 'category'])
       const oldPage = state.getIn(['articles', 'current'])
 
       if (routerMatch) {
         // 홈을 제외한 어떤 카테고리든 선택
-        const [, newCategory = 'all', nextPage = '1'] = routerMatch
+        const [, newCategory = 'humor', nextPage = '1'] = routerMatch
         const changingCategory = oldCategory !== newCategory
         const changingPage = !changingCategory && oldPage !== nextPage
 
@@ -144,7 +144,7 @@ export default handleActions(
             .setIn(['articles', 'current'], parseInt(nextPage, 10))
         }
       }
-      return state.setIn(['articles', 'category'], 'all').setIn(['articles', 'current'], 1)
+      return state.setIn(['articles', 'category'], 'humor').setIn(['articles', 'current'], 1)
     },
   },
   initialState,

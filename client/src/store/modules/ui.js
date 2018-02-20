@@ -1,23 +1,17 @@
 import { fromJS } from 'immutable'
 import { handleActions } from 'redux-actions'
-import types from 'store/actionTypes'
-import { commentListSchema } from 'store/schema'
 import { normalize } from 'normalizr'
 
+import types from 'store/actionTypes'
+import { commentListSchema } from 'store/schema'
+
 const initialState = fromJS({
-  loginView: 'login',
   comments: {},
   replies: {},
+  loginView: 'login',
 })
 
 export const getLoginView = ({ ui }) => ui.get('loginView')
-
-export const showAddComment = id => dispatch => {
-  dispatch({ type: types.ui.SHOW_ADD_COMMENT, payload: { id } })
-}
-export const hideAddComment = id => dispatch => {
-  dispatch({ type: types.ui.HIDE_ADD_COMMENT, payload: { id } })
-}
 export const toggleReplies = id => dispatch => {
   dispatch({ type: types.ui.TOGGLE_REPLIES, payload: { id } })
 }
@@ -167,14 +161,6 @@ export default handleActions(
     [types.reply.ADD_ERROR]: (state, { payload: { id } }) => {
       const isCommentType = state.get('comments').has(id)
       return state.setIn([isCommentType ? 'comments' : 'replies', id, 'isFetchingAddReply'], false)
-    },
-    [types.ui.SHOW_ADD_COMMENT]: (state, { payload: { id } }) => {
-      const isCommentType = state.get('comments').has(id)
-      return state.setIn([isCommentType ? 'comments' : 'replies', id, 'isAddingReply'], true)
-    },
-    [types.ui.HIDE_ADD_COMMENT]: (state, { payload: { id } }) => {
-      const isCommentType = state.get('comments').has(id)
-      return state.setIn([isCommentType ? 'comments' : 'replies', id, 'isAddingReply'], false)
     },
     [types.ui.TOGGLE_REPLIES]: (state, { payload: { id } }) => {
       const prevState = state.getIn(['comments', id, 'isShowingReply'])

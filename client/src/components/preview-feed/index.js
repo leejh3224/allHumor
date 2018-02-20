@@ -12,7 +12,7 @@ const escapeThumbnailSrc = src =>
 
 const PreviewItem = ({ article }) => {
   const {
-    _id, thumbnail, title, author, uploadDate, voteCount, commentCount,
+    _id, thumbnail, title, author, uploadDate, voteCount, comments,
   } = article
   return (
     <Link
@@ -30,7 +30,7 @@ const PreviewItem = ({ article }) => {
           />
         }
         header={<Header title={title} author={author} />}
-        footer={<Footer date={uploadDate} voteCount={voteCount} commentCount={commentCount} />}
+        footer={<Footer date={uploadDate} voteCount={voteCount} commentCount={comments.length} />}
       />
     </Link>
   )

@@ -13,6 +13,7 @@ const Article = new Schema(
     author: { type: String, required: true },
     thumbnail: String,
     content: { type: String, required: true },
+    category: { type: String, required: true },
     site: { type: String, required: true },
     comments: [
       {

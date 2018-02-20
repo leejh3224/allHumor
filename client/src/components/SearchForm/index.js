@@ -1,5 +1,7 @@
 import React from 'react'
 import { func, string } from 'prop-types'
+
+import { MagnifyingGlassIcon } from 'components/icons'
 import { colors, spacing, fonts } from 'styles/theme'
 
 const SearchForm = ({ keyword, handleInputChange, handleSubmit }) => (
@@ -8,25 +10,25 @@ const SearchForm = ({ keyword, handleInputChange, handleSubmit }) => (
       display: 'flex',
       backgroundColor: colors.primary,
       width: '100%',
-      padding: spacing.small,
+      padding: `${spacing.small}px ${spacing.medium}px`,
       position: 'relative',
     }}
   >
     <form css={{ display: 'flex', flex: 1 }} onSubmit={handleSubmit}>
-      <i
-        className="ion-ios-search-strong"
-        css={{
+      <MagnifyingGlassIcon
+        color={colors.black}
+        cssProps={{
           position: 'absolute',
-          top: 18,
-          left: 26,
-          ...fonts.icon,
+          top: 21,
+          left: 30,
         }}
       />
       <input
         css={{
           flex: 1,
           ...fonts.body,
-          borderRadius: 30,
+          height: 56,
+          borderRadius: 6,
           textIndent: 50,
           maxHeight: 45,
         }}
@@ -36,17 +38,6 @@ const SearchForm = ({ keyword, handleInputChange, handleSubmit }) => (
         value={keyword}
       />
     </form>
-    <button
-      css={{
-        backgroundColor: colors.primary,
-        color: colors.white,
-        cursor: 'pointer',
-        padding: spacing.small,
-        ...fonts.body,
-      }}
-    >
-      취소
-    </button>
   </div>
 )
 

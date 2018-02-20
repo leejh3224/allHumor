@@ -1,14 +1,14 @@
 import React, { Component } from 'react'
-import { number, func, bool } from 'prop-types'
+import { number, func } from 'prop-types'
 import { connect } from 'react-redux'
 
 import * as votingDucks from 'store/modules/voting'
+import { isAuthenticated } from 'utils/auth'
 import history from 'utils/history'
 import Button from './button'
 
 class ThumbsupButton extends Component {
   static propTypes = {
-    isLoggedIn: bool.isRequired,
     voteArticle: func.isRequired,
     voteCount: number.isRequired,
   }
@@ -16,9 +16,9 @@ class ThumbsupButton extends Component {
     clearInterval(this.intervalId)
   }
   handleVoting = () => {
-    const { isLoggedIn, voteArticle } = this.props
+    const { voteArticle } = this.props
 
-    if (!isLoggedIn) {
+    if (!isAuthenticated()) {
       return history.replace('/login')
     }
     return voteArticle()

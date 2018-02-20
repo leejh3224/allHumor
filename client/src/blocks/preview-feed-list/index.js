@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { bool, arrayOf, shape } from 'prop-types'
 import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
 
 import * as articleDucks from 'store/modules/article'
 import * as fetchingDucks from 'store/modules/fetching'
@@ -29,10 +30,12 @@ class PreviewFeedList extends Component {
   }
 }
 
-export default connect(
-  state => ({
-    articles: articleDucks.getArticles(state),
-    fetching: fetchingDucks.getFetchingArticle(state),
-  }),
-  null,
-)(PreviewFeedList)
+export default withRouter(
+  connect(
+    state => ({
+      articles: articleDucks.getArticlesByCategory(state),
+      fetching: fetchingDucks.getFetchingArticle(state),
+    }),
+    null,
+  )(PreviewFeedList),
+)
