@@ -1,35 +1,21 @@
-import axios from 'axios'
-import cheerio from 'cheerio'
 import Article from 'models/Article'
 import parseRawHtml from 'utils/parseRawHtml'
 import filterDuplicateLinks from 'utils/filterDuplicateLinks'
+import selectLinks from 'utils/selectLinks'
 
 export default {
   crawlDogdrip: async (req, res) => {
-    const { boardName = 'dogdrip', page = 1 } = req.params
-    const dogdripUrl = `http://www.dogdrip.net/index.php?mid=${boardName}&page=${page}`
+    const { page = 1 } = req.params
+    const dogdripUrl = `http://www.dogdrip.net/index.php?mid=dogdrip&page=${page}`
 
     try {
-      const { data } = await axios.get(dogdripUrl)
-
-      // decodeEntities option 을 false로 설정해야 html() 실행 시 한국어가 제대로 나옴
-      // 아래의 옵션은 한국어를 유니코드로 디코딩하기 때문에 생기는 현상
-      const $ = await cheerio.load(data, {
-        decodeEntities: false,
+      const links = await selectLinks({
+        url: dogdripUrl,
+        selector: 'tbody tr .title a',
+        selectorsForUnneccessaryNode: ['tbody .notice'],
       })
-
-      const urls = []
-
-      // 공지 부분은 삭제
-      $('tbody .notice').remove()
-
-      // 개드립 게시판의 각 링크 주소
-      $('tbody tr .title a').each((i, el) => {
-        urls.push(el.attribs.href)
-      })
-
-      const withoutDuplicate = await filterDuplicateLinks(urls)
-      const articles = await Promise.all(withoutDuplicate.map(url => parseRawHtml(url)))
+      const filteredLinks = await filterDuplicateLinks(links)
+      const articles = await Promise.all(filteredLinks.map(link => parseRawHtml(link)))
       const truthy = articles.filter(article => article)
 
       await Article.insertMany(truthy)
@@ -52,22 +38,13 @@ export default {
     const kickoffUrl = `http://www.kick-off.co.kr/pub/overseas.aspx?pageNum=${page}&condition=I`
 
     try {
-      const { data } = await axios.get(kickoffUrl)
-
-      // decodeEntities option 을 false로 설정해야 html() 실행 시 한국어가 제대로 나옴
-      // 아래의 옵션은 한국어를 유니코드로 디코딩하기 때문에 생기는 현상
-      const $ = await cheerio.load(data, {
-        decodeEntities: false,
+      const links = await selectLinks({
+        url: kickoffUrl,
+        selector: 'tbody tr .list_title a',
+        selectorsForUnneccessaryNode: [],
       })
-
-      const urls = []
-
-      $('tbody tr .list_title a').each((i, el) => {
-        urls.push(`http://www.kick-off.co.kr${el.attribs.href}`)
-      })
-
-      const withoutDuplicate = await filterDuplicateLinks(urls)
-      const articles = await Promise.all(withoutDuplicate.map(url => parseRawHtml(url)))
+      const filteredLinks = await filterDuplicateLinks(links)
+      const articles = await Promise.all(filteredLinks.map(link => parseRawHtml(link)))
       const truthy = articles.filter(article => article)
 
       await Article.insertMany(truthy)
@@ -83,26 +60,17 @@ export default {
     }
   },
   crawlDdengle: async (req, res) => {
-    const { boardName = 'board_vote_all', page = 1 } = req.params
-    const ddengleUrl = `https://www.ddengle.com/index.php?mid=${boardName}&page=${page}`
+    const { page = 1 } = req.params
+    const ddengleUrl = `https://www.ddengle.com/index.php?mid=board_vote_all&page=${page}`
 
     try {
-      const { data } = await axios.get(ddengleUrl)
-
-      // decodeEntities option 을 false로 설정해야 html() 실행 시 한국어가 제대로 나옴
-      // 아래의 옵션은 한국어를 유니코드로 디코딩하기 때문에 생기는 현상
-      const $ = await cheerio.load(data, {
-        decodeEntities: false,
+      const links = await selectLinks({
+        url: ddengleUrl,
+        selector: 'tbody tr .title .bubble',
+        selectorsForUnneccessaryNode: [],
       })
-
-      const urls = []
-
-      $('tbody tr .title .bubble').each((i, el) => {
-        urls.push(el.attribs.href)
-      })
-
-      const withoutDuplicate = await filterDuplicateLinks(urls)
-      const articles = await Promise.all(withoutDuplicate.map(url => parseRawHtml(url)))
+      const filteredLinks = await filterDuplicateLinks(links)
+      const articles = await Promise.all(filteredLinks.map(link => parseRawHtml(link)))
       const truthy = articles.filter(article => article)
 
       await Article.insertMany(truthy)
@@ -123,27 +91,13 @@ export default {
     const instizUrl = `https://www.instiz.net/bbs/list.php?id=fanclip&page=${page}`
 
     try {
-      const { data } = await axios.get(instizUrl)
-
-      // decodeEntities option 을 false로 설정해야 html() 실행 시 한국어가 제대로 나옴
-      // 아래의 옵션은 한국어를 유니코드로 디코딩하기 때문에 생기는 현상
-      const $ = await cheerio.load(data, {
-        decodeEntities: false,
+      const links = await selectLinks({
+        url: instizUrl,
+        selector: 'tbody tr #subject a',
+        selectorsForUnneccessaryNode: ['tbody #topboard', 'tbody tr #subject .texthead'],
       })
-
-      const urls = []
-
-      // 필요없는 부분은 삭제
-      $('tbody #topboard').remove()
-      // 각 게시물 카테고리 태그
-      $('tbody tr #subject .texthead').remove()
-
-      $('tbody tr #subject a').each((i, el) => {
-        urls.push(`https://www.instiz.net${el.attribs.href.replace(/../, '')}`)
-      })
-
-      const withoutDuplicate = await filterDuplicateLinks(urls)
-      const articles = await Promise.all(withoutDuplicate.map(url => parseRawHtml(url)))
+      const filteredLinks = await filterDuplicateLinks(links)
+      const articles = await Promise.all(filteredLinks.map(link => parseRawHtml(link)))
       const truthy = articles.filter(article => article)
 
       await Article.insertMany(truthy)

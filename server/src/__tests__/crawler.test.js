@@ -1,6 +1,7 @@
-import request from 'superagent'
-import cheerio from 'cheerio'
-import getArticleData from 'utils/getArticleData'
+// import request from 'superagent'
+// import cheerio from 'cheerio'
+import { URL } from 'url'
+import selectLinks from 'utils/selectLinks'
 import config from 'config'
 import app from 'app'
 
@@ -22,27 +23,18 @@ test('GET /crawlers/dogdrip/:page', async () => {
   // dogdrip main url은 page만 바꿔주면 됨
   const page = 1
   const dogdripMainUrl = `http://www.dogdrip.net/index.php?mid=dogdrip&page=${page}`
+  const kickOffUrl = `http://www.kick-off.co.kr/pub/overseas.aspx?pageNum=${page}&condition=I`
+  const ddengleUrl = `https://www.ddengle.com/index.php?mid=board_vote_all&page=${page}`
+  const instizUrl = `https://www.instiz.net/bbs/list.php?id=fanclip&page=${page}`
 
   try {
-    const { text } = await request.get(dogdripMainUrl)
-
-    // decodeEntities option 을 false로 설정해야 html() 실행 시 한국어가 제대로 나옴
-    // 아래의 옵션은 한국어를 유니코드로 디코딩하기 때문에 생기는 현상
-    const $ = await cheerio.load(text, {
-      decodeEntities: false,
+    const links = await selectLinks({
+      url: ddengleUrl,
+      selector: 'tbody tr .title .bubble',
+      selectorsForUnneccessaryNode: [],
     })
-
-    const urls = []
-
-    // 공지 부분은 삭제
-    $('tbody .notice').remove()
-
-    // 개드립 게시판의 각 링크 주소를 집어넣음
-    $('tbody tr .title a').each((i, el) => {
-      urls.push(el.attribs.href)
-    })
-
-    return await Promise.all(urls.map(async url => getArticleData(url)))
+    console.log(links)
+    return links
   } catch (error) {
     console.log(error)
   }
