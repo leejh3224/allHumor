@@ -28,6 +28,7 @@ export default async (url, $) => {
       uploadDate: new Date(date),
       comments: [],
       votes: [],
+      originalLink: url,
     }
   }
   return null

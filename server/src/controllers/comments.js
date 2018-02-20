@@ -92,7 +92,7 @@ export default {
       })
     }
   },
-  getAllReply: async (req, res) => {
+  getReplies: async (req, res) => {
     try {
       const { id } = req.params
       const { replies } = await Comment.findById(id)

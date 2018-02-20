@@ -2,7 +2,7 @@ import axios from 'axios'
 import cheerio from 'cheerio'
 import Article from 'models/Article'
 import parseRawHtml from 'utils/parseRawHtml'
-import removeDuplicate from 'utils/removeDuplicate'
+import filterDuplicateLinks from 'utils/filterDuplicateLinks'
 
 export default {
   crawlDogdrip: async (req, res) => {
@@ -28,7 +28,7 @@ export default {
         urls.push(el.attribs.href)
       })
 
-      const withoutDuplicate = await removeDuplicate(urls)
+      const withoutDuplicate = await filterDuplicateLinks(urls)
       const articles = await Promise.all(withoutDuplicate.map(url => parseRawHtml(url)))
       const truthy = articles.filter(article => article)
 
@@ -66,7 +66,7 @@ export default {
         urls.push(`http://www.kick-off.co.kr${el.attribs.href}`)
       })
 
-      const withoutDuplicate = await removeDuplicate(urls)
+      const withoutDuplicate = await filterDuplicateLinks(urls)
       const articles = await Promise.all(withoutDuplicate.map(url => parseRawHtml(url)))
       const truthy = articles.filter(article => article)
 
@@ -101,7 +101,7 @@ export default {
         urls.push(el.attribs.href)
       })
 
-      const withoutDuplicate = await removeDuplicate(urls)
+      const withoutDuplicate = await filterDuplicateLinks(urls)
       const articles = await Promise.all(withoutDuplicate.map(url => parseRawHtml(url)))
       const truthy = articles.filter(article => article)
 
@@ -142,7 +142,7 @@ export default {
         urls.push(`https://www.instiz.net${el.attribs.href.replace(/../, '')}`)
       })
 
-      const withoutDuplicate = await removeDuplicate(urls)
+      const withoutDuplicate = await filterDuplicateLinks(urls)
       const articles = await Promise.all(withoutDuplicate.map(url => parseRawHtml(url)))
       const truthy = articles.filter(article => article)
 

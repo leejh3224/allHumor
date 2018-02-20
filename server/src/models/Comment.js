@@ -57,8 +57,7 @@ Comment.post('save', async (doc, next) => {
       console.log(error)
       next(error)
     }
-  }
-  if (!recipient) {
+  } else {
     try {
       await Article.findByIdAndUpdate(doc.articleId, { $push: { comments: _id } })
       console.log('comment saved')
@@ -81,8 +80,7 @@ Comment.post('remove', async (doc, next) => {
       console.log(error)
       next(error)
     }
-  }
-  if (!recipient) {
+  } else {
     try {
       await Article.findByIdAndUpdate(doc.articleId, { $pull: { comments: _id } })
       console.log('comment removed')

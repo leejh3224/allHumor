@@ -27,6 +27,7 @@ const Article = new Schema(
         ref: 'Vote',
       },
     ],
+    originalLink: { type: String, required: true },
   },
   { timestamps: true },
 )

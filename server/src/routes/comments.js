@@ -8,7 +8,7 @@ routes.post('/comments', commentsController.addComment)
 routes.put('/comments/:id', commentsController.editComment)
 routes.delete('/comments/:id', commentsController.removeComment)
 
-routes.get('/comments/:id/replies', commentsController.getAllReply)
+routes.get('/comments/:id/replies', commentsController.getReplies)
 routes.post('/comments/:id/replies', commentsController.addReply)
 
 export default routes
