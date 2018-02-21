@@ -1,4 +1,4 @@
-import sanitizeHtml from 'utils/sanitizeHtml'
+import { sanitizeHtml } from 'utils/crawler'
 import parseMediaTags from 'utils/parseMediaTags'
 import getCategoryBySite from 'utils/getCategoryBySite'
 
@@ -6,13 +6,11 @@ export default async (url, $) => {
   const articleId = /(postNum=)(\d{0,})/.exec(url)[2]
   const site = 'kickoff'
   const domain = 'http://www.kick-off.co.kr'
-  const author = $('.view_regist_info_regist_user')
-    .children()
-    .last()
-    .text()
+  const author = $('.view_regist_info_regist_user a[onclick^="$.userInfoMenu"]').text()
   let content = $('.view_contents').html()
   const date = $('.view_regist_info_regist_date').text()
   const title = $('.view_title').text()
+
   content = sanitizeHtml(content).replace(/src="\/uploadImage/g, `src="${domain}/uploadImage`)
 
   // fmkorea에서 가져온 이미지는 다운로드가 정상적으로 이뤄지지 않음

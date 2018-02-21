@@ -1,7 +1,6 @@
 import Article from 'models/Article'
 import parseRawHtml from 'utils/parseRawHtml'
-import filterDuplicateLinks from 'utils/filterDuplicateLinks'
-import selectLinks from 'utils/selectLinks'
+import { filterDuplicateLinks, selectLinks } from 'utils/crawler'
 
 export default {
   crawlDogdrip: async (req, res) => {

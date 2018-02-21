@@ -1,4 +1,4 @@
-import sanitizeHtml from 'utils/sanitizeHtml'
+import { sanitizeHtml } from 'utils/crawler'
 import parseMediaTags from 'utils/parseMediaTags'
 import getCategoryBySite from 'utils/getCategoryBySite'
 
@@ -7,10 +7,7 @@ export default async (url, $) => {
   const site = 'instiz'
   const author = $('.tb_left span a').text()
   let content = $('.memo_content').html()
-  const date = $('.tb_left span')
-    .eq(2)
-    .text()
-    .match(/\d{4}.\d{1,2}.\d{1,2}\s\d{1,}:\d{1,2}/)[0]
+  const date = $('.tb_left span[itemprop=datePublished]').attr('title')
   const title = $('.tb_top #subject a').text()
   content = sanitizeHtml(content)
 

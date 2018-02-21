@@ -15,13 +15,13 @@ const Content = ({ content, originalLink }) => (
   >
     <div
       css={{
-        display: 'flex',
-        flexDirection: 'column',
         marginBottom: spacing.small,
-        // to align each item inside p tag
+        textAlign: 'center',
         '> p': {
-          display: 'flex',
-          justifyContent: 'center',
+          textAlign: 'center',
+        },
+        ' > div': {
+          textAlign: 'center',
         },
       }}
       dangerouslySetInnerHTML={{ __html: content }}

@@ -1,4 +1,4 @@
-import sanitizeHtml from 'utils/sanitizeHtml'
+import { sanitizeHtml } from 'utils/crawler'
 import parseMediaTags from 'utils/parseMediaTags'
 import getCategoryBySite from 'utils/getCategoryBySite'
 
