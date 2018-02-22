@@ -1,6 +1,6 @@
 import { URL } from 'url'
 
-import { loadParser } from 'utils/crawler'
+import loadParser from 'utils/loadParser'
 
 function hasSearchParams(url) {
   const { searchParams } = new URL(url)
@@ -13,7 +13,9 @@ function fromPathname(pathname) {
 }
 
 function fromQueryString(searchParams) {
-  const articleIdKeys = ['postNum', 'no']
+  // INFO
+  // articleIdKeys는 사이트를 추가할 때마다 update가 필요
+  const articleIdKeys = ['postNum', 'no', 'document_srl']
   const [articleId] = articleIdKeys.map(key => searchParams.get(key)).filter(value => value)
   return articleId
 }
@@ -42,22 +44,24 @@ function convertToISODate(date) {
 export default async ({
   url,
   authorSelector,
-  contentSelector,
   titleSelector,
   uploadDateSelector,
+  selectorsForUnneccessaryNode = [],
+  additionalFields = {},
 }) => {
   try {
-    const parser = await loadParser(url)
+    let parser = await loadParser(url)
+    parser = parser.remove(selectorsForUnneccessaryNode)
 
     const uploadDate = parser.getText(uploadDateSelector)
 
     const article = {
       articleId: getArticleId(url),
       author: parser.getText(authorSelector),
-      content: parser.getHtml(contentSelector),
       title: parser.getText(titleSelector),
       uploadDate: convertToISODate(uploadDate),
       originalLink: url,
+      ...additionalFields,
     }
 
     return article

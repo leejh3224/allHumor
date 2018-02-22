@@ -8,31 +8,30 @@ const Article = new Schema(
   {
     // 사이트 별 고유 article id
     articleId: { type: String, required: true },
-    uploadDate: { type: Date, required: true },
-    title: { type: String, required: true },
     author: { type: String, required: true },
-    thumbnail: String,
-    content: { type: String, required: true },
+    body: { type: String, required: true },
     category: { type: String, required: true },
-    site: { type: String, required: true },
     comments: [
       {
         type: Schema.Types.ObjectId,
         ref: 'Comment',
       },
     ],
+    originalLink: { type: String, required: true },
+    title: { type: String, required: true },
+    thumbnail: String,
+    uploadDate: { type: Date, required: true },
     votes: [
       {
         type: Schema.Types.ObjectId,
         ref: 'Vote',
       },
     ],
-    originalLink: { type: String, required: true },
   },
   { timestamps: true },
 )
 
-Article.index({ author: 'text', title: 'text', content: 'text' })
+Article.index({ author: 'text', title: 'text', body: 'text' })
 
 Article.post('remove', async (doc, next) => {
   const { _id } = doc

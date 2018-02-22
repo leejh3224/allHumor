@@ -1,6 +1,7 @@
 import Article from 'models/Article'
-import parseRawHtml from 'utils/parseRawHtml'
-import { filterDuplicateLinks, selectLinks } from 'utils/crawler'
+import filterDuplicateLinks from 'utils/filterDuplicateLinks'
+import selectLinks from 'utils/selectLinks'
+import crawl from 'utils/crawl'
 
 export default {
   crawlDogdrip: async (req, res) => {
@@ -14,17 +15,14 @@ export default {
         selectorsForUnneccessaryNode: ['tbody .notice'],
       })
       const filteredLinks = await filterDuplicateLinks(links)
-      const articles = await Promise.all(filteredLinks.map(link => parseRawHtml(link)))
-      const truthy = articles.filter(article => article)
+      const articles = await Promise.all(filteredLinks.map(crawl))
+      // await Article.insertMany(articles)
 
-      await Article.insertMany(truthy)
-
-      console.log('articles saved!')
       res.json({
-        articles: truthy,
+        articles,
       })
     } catch (error) {
-      console.log(88888, error)
+      console.log(error)
       res.json({
         error,
       })
@@ -43,13 +41,11 @@ export default {
         selectorsForUnneccessaryNode: [],
       })
       const filteredLinks = await filterDuplicateLinks(links)
-      const articles = await Promise.all(filteredLinks.map(link => parseRawHtml(link)))
-      const truthy = articles.filter(article => article)
-
-      await Article.insertMany(truthy)
+      // const articles = await crawl(filteredLinks)
+      await Article.insertMany(articles)
 
       res.json({
-        articles: truthy,
+        articles,
       })
     } catch (error) {
       console.log(error)
@@ -69,13 +65,11 @@ export default {
         selectorsForUnneccessaryNode: [],
       })
       const filteredLinks = await filterDuplicateLinks(links)
-      const articles = await Promise.all(filteredLinks.map(link => parseRawHtml(link)))
-      const truthy = articles.filter(article => article)
-
-      await Article.insertMany(truthy)
+      // const articles = await crawl(filteredLinks)
+      await Article.insertMany(articles)
 
       res.json({
-        articles: truthy,
+        articles,
       })
     } catch (error) {
       console.log(error)
@@ -96,13 +90,11 @@ export default {
         selectorsForUnneccessaryNode: ['tbody #topboard', 'tbody tr #subject .texthead'],
       })
       const filteredLinks = await filterDuplicateLinks(links)
-      const articles = await Promise.all(filteredLinks.map(link => parseRawHtml(link)))
-      const truthy = articles.filter(article => article)
-
-      await Article.insertMany(truthy)
+      // const articles = await crawl(filteredLinks)
+      await Article.insertMany(articles)
 
       res.json({
-        articles: truthy,
+        articles,
       })
     } catch (error) {
       console.log(error)
