@@ -41,32 +41,27 @@ function convertToISODate(date) {
   return new Date(instizUploadDate)
 }
 
-export default async ({
+export default ({
   url,
+  parser,
   authorSelector,
   titleSelector,
   uploadDateSelector,
   selectorsForUnneccessaryNode = [],
   additionalFields = {},
 }) => {
-  try {
-    let parser = await loadParser(url)
-    parser = parser.remove(selectorsForUnneccessaryNode)
+  const newParser = parser.remove(selectorsForUnneccessaryNode)
 
-    const uploadDate = parser.getText(uploadDateSelector)
+  const uploadDate = newParser.getText(uploadDateSelector)
 
-    const article = {
-      articleId: getArticleId(url),
-      author: parser.getText(authorSelector),
-      title: parser.getText(titleSelector),
-      uploadDate: convertToISODate(uploadDate),
-      originalLink: url,
-      ...additionalFields,
-    }
-
-    return article
-  } catch (error) {
-    console.log(error)
-    return {}
+  const article = {
+    articleId: getArticleId(url),
+    author: newParser.getText(authorSelector),
+    title: newParser.getText(titleSelector),
+    uploadDate: convertToISODate(uploadDate),
+    originalLink: url,
+    ...additionalFields,
   }
+
+  return article
 }

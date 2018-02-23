@@ -4,40 +4,16 @@ import loadParser from 'utils/loadParser'
 import createArticle from 'utils/createArticle'
 import saveImage from 'utils/saveImage'
 import getSrcList from 'utils/getSrcList'
-import srcToArrayBuffer from 'utils/srcToArrayBuffer'
+import toArrayBuffer from 'utils/toArrayBuffer'
 import createImageName from 'utils/createImageName'
 import changeChildImageAttributes from 'utils/changeChildImageAttributes'
 import sanitizeHtml from 'utils/sanitizeHtml'
-import getSelectorsForArticle from 'utils/getSelectorsForArticle'
+import getSelectors from 'utils/getSelectors'
 
 export default async (link) => {
-  const {
-    authorSelector,
-    bodySelector,
-    titleSelector,
-    uploadDateSelector,
-    selectorsForUnneccessaryNode,
-  } = getSelectorsForArticle(link)
-
-  const listOfSrc = await getSrcList(link)
-
   function toListOfBuffer(list) {
-    return Promise.all(list.map(srcToArrayBuffer))
+    return Promise.all(list.map(toArrayBuffer))
   }
-
-  const listOfBuffer = await toListOfBuffer(listOfSrc)
-
-  async function createImageNameAndSaveImage(buffer) {
-    const name = await createImageName(buffer)
-    await saveImage({ buffer, imageName: name })
-    return name
-  }
-
-  function toListOfImageName(list) {
-    return Promise.all(list.map(createImageNameAndSaveImage))
-  }
-
-  const listOfImageName = await toListOfImageName(listOfBuffer)
 
   function getCategory(url) {
     return {
@@ -48,75 +24,82 @@ export default async (link) => {
     }[new URL(url).hostname]
   }
 
-  async function checkVideos(url) {
-    try {
-      const parser = await loadParser(url)
-      const iframes = parser.getNodesList(`${bodySelector} iframe`)
-      return !!iframes.length
-    } catch (error) {
-      console.log(error)
-      return false
-    }
-  }
+  try {
+    const parser = await loadParser(link)
 
-  async function getThumbnail(url) {
-    const images = listOfImageName
-
-    const hasImages = images.length
-    const hasVideos = await checkVideos(url)
-
-    if (hasImages) {
-      const [thumbnail] = images
-      return `/img/${thumbnail}`
-    }
-
-    if (hasVideos) {
-      return 'video'
-    }
-    return null
-  }
-
-  async function toArticle() {
-    return createArticle({
-      url: link,
+    const {
       authorSelector,
+      bodySelector,
       titleSelector,
       uploadDateSelector,
       selectorsForUnneccessaryNode,
-      additionalFields: {
-        category: getCategory(link),
-        comments: [],
-        thumbnail: await getThumbnail(link),
-        votes: [],
-      },
-    })
-  }
+    } = getSelectors(link)
 
-  async function updateChildImages() {
-    try {
-      const parser = await loadParser(link)
-      const [root] = await parser.getNodesList(bodySelector)
+    const [body] = parser.getNodesList(bodySelector)
+    const imagesInBody = parser.getNodesList(`${bodySelector} img`)
+    const videosInBody = parser.getNodesList(`${bodySelector} iframe`)
+    const tooManyImages = imagesInBody.length > 2
 
-      if (listOfImageName.length) {
-        const [changedBody] = listOfImageName.map(imageName =>
-          changeChildImageAttributes({
-            root,
-            newSrc: `/img/${imageName}`,
-            newStyle: 'max-width: 100%;',
-          }))
-        return sanitizeHtml(changedBody)
-      }
-      return sanitizeHtml(root)
-    } catch (error) {
-      console.log(error)
+    if (tooManyImages) {
       return null
     }
-  }
 
-  const [body, withoutBody] = await Promise.all([updateChildImages(), toArticle()])
+    const listOfSrc = getSrcList({ url: link, imagesInBody })
+    const listOfBuffer = await toListOfBuffer(listOfSrc)
+    const listOfImageName = listOfBuffer.map(createImageName)
+    const [thumbnail] = listOfImageName
 
-  return {
-    ...withoutBody,
-    body,
+    await Promise.all(listOfBuffer.map(async (buffer, i) => {
+      await saveImage({ buffer, imageName: listOfImageName[i] })
+    }))
+
+    const hasImages = imagesInBody.length
+    const hasVideos = videosInBody.length
+
+    const getThumbnail = () => {
+      if (hasImages) {
+        return `/img/${thumbnail}`
+      }
+      if (hasVideos) {
+        return 'video'
+      }
+      return null
+    }
+
+    const toArticle = () =>
+      createArticle({
+        url: link,
+        parser,
+        authorSelector,
+        titleSelector,
+        uploadDateSelector,
+        selectorsForUnneccessaryNode,
+        additionalFields: {
+          category: getCategory(link),
+          comments: [],
+          thumbnail: getThumbnail(),
+          votes: [],
+        },
+      })
+
+    const updateChildImages = () => {
+      const [updatedBody] = listOfImageName.map(imageName =>
+        changeChildImageAttributes({
+          root: body,
+          newSrc: `/img/${imageName}`,
+          newStyle: 'max-width: 100%;',
+        }))
+      return updatedBody
+    }
+
+    const [updatedBody, article] = [hasImages ? updateChildImages() : body, toArticle()]
+
+    return {
+      ...article,
+      body: sanitizeHtml(updatedBody),
+    }
+  } catch (error) {
+    console.log(error)
+    return null
   }
 }

@@ -14,7 +14,7 @@ export default async ({ url, selector, selectorsForUnneccessaryNode = [] }) => {
       .map(element => element.attr('href'))
       .map((href) => {
         if (checkRelativePath(href)) {
-          return href.replace(/[.]{1,2}/, origin)
+          return href.replace(/[.]{0,2}\//, `${origin}/`)
         }
         return href
       })
