@@ -6,7 +6,7 @@ import saveImage from 'utils/saveImage'
 import getSrcList from 'utils/getSrcList'
 import toArrayBuffer from 'utils/toArrayBuffer'
 import createImageName from 'utils/createImageName'
-import changeChildImageAttributes from 'utils/changeChildImageAttributes'
+import updateImageAttributes from 'utils/updateImageAttributes'
 import sanitizeHtml from 'utils/sanitizeHtml'
 import getSelectors from 'utils/getSelectors'
 
@@ -24,6 +24,10 @@ export default async (link) => {
     }[new URL(url).hostname]
   }
 
+  function checkGif(string) {
+    return string.includes('.gif')
+  }
+
   try {
     const parser = await loadParser(link)
 
@@ -35,9 +39,21 @@ export default async (link) => {
       selectorsForUnneccessaryNode,
     } = getSelectors(link)
 
-    const [body] = parser.getNodesList(bodySelector)
-    const imagesInBody = parser.getNodesList(`${bodySelector} img`)
-    const videosInBody = parser.getNodesList(`${bodySelector} iframe`)
+    const [body] = parser.toArray(bodySelector)
+    const imagesInBody = parser.toArray(`${bodySelector} img`)
+
+    const gifImagesInBody = []
+    const nonGifImagesInBody = []
+    imagesInBody.forEach((element) => {
+      const src = element.attr('src')
+      if (checkGif(src)) {
+        gifImagesInBody.push(element)
+      } else {
+        nonGifImagesInBody.push(element)
+      }
+    })
+
+    const videosInBody = parser.toArray(`${bodySelector} iframe`).concat(gifImagesInBody)
     const tooManyImages = imagesInBody.length > 2
 
     if (tooManyImages) {
@@ -46,28 +62,44 @@ export default async (link) => {
 
     const listOfSrc = getSrcList({ url: link, imagesInBody })
     const listOfBuffer = await toListOfBuffer(listOfSrc)
-    const listOfImageName = listOfBuffer.map(createImageName)
-    const [thumbnail] = listOfImageName
+    let listOfImageName = listOfBuffer.map(createImageName)
 
-    await Promise.all(listOfBuffer.map(async (buffer, i) => {
-      await saveImage({ buffer, imageName: listOfImageName[i] })
-    }))
+    // await Promise.all(listOfBuffer.map(async (buffer, i) => {
+    //   await saveImage({ buffer, imageName: listOfImageName[i] })
+    // }))
 
-    const hasImages = imagesInBody.length
+    listOfImageName = listOfImageName.map((name) => {
+      if (checkGif(name)) {
+        return name.replace(/.gif$/, '.mp4')
+      }
+      return name
+    })
+
+    const hasImages = nonGifImagesInBody.length
     const hasVideos = videosInBody.length
+    const [thumbnail] = listOfImageName.filter(name => !name.includes('.mp4'))
 
     const getThumbnail = () => {
       if (hasImages) {
         return `/img/${thumbnail}`
       }
       if (hasVideos) {
-        return 'video'
+        return '/images/video.png'
       }
       return null
     }
 
-    const toArticle = () =>
-      createArticle({
+    const updatedBody = hasImages
+      ? updateImageAttributes({
+        root: body,
+        parser,
+        imageNames: listOfImageName,
+        newStyle: 'max-width: 100%;',
+      })
+      : body.html()
+
+    const article = {
+      ...createArticle({
         url: link,
         parser,
         authorSelector,
@@ -80,24 +112,13 @@ export default async (link) => {
           thumbnail: getThumbnail(),
           votes: [],
         },
-      })
-
-    const updateChildImages = () => {
-      const [updatedBody] = listOfImageName.map(imageName =>
-        changeChildImageAttributes({
-          root: body,
-          newSrc: `/img/${imageName}`,
-          newStyle: 'max-width: 100%;',
-        }))
-      return updatedBody
-    }
-
-    const [updatedBody, article] = [hasImages ? updateChildImages() : body, toArticle()]
-
-    return {
-      ...article,
+      }),
       body: sanitizeHtml(updatedBody),
     }
+
+    console.log(article)
+
+    return article
   } catch (error) {
     console.log(error)
     return null

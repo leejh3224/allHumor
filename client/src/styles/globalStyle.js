@@ -33,4 +33,12 @@ export default injectGlobal`
       height: 250px;
     };
   }
+  embed {
+    width: 100%;
+    height: 400px;
+
+    @media(max-width: 499px) {
+      height: 250px;
+    };
+  }
 `

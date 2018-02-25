@@ -18,18 +18,15 @@ class Parser {
     }
     return this
   }
-  getNodesList(selector) {
+  toArray(selector) {
     const nodes = []
     this.$(selector).each((i, el) => {
       nodes.push(this.$(el))
     })
     return nodes
   }
-  getText(selector) {
+  text(selector) {
     return this.$(selector).text()
-  }
-  getHtml(selector) {
-    return this.$(selector).html()
   }
 }
 

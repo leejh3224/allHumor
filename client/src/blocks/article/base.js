@@ -5,16 +5,15 @@ import ThumbsupButton from './thumbsup-button'
 import ArticleTemplate from './template'
 import Header from './header'
 import Content from './content'
-import getOriginalLink from './getOriginalLink'
 
 const Base = ({ article }) => {
   const {
-    title, site, author, uploadDate, content, articleId,
+    title, author, uploadDate, body, originalLink,
   } = article
   return (
     <ArticleTemplate
-      header={<Header title={title} site={site} author={author} uploadDate={uploadDate} />}
-      content={<Content content={content} originalLink={getOriginalLink(site, articleId)} />}
+      header={<Header title={title} author={author} uploadDate={uploadDate} />}
+      content={<Content content={body} originalLink={originalLink} />}
       thumbsupButton={<ThumbsupButton />}
     />
   )

@@ -1,7 +1,5 @@
 import { URL } from 'url'
 
-import loadParser from 'utils/loadParser'
-
 function hasSearchParams(url) {
   const { searchParams } = new URL(url)
   return !!Array.from(searchParams).length
@@ -52,12 +50,12 @@ export default ({
 }) => {
   const newParser = parser.remove(selectorsForUnneccessaryNode)
 
-  const uploadDate = newParser.getText(uploadDateSelector)
+  const uploadDate = newParser.text(uploadDateSelector)
 
   const article = {
     articleId: getArticleId(url),
-    author: newParser.getText(authorSelector),
-    title: newParser.getText(titleSelector),
+    author: newParser.text(authorSelector),
+    title: newParser.text(titleSelector),
     uploadDate: convertToISODate(uploadDate),
     originalLink: url,
     ...additionalFields,

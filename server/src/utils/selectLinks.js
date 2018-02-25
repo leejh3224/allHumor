@@ -10,7 +10,7 @@ export default async ({ url, selector, selectorsForUnneccessaryNode = [] }) => {
     const { origin } = new URL(url)
     const links = parser
       .remove(selectorsForUnneccessaryNode)
-      .getNodesList(selector)
+      .toArray(selector)
       .map(element => element.attr('href'))
       .map((href) => {
         if (checkRelativePath(href)) {

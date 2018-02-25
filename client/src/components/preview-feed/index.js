@@ -7,9 +7,6 @@ import Thumbnail from './Thumbnail'
 import Header from './Header'
 import Footer from './Footer'
 
-const escapeThumbnailSrc = src =>
-  (src ? src.replace(/[()]/g, matched => `\\${matched}`) : 'images/noimage.jpg')
-
 const PreviewItem = ({ article }) => {
   const {
     _id, thumbnail, title, author, uploadDate, voteCount, comments,
@@ -24,9 +21,7 @@ const PreviewItem = ({ article }) => {
       <PreviewItemTemplate
         thumbnail={
           <Thumbnail
-            image={`../../../${
-              thumbnail === 'video' ? 'images/video.png' : escapeThumbnailSrc(thumbnail)
-            }`}
+            image={`../../..${thumbnail}`}
           />
         }
         header={<Header title={title} author={author} />}

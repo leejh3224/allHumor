@@ -33,9 +33,15 @@ export default html =>
       'pre',
       'img',
       'iframe',
+      'embed',
+      'video',
+      'source',
     ],
     allowedAttributes: {
       img: ['src', 'alt', 'data-original'],
       iframe: ['src', 'allowfullscreen'],
+      embed: ['src', 'autoplay'],
+      video: ['controls', 'autoplay'],
+      source: ['src', 'type'],
     },
   })
