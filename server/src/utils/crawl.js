@@ -25,98 +25,84 @@ export default async (link) => {
   }
 
   function checkGif(string) {
-    return string.includes('.gif')
+    return string.endsWith('.gif')
   }
 
-  try {
-    const parser = await loadParser(link)
-
-    const {
-      authorSelector,
-      bodySelector,
-      titleSelector,
-      uploadDateSelector,
-      selectorsForUnneccessaryNode,
-    } = getSelectors(link)
-
-    const [body] = parser.toArray(bodySelector)
-    const imagesInBody = parser.toArray(`${bodySelector} img`)
-
-    const gifImagesInBody = []
-    const nonGifImagesInBody = []
-    imagesInBody.forEach((element) => {
-      const src = element.attr('src')
-      if (checkGif(src)) {
-        gifImagesInBody.push(element)
-      } else {
-        nonGifImagesInBody.push(element)
-      }
-    })
-
-    const videosInBody = parser.toArray(`${bodySelector} iframe`).concat(gifImagesInBody)
-    const tooManyImages = imagesInBody.length > 2
-
-    if (tooManyImages) {
-      return null
-    }
-
-    const listOfSrc = getSrcList({ url: link, imagesInBody })
-    const listOfBuffer = await toListOfBuffer(listOfSrc)
-    let listOfImageName = listOfBuffer.map(createImageName)
-
-    // await Promise.all(listOfBuffer.map(async (buffer, i) => {
-    //   await saveImage({ buffer, imageName: listOfImageName[i] })
-    // }))
-
-    listOfImageName = listOfImageName.map((name) => {
+  function changeGifToMp4Extension(list) {
+    return list.map((name) => {
       if (checkGif(name)) {
         return name.replace(/.gif$/, '.mp4')
       }
       return name
     })
+  }
 
-    const hasImages = nonGifImagesInBody.length
-    const hasVideos = videosInBody.length
-    const [thumbnail] = listOfImageName.filter(name => !name.includes('.mp4'))
+  function getThumbnailPath({ imageList, hasEmbededVideos = false }) {
+    if (hasEmbededVideos) {
+      return '/images/video.png'
+    }
 
-    const getThumbnail = () => {
-      if (hasImages) {
-        return `/img/${thumbnail}`
-      }
-      if (hasVideos) {
-        return '/images/video.png'
-      }
+    if (!imageList.length) {
       return null
     }
 
-    const updatedBody = hasImages
+    const [thumbnail] = imageList
+
+    if (thumbnail.endsWith('.mp4')) {
+      return '/images/video.png'
+    }
+
+    return `/img/${thumbnail}`
+  }
+
+  function saveBunchOfImages({ buffers, imageNames }) {
+    return Promise.all(buffers.map(async (buffer, i) => {
+      await saveImage({ buffer, imageName: imageNames[i] })
+    }))
+  }
+
+  try {
+    const { bodySelector } = getSelectors(link)
+
+    const parser = await loadParser(link)
+    const [body] = parser.toArray(bodySelector)
+    const allImagesInBody = parser.toArray(`${bodySelector} img`)
+
+    const tooManyImages = allImagesInBody.length > 2
+    if (tooManyImages) {
+      return null
+    }
+
+    const listOfSrc = getSrcList({ url: link, imageTags: allImagesInBody })
+    const listOfBuffer = await toListOfBuffer(listOfSrc)
+    let listOfImageName = listOfBuffer.map(createImageName)
+    await saveBunchOfImages({ buffers: listOfBuffer, imageNames: listOfImageName })
+
+    // after saving gif images as mp4 format, change its extension too.
+    listOfImageName = changeGifToMp4Extension(listOfImageName)
+    const embedVideos = parser.toArray(`${bodySelector} iframe,embed`) || []
+    const hasEmbededVideos = embedVideos.length
+    const updatedBody = allImagesInBody.length
       ? updateImageAttributes({
         root: body,
         parser,
         imageNames: listOfImageName,
         newStyle: 'max-width: 100%;',
       })
-      : body.html()
-
+      : body
     const article = {
       ...createArticle({
         url: link,
         parser,
-        authorSelector,
-        titleSelector,
-        uploadDateSelector,
-        selectorsForUnneccessaryNode,
         additionalFields: {
           category: getCategory(link),
           comments: [],
-          thumbnail: getThumbnail(),
+          thumbnail: getThumbnailPath({ imageList: listOfImageName, hasEmbededVideos }),
           votes: [],
         },
       }),
-      body: sanitizeHtml(updatedBody),
+      body: sanitizeHtml(updatedBody.html()),
     }
-
-    console.log(article)
 
     return article
   } catch (error) {

@@ -1,6 +1,15 @@
 import { injectGlobal } from 'emotion'
 import { colors, fonts } from 'styles/theme'
 
+const videoStyle = `
+  width: 100%;
+  height: 400px;
+
+  @media(max-width: 499px) {
+    height: 250px;
+  };
+`
+
 /* eslint-disable no-unused-expressions */
 export default injectGlobal`
   * {
@@ -25,20 +34,7 @@ export default injectGlobal`
     line-height: ${fonts.body.lineHeight};
   }
   // 크롤링 된 비디오의 크기
-  iframe {
-    width: 100%;
-    height: 400px;
-
-    @media(max-width: 499px) {
-      height: 250px;
-    };
-  }
-  embed {
-    width: 100%;
-    height: 400px;
-
-    @media(max-width: 499px) {
-      height: 250px;
-    };
+  iframe, embed, video {
+    ${videoStyle}
   }
 `

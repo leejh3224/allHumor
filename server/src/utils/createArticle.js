@@ -1,4 +1,5 @@
 import { URL } from 'url'
+import getSelectors from './getSelectors'
 
 function hasSearchParams(url) {
   const { searchParams } = new URL(url)
@@ -39,15 +40,14 @@ function convertToISODate(date) {
   return new Date(instizUploadDate)
 }
 
-export default ({
-  url,
-  parser,
-  authorSelector,
-  titleSelector,
-  uploadDateSelector,
-  selectorsForUnneccessaryNode = [],
-  additionalFields = {},
-}) => {
+export default ({ url, parser, additionalFields = {} }) => {
+  const {
+    authorSelector,
+    titleSelector,
+    uploadDateSelector,
+    selectorsForUnneccessaryNode = [],
+  } = getSelectors(url)
+
   const newParser = parser.remove(selectorsForUnneccessaryNode)
 
   const uploadDate = newParser.text(uploadDateSelector)

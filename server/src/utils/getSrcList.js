@@ -12,11 +12,11 @@ function checkLazyLoad(url) {
 }
 
 function checkUnsafeCharacters(url) {
-  return /가-힇\s/g.test(url)
+  return /[가-힇\s]+/g.test(url)
 }
 
-export default ({ url, imagesInBody }) => (
-  imagesInBody
+export default ({ url, imageTags }) =>
+  imageTags
     .filter(isValidImg)
     .map((imgElement) => {
       const src = imgElement.attr('src')
@@ -36,7 +36,6 @@ export default ({ url, imagesInBody }) => (
       }
       return src
     })
-  // INFO
-  // 땡글의 이미지 요청 url에서 www가 없어지면 Max Redirects Exceeded 에러가 발생함
+    // INFO
+    // 땡글의 이미지 요청 url에서 www가 없어지면 Max Redirects Exceeded 에러가 발생함
     .map(src => normalizeUrl(src, { stripWWW: false }))
-)
