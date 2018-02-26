@@ -1,7 +1,6 @@
 import { combineReducers } from 'redux'
 import { routerReducer } from 'react-router-redux'
 import article from './article'
-import fetching from './fetching'
 import error from './error'
 import pagination from './pagination'
 import voting from './voting'
@@ -11,6 +10,10 @@ import ui from './ui'
 import search from './search'
 import nextArticle from './nextArticle'
 import addReply from './addReply'
+
+import fetching from './fetching'
+import errorMessage from './errorMessage'
+import previewList from './previewList'
 
 const rootReducer = combineReducers({
   router: routerReducer,
@@ -25,6 +28,8 @@ const rootReducer = combineReducers({
   search,
   nextArticle,
   addReply,
+  previewList,
+  errorMessage,
 })
 
 export default rootReducer

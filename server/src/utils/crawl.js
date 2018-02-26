@@ -43,7 +43,7 @@ export default async (link) => {
     }
 
     if (!imageList.length) {
-      return null
+      return '/images/noImage.jpg'
     }
 
     const [thumbnail] = imageList

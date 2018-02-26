@@ -1,14 +1,6 @@
-import fs from 'fs'
-
 import config from 'config'
 import app from 'app'
-import axios from 'axios'
-import ffmpeg from 'fluent-ffmpeg'
-import uuid from 'uuid/v4'
 import crawl from 'utils/crawl'
-import loadParser from 'utils/loadParser'
-import getSelectors from 'utils/getSelectors'
-import updateImageAttributes from 'utils/updateImageAttributes'
 
 const env = process.env.NODE_ENV
 const { port } = config[env]

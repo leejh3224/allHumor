@@ -1,18 +1,14 @@
-import { fromJS, Map } from 'immutable'
+import { fromJS } from 'immutable'
 import { handleActions } from 'redux-actions'
 import { normalize } from 'normalizr'
 import values from 'lodash/values'
-import { createSelector } from 'reselect'
 
 import api from 'api'
 import types from 'store/actionTypes'
 import { articleListSchema } from 'store/schema'
-import { getArticlesCategory } from 'store/modules/pagination'
 
 const initialState = fromJS({
-  entities: {
-    articles: {},
-  },
+  byId: {},
 })
 
 export const loadArticle = id => async dispatch => {
@@ -35,26 +31,16 @@ export const loadArticle = id => async dispatch => {
   }
 }
 
-export const getArticles = ({ article }) =>
-  values((article.getIn(['entities', 'articles']) || Map()).toJS())
-
-export const getArticlesByCategory = createSelector(
-  getArticles,
-  getArticlesCategory,
-  (articles, category) => articles.filter(article => article.category === category),
-)
+export const getArticles = ({ article }) => values(article.get('byId').toJS())
 
 export default handleActions(
   {
     [types.article.SUCCESS]: (state, { payload: { data } }) => {
       if (data.result.length === 1) {
         const id = data.result[0]
-        return state.setIn(['entities', 'articles', id], fromJS(data.entities.articles[id]))
+        return state.setIn(['byId', id], fromJS(data.entities.articles[id]))
       }
-      return state.setIn(
-        ['entities', 'articles'],
-        fromJS(data.entities.articles).merge(state.getIn(['entities', 'articles'])),
-      )
+      return state.set('byId', fromJS(data.entities.articles || {}).merge(state.get('byId')))
     },
   },
   initialState,

@@ -1,18 +1,17 @@
 import React from 'react'
-import { number, string } from 'prop-types'
+import { number, element } from 'prop-types'
 
 import { colors, spacing, fonts } from 'styles/theme'
-import { Timestamp } from 'components'
 import { CommentIcon, ThumbsupIcon } from 'components/icons'
 
-const Footer = ({ date, voteCount, commentCount }) => (
+const Footer = ({ timestamp, voteCount, commentCount }) => (
   <div
     css={{
       display: 'flex',
       justifyContent: 'space-between',
     }}
   >
-    <Timestamp date={date} />
+    {timestamp}
     <div
       css={{
         display: 'flex',
@@ -48,7 +47,7 @@ const Footer = ({ date, voteCount, commentCount }) => (
 )
 
 Footer.propTypes = {
-  date: string.isRequired,
+  timestamp: element.isRequired,
   commentCount: number.isRequired,
   voteCount: number.isRequired,
 }

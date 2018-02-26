@@ -1,5 +1,5 @@
 import Article from 'models/Article'
-import filterDuplicateLinks from 'utils/filterDuplicateLinks'
+import checkExistence from 'utils/checkExistence'
 import selectLinks from 'utils/selectLinks'
 import crawl from 'utils/crawl'
 
@@ -25,15 +25,30 @@ export default {
       instiz: ['tbody #topboard', 'tbody tr #subject .texthead'],
     }[site]
 
+    function filterLinks(list) {
+      return list.map(async (link) => {
+        const exists = await checkExistence(link)
+        return !exists ? link : null
+      })
+    }
+
     try {
       const links = await selectLinks({
         url,
         selector,
         selectorsForUnneccessaryNode,
       })
-      const filteredLinks = await filterDuplicateLinks(links)
-      const articles = (await Promise.all(filteredLinks.map(crawl))).filter(article => article)
-      await Article.insertMany(articles)
+
+      // filter promises are not supported
+      // https://stackoverflow.com/questions/33355528/filtering-an-array-with-a-function-that-returns-a-promise
+      const filteredLinks = (await Promise.all(filterLinks(links))).filter(truthy => truthy)
+
+      let articles = []
+
+      if (filteredLinks.length) {
+        articles = (await Promise.all(filteredLinks.map(crawl))).filter(article => article)
+        await Article.insertMany(articles)
+      }
 
       res.json({
         articles,

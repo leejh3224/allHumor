@@ -29,6 +29,7 @@ export default {
     const addFieldVoteCounts = {
       $addFields: {
         voteCount: { $sum: '$votes.counts' },
+        commentCount: { $size: '$comments' },
       },
     }
     const sort = {
@@ -37,6 +38,7 @@ export default {
     const excludeFieldVotes = {
       $project: {
         votes: false,
+        comments: false,
       },
     }
     const skip = {
@@ -59,7 +61,8 @@ export default {
       const total = await Article.find(findQuery).count()
       let articles = await Article.aggregate(pipeline)
 
-      articles = articles.map(article => omit(article, '__v'))
+      articles = articles.map(article =>
+        omit(article, ['__v', 'body', 'originalLink', 'updatedAt', 'articleId', 'createdAt']))
 
       res.json({
         articles,
@@ -67,9 +70,7 @@ export default {
         perPage: PER_PAGE,
       })
     } catch (error) {
-      res.json({
-        error,
-      })
+      res.error(error)
     }
   },
   getArticle: async (req, res) => {

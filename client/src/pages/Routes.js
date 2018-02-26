@@ -2,7 +2,6 @@ import React from 'react'
 import { Switch, Route } from 'react-router-dom'
 import { ConnectedRouter } from 'react-router-redux'
 import { connect } from 'react-redux'
-// import SwipeableViews from 'react-swipeable-views'
 
 import history from 'utils/history'
 import 'styles/globalStyle'
@@ -49,13 +48,13 @@ const Routes = props => (
           }}
         />
         <Route
-          path="/:id?"
+          path="/"
           render={routerProps => {
             const articleIdRegex = /^\/[a-f\d]{24}$/
             return articleIdRegex.test(routerProps.location.pathname) ? (
-              <Detail {...props} {...routerProps} />
+              <Route path="/:id" render={() => <Detail {...props} {...routerProps} />} />
             ) : (
-              <Home {...props} {...routerProps} />
+              <Route path="/:category" render={() => <Home {...props} {...routerProps} />} />
             )
           }}
         />

@@ -1,30 +1,44 @@
 import React, { Component } from 'react'
-import { bool, arrayOf, shape } from 'prop-types'
+import { bool, arrayOf, shape, string } from 'prop-types'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 
-import * as articleDucks from 'store/modules/article'
 import * as fetchingDucks from 'store/modules/fetching'
+import * as previewListDucks from 'store/modules/previewList'
+import * as errorMessageDucks from 'store/modules/errorMessage'
 import { PreviewFeed } from 'components'
-import { QueryArticles } from 'components/data'
+import { QueryPreviews } from 'components/data'
 import InfiniteScroll from './infinite-scroll'
 
 class PreviewFeedList extends Component {
+  static defaultProps = {
+    errorMessage: null,
+  }
   static propTypes = {
-    articles: arrayOf(shape()).isRequired,
+    previewList: arrayOf(shape()).isRequired,
+    errorMessage: string,
     fetching: bool.isRequired,
     isAtTheBottom: bool.isRequired,
   }
   render() {
-    const { articles, fetching, isAtTheBottom } = this.props
+    const {
+      previewList, fetching, errorMessage, isAtTheBottom,
+    } = this.props
+
+    if (fetching && !previewList.length) {
+      return <p>loading ...</p>
+    }
+
+    if (errorMessage && !previewList.length) {
+      return <p>{errorMessage}</p>
+    }
+
     return (
       <div>
-        <QueryArticles />
-        {articles.length ? (
-          <ul>{articles.map(article => <PreviewFeed key={article._id} article={article} />)}</ul>
-        ) : null}
+        {!previewList.length && <QueryPreviews />}
+        <ul>{previewList.map(preview => <PreviewFeed key={preview._id} preview={preview} />)}</ul>
         {fetching && <p>loading ...</p>}
-        <InfiniteScroll isAtTheBottom={isAtTheBottom} haveMoreToLoad={articles.length >= 10} />
+        <InfiniteScroll isAtTheBottom={isAtTheBottom} haveMoreToLoad={previewList.length >= 10} />
       </div>
     )
   }
@@ -32,9 +46,10 @@ class PreviewFeedList extends Component {
 
 export default withRouter(
   connect(
-    state => ({
-      articles: articleDucks.getArticlesByCategory(state),
-      fetching: fetchingDucks.getFetchingArticle(state),
+    (state, { match: { params } }) => ({
+      fetching: fetchingDucks.getFetching(state, 'previewList'),
+      previewList: previewListDucks.getPreviewList(state, params.category),
+      errorMessage: errorMessageDucks.getErrorMessage(state),
     }),
     null,
   )(PreviewFeedList),

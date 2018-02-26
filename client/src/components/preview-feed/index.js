@@ -2,15 +2,16 @@ import React from 'react'
 import { shape } from 'prop-types'
 import { Link } from 'react-router-dom'
 
+import { Timestamp } from 'components'
 import PreviewItemTemplate from './template'
 import Thumbnail from './Thumbnail'
 import Header from './Header'
 import Footer from './Footer'
 
-const PreviewItem = ({ article }) => {
+const PreviewItem = ({ preview }) => {
   const {
-    _id, thumbnail, title, author, uploadDate, voteCount, comments,
-  } = article
+    _id, thumbnail, title, author, uploadDate, voteCount, commentCount,
+  } = preview
   return (
     <Link
       css={{
@@ -19,20 +20,22 @@ const PreviewItem = ({ article }) => {
       to={`/${_id}`}
     >
       <PreviewItemTemplate
-        thumbnail={
-          <Thumbnail
-            image={`../../..${thumbnail}`}
+        thumbnail={<Thumbnail image={thumbnail} />}
+        header={<Header title={title} author={author} />}
+        footer={
+          <Footer
+            timestamp={<Timestamp date={uploadDate} />}
+            voteCount={voteCount}
+            commentCount={commentCount}
           />
         }
-        header={<Header title={title} author={author} />}
-        footer={<Footer date={uploadDate} voteCount={voteCount} commentCount={comments.length} />}
       />
     </Link>
   )
 }
 
 PreviewItem.propTypes = {
-  article: shape({}).isRequired,
+  preview: shape({}).isRequired,
 }
 
 export default PreviewItem

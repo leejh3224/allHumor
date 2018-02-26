@@ -8,7 +8,6 @@ import isEmpty from 'lodash/isEmpty'
 
 const initialState = fromJS({
   articles: {
-    category: 'humor',
     perPage: 0,
     current: 1,
     pageCount: 0,
@@ -34,16 +33,15 @@ export const getArticleId = ({ pagination }) => pagination.getIn(['comments', 'a
 export const getCommentsCurrentPage = ({ pagination }) => pagination.getIn(['comments', 'current'])
 export const getCommentsLastPage = ({ pagination }) => pagination.getIn(['comments', 'pageCount'])
 
-export const loadArticles = (category, page) => async (dispatch, getState) => {
+export const loadArticles = (category = 'humor', page) => async (dispatch, getState) => {
   dispatch({ type: types.article.REQUEST })
 
   const state = getState()
-  const categoryInStore = getArticlesCategory(state)
   const currentPageInStore = getArticlesCurrentPage(state)
 
   try {
     const { data: { articles, total, perPage } } = await api.get(
-      `/articles/${category || categoryInStore}/${page || currentPageInStore}`,
+      `/articles/${category}/${page || currentPageInStore}`,
     )
 
     if (articles) {
@@ -52,7 +50,6 @@ export const loadArticles = (category, page) => async (dispatch, getState) => {
         payload: {
           data: normalize(articles, articleListSchema),
           page,
-          category,
           perPage,
           total,
         },
@@ -97,7 +94,7 @@ export default handleActions(
       state,
       {
         payload: {
-          data: { result }, page, perPage, total, category,
+          data: { result }, page, perPage, total,
         },
       },
     ) => {
@@ -108,7 +105,6 @@ export default handleActions(
         return state
           .setIn(['articles', 'current'], page)
           .setIn(['articles', 'perPage'], perPage)
-          .setIn(['articles', 'category'], category)
           .setIn(['articles', 'pageCount'], Math.ceil(total / perPage))
       }
       return state
@@ -126,25 +122,6 @@ export default handleActions(
       return state
         .setIn(['comments', 'perPage'], perPage)
         .setIn(['comments', 'pageCount'], Math.ceil(total / perPage))
-    },
-    '@@router/LOCATION_CHANGE': (state, { payload }) => {
-      const routerMatch = payload.pathname.match(/\/(humor|soccer|bitcoin|idol)/)
-      const oldCategory = state.getIn(['articles', 'category'])
-      const oldPage = state.getIn(['articles', 'current'])
-
-      if (routerMatch) {
-        // 홈을 제외한 어떤 카테고리든 선택
-        const [, newCategory = 'humor', nextPage = '1'] = routerMatch
-        const changingCategory = oldCategory !== newCategory
-        const changingPage = !changingCategory && oldPage !== nextPage
-
-        if (changingCategory || changingPage) {
-          return state
-            .setIn(['articles', 'category'], newCategory)
-            .setIn(['articles', 'current'], parseInt(nextPage, 10))
-        }
-      }
-      return state.setIn(['articles', 'category'], 'humor').setIn(['articles', 'current'], 1)
     },
   },
   initialState,

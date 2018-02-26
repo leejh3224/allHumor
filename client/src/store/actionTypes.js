@@ -1,4 +1,11 @@
 export default {
+  app: {
+    API_REQUEST: 'app/API_REQUEST',
+    API_ERROR: 'app/API_ERROR',
+  },
+  previewList: {
+    SUCCESS: 'previewList/FETCH_SUCCESS',
+  },
   article: {
     REQUEST: 'article/ARTICLE_REQUEST',
     SUCCESS: 'article/ARTICLE_SUCCESS',
