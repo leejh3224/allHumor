@@ -10,6 +10,7 @@ const Base = ({ article }) => {
   const {
     title, author, uploadDate, body, originalLink,
   } = article
+  console.log(article)
   return (
     <ArticleTemplate
       header={<Header title={title} author={author} uploadDate={uploadDate} />}

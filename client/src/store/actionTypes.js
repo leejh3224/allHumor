@@ -1,10 +1,8 @@
 export default {
-  app: {
-    API_REQUEST: 'app/API_REQUEST',
-    API_ERROR: 'app/API_ERROR',
-  },
   previewList: {
+    REQUEST: 'previewList/FETCH_REQUEST',
     SUCCESS: 'previewList/FETCH_SUCCESS',
+    ERROR: 'previewList/FETCH_ERROR',
   },
   article: {
     REQUEST: 'article/ARTICLE_REQUEST',

@@ -1,7 +1,16 @@
 import { schema } from 'normalizr'
 
-const articleSchema = new schema.Entity('articles', {}, { idAttribute: '_id' })
-export const articleListSchema = [articleSchema]
+import { getPlural } from 'store/utils'
+
+const createListSchema = key => {
+  const entitySchema = new schema.Entity(getPlural(key), {}, { idAttribute: '_id' })
+  return [entitySchema]
+}
+
+const createEntitySchema = key => new schema.Entity(key, {}, { idAttribute: '_id' })
+
+export const previewListSchema = createListSchema('preview')
+export const articleSchema = createEntitySchema('article')
 
 const commentSchema = new schema.Entity('comments', {}, { idAttribute: '_id' })
 export const commentListSchema = [commentSchema]

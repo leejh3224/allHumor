@@ -4,15 +4,15 @@ import { withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
 import ReactRouterPropTypes from 'react-router-prop-types'
 
-import { colors } from 'styles/theme'
-import * as paginationDucks from 'store/modules/pagination'
+import * as actions from 'store/previewList/actions'
 import { WithWindowSize, StickyOnScroll } from 'blocks/render-props'
+import history from 'utils/history'
 import getActiveTabIndex from './getActiveTabIndex'
 import Base from './base'
 
 class Tabs extends Component {
   static propTypes = {
-    loadArticles: func.isRequired,
+    fetchPreviews: func.isRequired,
     location: ReactRouterPropTypes.location.isRequired,
   }
   state = {
@@ -20,25 +20,26 @@ class Tabs extends Component {
   }
   render() {
     const { names } = this.state
+    const { location: { pathname }, fetchPreviews } = this.props
+
+    function onTabClick(event, name) {
+      event.preventDefault()
+      history.replace(name)
+      fetchPreviews(name, 1)
+    }
+
     return (
       <StickyOnScroll headerHeight={75}>
         {({ isSticky }) => (
           <WithWindowSize>
             {({ width }) => (
-              <div
-                css={{
-                  width: '100%',
-                  backgroundColor: colors.primary,
-                  position: isSticky ? 'fixed' : 'static',
-                }}
-              >
-                <Base
-                  tabsWidth={width}
-                  names={names}
-                  activeTabIndex={getActiveTabIndex(names, this.props.location.pathname)}
-                  onTabClick={() => this.props.loadArticles()}
-                />
-              </div>
+              <Base
+                tabsWidth={width}
+                names={names}
+                activeTabIndex={getActiveTabIndex(names, pathname)}
+                onTabClick={onTabClick}
+                isSticky={isSticky}
+              />
             )}
           </WithWindowSize>
         )}
@@ -47,4 +48,4 @@ class Tabs extends Component {
   }
 }
 
-export default withRouter(connect(null, paginationDucks)(Tabs))
+export default withRouter(connect(null, actions)(Tabs))

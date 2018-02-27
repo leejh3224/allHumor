@@ -16,13 +16,11 @@ const initialState = fromJS({
 })
 
 const getVotes = ({ voting }) => voting.getIn(['entities', 'votes'])
-const getMyVote = ({ voting }, userId) =>
-  voting.getIn(['entities', 'votes', userId])
+const getMyVote = ({ voting }, userId) => voting.getIn(['entities', 'votes', userId])
 const getArticleId = ({ voting }) => voting.get('articleId')
 export const getVoteCount = createSelector(
   getVotes,
-  votes =>
-    (!votes ? 0 : votes.reduce((acc, vote) => acc + vote.get('counts'), 0)),
+  votes => (!votes ? 0 : votes.reduce((acc, vote) => acc + vote.get('counts'), 0)),
 )
 
 export const voteArticle = () => async (dispatch, getState) => {
@@ -61,16 +59,11 @@ export const voteArticle = () => async (dispatch, getState) => {
 
 export default handleActions(
   {
-    [types.article.SUCCESS]: (
-      state,
-      { payload: { data: { entities, result } } },
-    ) => {
+    [types.article.SUCCESS]: (state, { payload: { entities, result } }) => {
       if (result.length === 1) {
         const { votes } = entities.articles[result[0]]
 
-        return state
-          .set('articleId', result[0])
-          .merge(normalize(votes, voteListSchema))
+        return state.set('articleId', result[0]).merge(normalize(votes, voteListSchema))
       }
 
       return state

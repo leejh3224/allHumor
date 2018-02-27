@@ -1,32 +1,4 @@
-import { URL } from 'url'
 import getSelectors from './getSelectors'
-
-function hasSearchParams(url) {
-  const { searchParams } = new URL(url)
-  return !!Array.from(searchParams).length
-}
-
-function fromPathname(pathname) {
-  const [articleId] = pathname.match(/\d+/)
-  return articleId
-}
-
-function fromQueryString(searchParams) {
-  // INFO
-  // articleIdKeys는 사이트를 추가할 때마다 update가 필요
-  const articleIdKeys = ['postNum', 'no', 'document_srl']
-  const [articleId] = articleIdKeys.map(key => searchParams.get(key)).filter(value => value)
-  return articleId
-}
-
-function getArticleId(url) {
-  if (hasSearchParams(url)) {
-    const { searchParams } = new URL(url)
-    return fromQueryString(searchParams)
-  }
-  const { pathname } = new URL(url)
-  return fromPathname(pathname)
-}
 
 function convertToISODate(date) {
   const isValidDateString = !!Date.parse(date)
@@ -53,7 +25,6 @@ export default ({ url, parser, additionalFields = {} }) => {
   const uploadDate = newParser.text(uploadDateSelector)
 
   const article = {
-    articleId: getArticleId(url),
     author: newParser.text(authorSelector),
     title: newParser.text(titleSelector),
     uploadDate: convertToISODate(uploadDate),

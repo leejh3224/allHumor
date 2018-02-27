@@ -6,8 +6,6 @@ const { Schema } = mongoose
 // _id: false => custom _id
 const Article = new Schema(
   {
-    // 사이트 별 고유 article id
-    articleId: { type: String, required: true },
     author: { type: String, required: true },
     body: { type: String, required: true },
     category: { type: String, required: true },

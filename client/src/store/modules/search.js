@@ -1,9 +1,9 @@
 import { fromJS, Map } from 'immutable'
 import { handleActions } from 'redux-actions'
 import types from 'store/actionTypes'
-import api from 'api'
-import { normalize } from 'normalizr'
-import { articleListSchema } from 'store/schema'
+// import api from 'api'
+// import { normalize } from 'normalizr'
+// import { articleListSchema } from 'store/schema'
 
 const initialState = fromJS({
   keyword: '',
@@ -24,28 +24,28 @@ export const handleInputChange = e => dispatch => {
   dispatch({ type: types.search.CHANGE_INPUT, payload: { keyword: e.target.value } })
 }
 
-export const handleSubmit = e => async (dispatch, getState) => {
-  const keyword = getKeyword(getState())
-  e.preventDefault()
+// export const handleSubmit = e => async (dispatch, getState) => {
+//   const keyword = getKeyword(getState())
+//   e.preventDefault()
 
-  dispatch({ type: types.search.REQUEST })
+//   dispatch({ type: types.search.REQUEST })
 
-  try {
-    const { data: { articles } } = await api.get(`/articles/all/1${`?keyword=${keyword}`}`)
+//   try {
+//     const { data: { articles } } = await api.get(`/articles/all/1${`?keyword=${keyword}`}`)
 
-    if (articles) {
-      dispatch({
-        type: types.search.SUCCESS,
-        payload: {
-          data: normalize(articles, articleListSchema),
-        },
-      })
-    }
-  } catch (error) {
-    console.log(error)
-    dispatch({ type: types.search.ERROR, payload: { error } })
-  }
-}
+//     if (articles) {
+//       dispatch({
+//         type: types.search.SUCCESS,
+//         payload: {
+//           data: normalize(articles, articleListSchema),
+//         },
+//       })
+//     }
+//   } catch (error) {
+//     console.log(error)
+//     dispatch({ type: types.search.ERROR, payload: { error } })
+//   }
+// }
 
 export default handleActions(
   {

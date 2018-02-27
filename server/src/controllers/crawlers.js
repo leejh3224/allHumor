@@ -12,7 +12,7 @@ export default {
       ddengle: `https://www.ddengle.com/index.php?mid=board_vote_all&page=${page}`,
       instiz: `https://www.instiz.net/bbs/list.php?id=fanclip&page=${page}`,
     }[site]
-    const selector = {
+    const hrefSelector = {
       dogdrip: 'tbody tr .title a',
       kickoff: 'tbody tr .list_title a',
       ddengle: 'tbody tr .title .bubble',
@@ -35,11 +35,12 @@ export default {
     try {
       const links = await selectLinks({
         url,
-        selector,
+        selector: hrefSelector,
         selectorsForUnneccessaryNode,
       })
 
       // filter promises are not supported
+      // so map first then filter instead
       // https://stackoverflow.com/questions/33355528/filtering-an-array-with-a-function-that-returns-a-promise
       const filteredLinks = (await Promise.all(filterLinks(links))).filter(truthy => truthy)
 

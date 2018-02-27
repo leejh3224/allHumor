@@ -8,7 +8,7 @@ class ScrollDetector extends Component {
     children: func.isRequired,
   }
   state = {
-    isAtTheBottom: false,
+    scrolledToBottom: false,
   }
   componentWillMount() {
     window.addEventListener('scroll', this.handleScroll)
@@ -29,11 +29,11 @@ class ScrollDetector extends Component {
     const windowBottom = windowHeight + window.pageYOffset
     if (windowBottom >= docHeight) {
       return this.setState({
-        isAtTheBottom: true,
+        scrolledToBottom: true,
       })
     }
     return this.setState({
-      isAtTheBottom: false,
+      scrolledToBottom: false,
     })
   }
   render() {

@@ -3,7 +3,10 @@ import types from 'store/actionTypes'
 
 const errorMessage = createReducer(
   {
-    [types.app.API_ERROR](state, { payload }) {
+    [types.previewList.ERROR](state, { payload }) {
+      return payload
+    },
+    [types.article.ERROR](state, { payload }) {
       return payload
     },
   },

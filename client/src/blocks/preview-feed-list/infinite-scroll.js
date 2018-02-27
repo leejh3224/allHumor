@@ -1,34 +1,54 @@
 import { Component } from 'react'
-import { number, bool } from 'prop-types'
+import { number, func, bool } from 'prop-types'
 import throttle from 'lodash/throttle'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import ReactRouterPropTypes from 'react-router-prop-types'
 
-import * as actions from 'store/modules/previewList/actions'
-import * as paginationDucks from 'store/modules/pagination'
+import * as actions from 'store/previewList/actions'
+import * as paginationReducer from 'store/pagination/reducer'
 
 class InfiniteScroll extends Component {
   static propTypes = {
     currentPage: number.isRequired,
-    lastPage: number.isRequired,
-    isAtTheBottom: bool.isRequired,
-    haveMoreToLoad: bool.isRequired,
     match: ReactRouterPropTypes.match.isRequired,
+    fetching: bool.isRequired,
+    fetchPreviews: func.isRequired,
+    lastPage: number.isRequired,
   }
-  shouldComponentUpdate(nextProps) {
+  componentWillMount() {
+    window.addEventListener('scroll', throttle(this.handleScroll, 100))
+  }
+  componentWillUnmount() {
+    window.removeEventListener('scroll', throttle(this.handleScroll, 100))
+  }
+  queryItems() {
     const {
-      haveMoreToLoad, currentPage, lastPage, isAtTheBottom,
+      currentPage, fetchPreviews, fetching, lastPage,
     } = this.props
     const { category } = this.props.match.params
-    const reachedLastPage = currentPage !== lastPage
-    const touchingBottom = nextProps.isAtTheBottom !== isAtTheBottom && !isAtTheBottom
 
-    if (haveMoreToLoad && reachedLastPage && touchingBottom) {
-      const throttled = throttle(nextProps.fetchPreviews, 500)
-      throttled(category, currentPage + 1)
+    if (fetching || currentPage === lastPage) {
+      return
     }
-    return true
+
+    fetchPreviews(category, currentPage + 1)
+  }
+  handleScroll = async () => {
+    const { body, documentElement: { offsetHeight, clientHeight, scrollHeight } } = document
+    const windowHeight = 'innerHeight' in window ? window.innerHeight : offsetHeight
+    const docHeight = Math.max(
+      body.scrollHeight,
+      body.offsetHeight,
+      clientHeight,
+      scrollHeight,
+      offsetHeight,
+    )
+    const windowBottom = windowHeight + window.pageYOffset
+
+    if (windowBottom >= docHeight) {
+      this.queryItems()
+    }
   }
   render() {
     return null
@@ -38,8 +58,8 @@ class InfiniteScroll extends Component {
 export default withRouter(
   connect(
     state => ({
-      currentPage: paginationDucks.getArticlesCurrentPage(state),
-      lastPage: paginationDucks.getArticlesLastPage(state),
+      currentPage: paginationReducer.getCurrent(state, 'previewList'),
+      lastPage: paginationReducer.getPageCount(state, 'previewList'),
     }),
     actions,
   )(InfiniteScroll),

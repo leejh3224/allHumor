@@ -1,13 +1,14 @@
 import React, { Component } from 'react'
-import { bool, arrayOf, shape, string } from 'prop-types'
+import { bool, arrayOf, shape, string, func } from 'prop-types'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
+import ReactRouterPropTypes from 'react-router-prop-types'
 
-import * as fetchingDucks from 'store/modules/fetching'
-import * as previewListDucks from 'store/modules/previewList'
-import * as errorMessageDucks from 'store/modules/errorMessage'
+import * as fetchingReducer from 'store/fetching/reducer'
+import * as previewListReducer from 'store/previewList/reducer'
+import * as actions from 'store/previewList/actions'
+import * as errorMessageReducer from 'store/errorMessage/reducer'
 import { PreviewFeed } from 'components'
-import { QueryPreviews } from 'components/data'
 import InfiniteScroll from './infinite-scroll'
 
 class PreviewFeedList extends Component {
@@ -18,12 +19,15 @@ class PreviewFeedList extends Component {
     previewList: arrayOf(shape()).isRequired,
     errorMessage: string,
     fetching: bool.isRequired,
-    isAtTheBottom: bool.isRequired,
+    fetchPreviews: func.isRequired,
+    match: ReactRouterPropTypes.match.isRequired,
+  }
+  componentDidMount() {
+    const { fetchPreviews, match: { params } } = this.props
+    fetchPreviews(params.category, 1)
   }
   render() {
-    const {
-      previewList, fetching, errorMessage, isAtTheBottom,
-    } = this.props
+    const { previewList, fetching, errorMessage } = this.props
 
     if (fetching && !previewList.length) {
       return <p>loading ...</p>
@@ -35,10 +39,13 @@ class PreviewFeedList extends Component {
 
     return (
       <div>
-        {!previewList.length && <QueryPreviews />}
-        <ul>{previewList.map(preview => <PreviewFeed key={preview._id} preview={preview} />)}</ul>
-        {fetching && <p>loading ...</p>}
-        <InfiniteScroll isAtTheBottom={isAtTheBottom} haveMoreToLoad={previewList.length >= 10} />
+        <ul>
+          {previewList.length
+            ? previewList.map(preview => <PreviewFeed key={preview._id} preview={preview} />)
+            : '해당 카테고리에 게시물이 없습니다.'}
+        </ul>
+        <InfiniteScroll fetching={fetching} />
+        <div>{fetching && <p>loading ...</p>}</div>
       </div>
     )
   }
@@ -47,10 +54,10 @@ class PreviewFeedList extends Component {
 export default withRouter(
   connect(
     (state, { match: { params } }) => ({
-      fetching: fetchingDucks.getFetching(state, 'previewList'),
-      previewList: previewListDucks.getPreviewList(state, params.category),
-      errorMessage: errorMessageDucks.getErrorMessage(state),
+      fetching: fetchingReducer.getFetching(state, 'previewList'),
+      previewList: previewListReducer.getPreviewList(state, params.category),
+      errorMessage: errorMessageReducer.getErrorMessage(state),
     }),
-    null,
+    actions,
   )(PreviewFeedList),
 )

@@ -3,7 +3,7 @@ import { bool, number } from 'prop-types'
 import { connect } from 'react-redux'
 import throttle from 'lodash/throttle'
 
-import * as paginationDucks from 'store/modules/pagination'
+// import * as actions from 'store/pagination/actions'
 
 class InfiniteScroll extends Component {
   static propTypes = {
@@ -31,9 +31,9 @@ class InfiniteScroll extends Component {
 }
 
 export default connect(
-  state => ({
-    currentPage: paginationDucks.getCommentsCurrentPage(state),
-    lastPage: paginationDucks.getCommentsLastPage(state),
+  () => ({
+    // currentPage: actions.getCommentsCurrentPage(state),
+    // lastPage: actions.getCommentsLastPage(state),
   }),
-  paginationDucks,
+  null,
 )(InfiniteScroll)

@@ -171,7 +171,7 @@ export const getOrderedComments = createSelector(getComments, comments =>
 
 export default handleActions(
   {
-    [types.article.SUCCESS]: (state, { payload: { data: { entities, result } } }) => {
+    [types.article.SUCCESS]: (state, { payload: { entities, result } }) => {
       if (result.length === 1) {
         const articleId = result[0]
         const { comments } = entities.articles[articleId]

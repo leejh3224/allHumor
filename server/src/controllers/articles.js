@@ -1,10 +1,11 @@
+import omit from 'lodash/omit'
+
 import Article from 'models/Article'
 import Vote from 'models/Vote'
 import mongoose from 'mongoose'
-import omit from 'lodash/omit'
 
 export default {
-  getArticles: async (req, res) => {
+  getPreviews: async (req, res) => {
     const { category, page } = req.params
     const PER_PAGE = 10
     const { keyword } = req.query
@@ -29,7 +30,7 @@ export default {
     const addFieldVoteCounts = {
       $addFields: {
         voteCount: { $sum: '$votes.counts' },
-        commentCount: { $size: '$comments' },
+        commentCount: { $add: [{ $size: '$comments' }, { $sum: { $size: '$comments.reply' } }] },
       },
     }
     const sort = {
@@ -59,18 +60,18 @@ export default {
 
     try {
       const total = await Article.find(findQuery).count()
-      let articles = await Article.aggregate(pipeline)
+      let previews = await Article.aggregate(pipeline)
 
-      articles = articles.map(article =>
+      previews = previews.map(article =>
         omit(article, ['__v', 'body', 'originalLink', 'updatedAt', 'articleId', 'createdAt']))
 
       res.json({
-        articles,
+        previews,
         total,
         perPage: PER_PAGE,
       })
     } catch (error) {
-      res.error(error)
+      throw new Error(error)
     }
   },
   getArticle: async (req, res) => {
@@ -119,9 +120,9 @@ export default {
 
     try {
       let [article] = await Article.aggregate([match, lookupForVotes, addField, lookUpForComments])
-      article = omit(article, ['__v'])
+      article = omit(article, ['__v', 'createdAt', 'updatedAt', 'thumbnail'])
       res.json({
-        articles: [article],
+        article,
       })
     } catch (error) {
       console.log(error)

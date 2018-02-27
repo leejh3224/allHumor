@@ -28,7 +28,7 @@ class Auth {
     return accessToken
   }
 
-  getProfile = (cb) => {
+  getProfile = cb => {
     const accessToken = this.getAccessToken()
     this.auth0.client.userInfo(accessToken, cb)
   }
@@ -56,13 +56,12 @@ class Auth {
       } else if (err) {
         history.replace('/')
         console.log(err)
-        alert(`Error: ${err.error}. Check the console for further details.`)
       }
     })
   }
 
   /* eslint-disable no-mixed-operators */
-  setSession = (authResult) => {
+  setSession = authResult => {
     const { expiresIn, accessToken, idToken } = authResult
     const expiresAt = JSON.stringify(expiresIn * 1000 + new Date().getTime())
     localStorage.setItem('access_token', accessToken)

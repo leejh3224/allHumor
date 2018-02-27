@@ -7,7 +7,7 @@ import { createReducer } from 'store/utils'
 const byId = createReducer(
   {
     [types.previewList.SUCCESS](state, { payload }) {
-      return state.merge(payload.entities.articles)
+      return state.merge(payload.entities.previews)
     },
   },
   OrderedMap(), // preserve order

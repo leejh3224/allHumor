@@ -3,7 +3,7 @@ import { func, bool, arrayOf, shape } from 'prop-types'
 import { connect } from 'react-redux'
 
 import * as commentDucks from 'store/modules/comment'
-import * as fetchingDucks from 'store/modules/fetching'
+// import * as fetchingReducer from 'store/fetching/reducer'
 import * as uiDucks from 'store/modules/ui'
 import * as userDucks from 'store/modules/user'
 import Base from './base'
@@ -34,8 +34,8 @@ export default connect(
   state => ({
     comments: commentDucks.getOrderedComments(state),
     getRepliesOfCommentThunk: commentId => commentDucks.getOrderedReplies(state, commentId),
-    fetchingAddComment: fetchingDucks.getFetchingAddComment(state),
-    fetchingComment: fetchingDucks.getFetchingComment(state),
+    // fetchingAddComment: fetchingReducer.getFetchingAddComment(state),
+    // fetchingComment: fetchingReducer.getFetchingComment(state),
     myUserId: userDucks.getUserId(state),
   }),
   { ...commentDucks, ...uiDucks },

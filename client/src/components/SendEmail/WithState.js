@@ -11,7 +11,7 @@ const WithStateHoc = WrappedComponent =>
       submitError: null,
       isSubmitting: false,
     }
-    handleInputChange = (e) => {
+    handleInputChange = e => {
       const { value } = e.target
       this.setState(prev => ({ ...prev, email: value }))
     }
@@ -27,7 +27,7 @@ const WithStateHoc = WrappedComponent =>
       const { sendMagicLink } = this.props
 
       this.setState(prev => ({ ...prev, isSubmitting: true }))
-      sendMagicLink(email, (err) => {
+      sendMagicLink(email, err => {
         if (err) {
           return this.setState(prev => ({
             ...prev,
@@ -35,7 +35,6 @@ const WithStateHoc = WrappedComponent =>
             isSubmitting: false,
           }))
         }
-        alert('메일이 전송되었습니다!')
         this.resetFields()
         return this.setState(prev => ({
           ...prev,
