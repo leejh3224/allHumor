@@ -1,19 +1,18 @@
 import { Component } from 'react'
-import { number, func, bool } from 'prop-types'
+import { number, func, bool, shape } from 'prop-types'
 import throttle from 'lodash/throttle'
 import { connect } from 'react-redux'
-import { withRouter } from 'react-router-dom'
-import ReactRouterPropTypes from 'react-router-prop-types'
 
-import * as actions from 'store/previewList/actions'
 import * as paginationReducer from 'store/pagination/reducer'
+import * as fetchingReducer from 'store/fetching/reducer'
+import sleep from 'utils/sleep'
 
 class InfiniteScroll extends Component {
   static propTypes = {
     currentPage: number.isRequired,
-    match: ReactRouterPropTypes.match.isRequired,
+    params: shape().isRequired,
     fetching: bool.isRequired,
-    fetchPreviews: func.isRequired,
+    fetchAction: func.isRequired,
     lastPage: number.isRequired,
   }
   componentWillMount() {
@@ -22,17 +21,25 @@ class InfiniteScroll extends Component {
   componentWillUnmount() {
     window.removeEventListener('scroll', throttle(this.handleScroll, 100))
   }
-  queryItems() {
+  async queryItems() {
     const {
-      currentPage, fetchPreviews, fetching, lastPage,
+      currentPage, fetchAction, fetching, lastPage, params,
     } = this.props
-    const { category } = this.props.match.params
 
-    if (fetching || currentPage === lastPage) {
+    const initialLoadNotEnded = fetching && !currentPage
+    if (initialLoadNotEnded) {
       return
     }
 
-    fetchPreviews(category, currentPage + 1)
+    await sleep(200)
+
+    if (currentPage < lastPage) {
+      if (params.category) {
+        fetchAction(params.category, currentPage + 1)
+      } else {
+        fetchAction(currentPage + 1)
+      }
+    }
   }
   handleScroll = async () => {
     const { body, documentElement: { offsetHeight, clientHeight, scrollHeight } } = document
@@ -47,6 +54,9 @@ class InfiniteScroll extends Component {
     const windowBottom = windowHeight + window.pageYOffset
 
     if (windowBottom >= docHeight) {
+      // to prevent endless fetching, scroll to top a bit and wait
+      window.scrollTo(0, docHeight - 300)
+
       this.queryItems()
     }
   }
@@ -55,12 +65,11 @@ class InfiniteScroll extends Component {
   }
 }
 
-export default withRouter(
-  connect(
-    state => ({
-      currentPage: paginationReducer.getCurrent(state, 'previewList'),
-      lastPage: paginationReducer.getPageCount(state, 'previewList'),
-    }),
-    actions,
-  )(InfiniteScroll),
-)
+export default connect(
+  (state, { prefix }) => ({
+    currentPage: paginationReducer.getCurrent(state, prefix),
+    lastPage: paginationReducer.getPageCount(state, prefix),
+    fetching: fetchingReducer.getFetching(state, prefix),
+  }),
+  null,
+)(InfiniteScroll)

@@ -1,5 +1,5 @@
 import { fromJS, Map } from 'immutable'
-import { handleActions } from 'redux-actions'
+import { createReducer } from 'store/utils'
 import types from 'store/actionTypes'
 // import api from 'api'
 // import { normalize } from 'normalizr'
@@ -47,7 +47,7 @@ export const handleInputChange = e => dispatch => {
 //   }
 // }
 
-export default handleActions(
+export default createReducer(
   {
     [types.search.CHANGE_INPUT]: (state, { payload: { keyword } }) => state.set('keyword', keyword),
     [types.search.REQUEST]: state => state.set('isSubmitted', true),

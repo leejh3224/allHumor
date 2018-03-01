@@ -1,9 +1,9 @@
 import React from 'react'
-import { string, shape } from 'prop-types'
 
 import { colors } from 'styles/theme'
+import { IconDefaultProps, IconPropTypes } from 'propTypes/IconPropTypes'
 
-const ClockIcon = ({ color = colors.grey, cssProps }) => (
+const ClockIcon = ({ color, cssProps }) => (
   <svg
     version="1"
     xmlns="http://www.w3.org/2000/svg"
@@ -25,9 +25,11 @@ const ClockIcon = ({ color = colors.grey, cssProps }) => (
   </svg>
 )
 
-ClockIcon.propTypes = {
-  color: string.isRequired,
-  cssProps: shape().isRequired,
+ClockIcon.defaultProps = {
+  ...IconDefaultProps,
+  color: colors.grey,
 }
+
+ClockIcon.propTypes = IconPropTypes
 
 export default ClockIcon

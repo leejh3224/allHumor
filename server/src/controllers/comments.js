@@ -15,7 +15,6 @@ export default {
         .limit(PER_PAGE)
 
       res.json({
-        success: true,
         comments,
         total,
         perPage: PER_PAGE,
@@ -43,7 +42,6 @@ export default {
       }).save()
 
       res.json({
-        success: true,
         comments: [comment],
       })
     } catch (error) {
@@ -60,13 +58,13 @@ export default {
     try {
       const comment = await Comment.findByIdAndUpdate(id, { content }, { new: true })
       res.json({
-        success: true,
+        id,
         comments: [comment],
       })
     } catch (error) {
       console.log(error)
       res.json({
-        success: false,
+        id,
         error,
       })
     }
@@ -82,58 +80,67 @@ export default {
       })
 
       res.json({
-        success: true,
+        id,
       })
     } catch (error) {
       console.log(error)
       res.json({
-        success: false,
+        id,
         error,
       })
     }
   },
   getReplies: async (req, res) => {
+    const { parent } = req.params
+
     try {
-      const { id } = req.params
-      const { replies } = await Comment.findById(id)
-        .populate('replies')
+      const { replies: comments } = await Comment.findById(parent)
+        .populate({
+          path: 'replies',
+          options: {
+            sort: {
+              createdAt: -1,
+            },
+          },
+        })
         .lean()
       res.json({
-        success: true,
-        replies,
+        id: parent,
+        comments,
       })
     } catch (error) {
       console.log(error)
       res.json({
-        success: false,
+        id: parent,
         error,
       })
     }
   },
   addReply: async (req, res) => {
+    const { parent } = req.params
+
     try {
-      const { id } = req.params
       const {
         userId, avatar, author, content,
       } = req.body
-      const { _id, articleId, ...parent } = await Comment.findById(id).lean()
-      const reply = await new Comment({
+      const { _id, articleId, ...rest } = await Comment.findById(parent).lean()
+      const comment = await new Comment({
         articleId,
         userId,
         avatar,
         author,
         content,
         parent: _id,
-        recipient: parent.author,
+        recipient: rest.author,
       }).save()
       res.json({
-        success: true,
-        replies: [reply],
+        id: parent,
+        comments: [comment],
       })
     } catch (error) {
       console.log(error)
       res.json({
-        success: false,
+        id: parent,
         error,
       })
     }

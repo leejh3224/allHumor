@@ -1,30 +1,24 @@
 import React, { Component } from 'react'
-import { func, bool, arrayOf, shape } from 'prop-types'
+import { arrayOf, shape, func } from 'prop-types'
 import { connect } from 'react-redux'
 
-import * as commentDucks from 'store/modules/comment'
-// import * as fetchingReducer from 'store/fetching/reducer'
-import * as uiDucks from 'store/modules/ui'
-import * as userDucks from 'store/modules/user'
+import * as actions from 'store/comment/actions'
+import * as commentReducer from 'store/comment/reducer'
+import * as userReducer from 'store/user/reducer'
+import { InfiniteScroll } from 'components'
 import Base from './base'
-import InfiniteScroll from './infinite-scroll'
 
 class CommentList extends Component {
   static propTypes = {
-    getRepliesOfCommentThunk: func.isRequired,
-    isAtTheBottom: bool.isRequired,
     comments: arrayOf(shape({})).isRequired,
+    fetchComments: func.isRequired,
   }
   render() {
-    const { getRepliesOfCommentThunk, isAtTheBottom } = this.props
-
+    const { fetchComments } = this.props
     return (
       <div>
-        <Base {...this.props} getRepliesOfCommentById={getRepliesOfCommentThunk} />
-        <InfiniteScroll
-          isAtTheBottom={isAtTheBottom}
-          haveMoreToLoad={this.props.comments.length >= 20}
-        />
+        <Base {...this.props} />
+        <InfiniteScroll prefix="commentList" fetchAction={fetchComments} />
       </div>
     )
   }
@@ -32,11 +26,8 @@ class CommentList extends Component {
 
 export default connect(
   state => ({
-    comments: commentDucks.getOrderedComments(state),
-    getRepliesOfCommentThunk: commentId => commentDucks.getOrderedReplies(state, commentId),
-    // fetchingAddComment: fetchingReducer.getFetchingAddComment(state),
-    // fetchingComment: fetchingReducer.getFetchingComment(state),
-    myUserId: userDucks.getUserId(state),
+    comments: commentReducer.getComments(state),
+    myUserId: userReducer.getUserId(state),
   }),
-  { ...commentDucks, ...uiDucks },
+  actions,
 )(CommentList)

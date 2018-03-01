@@ -16,10 +16,13 @@ import Logo from './logo'
 import Right from './right'
 
 class Header extends Component {
+  static defaultProps = {
+    category: '',
+  }
   static propTypes = {
     fetchPreviews: func.isRequired,
     location: ReactRouterPropTypes.location.isRequired,
-    category: string.isRequired,
+    category: string,
   }
   static cocntextTypes = {
     router: func.isRequired,
@@ -39,7 +42,7 @@ class Header extends Component {
           let logoLinkTo = '/'
 
           if (pageName === 'detail') {
-            logoLinkTo = `/${this.props.category}`
+            logoLinkTo = `/${this.props.category || 'humor'}`
           }
 
           return (

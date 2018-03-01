@@ -1,9 +1,9 @@
 import React from 'react'
-import { string, shape } from 'prop-types'
 
 import { colors } from 'styles/theme'
+import { IconDefaultProps, IconPropTypes } from 'propTypes/IconPropTypes'
 
-const RocketIcon = ({ color = colors.grey, cssProps }) => (
+const RocketIcon = ({ color, cssProps }) => (
   <svg
     version="1"
     xmlns="http://www.w3.org/2000/svg"
@@ -45,9 +45,10 @@ const RocketIcon = ({ color = colors.grey, cssProps }) => (
   </svg>
 )
 
-RocketIcon.propTypes = {
-  color: string.isRequired,
-  cssProps: shape().isRequired,
+RocketIcon.defaultProps = {
+  ...IconDefaultProps,
+  color: colors.grey,
 }
+RocketIcon.propTypes = IconPropTypes
 
 export default RocketIcon

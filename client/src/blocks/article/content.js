@@ -31,9 +31,10 @@ const Content = ({ content, originalLink }) => (
       css={{
         color: colors.grey,
         float: 'right',
+        marginTop: spacing.small,
       }}
     >
-      원본: {originalLink}
+      원본 게시물 보기
     </a>
   </div>
 )

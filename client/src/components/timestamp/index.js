@@ -26,9 +26,13 @@ const Timestamp = ({ date, textOnly }) => (
   </div>
 )
 
+Timestamp.defaultProps = {
+  textOnly: false,
+}
+
 Timestamp.propTypes = {
   date: string.isRequired,
-  textOnly: bool.isRequired,
+  textOnly: bool,
 }
 
 export default Timestamp

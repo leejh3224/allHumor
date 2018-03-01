@@ -4,7 +4,9 @@ import { string } from 'prop-types'
 import { spacing } from 'styles/theme'
 
 const RecipientTag = ({ recipient }) => (
-  <span css={{ marginRight: spacing.small }}>{recipient && `@${recipient}`}</span>
+  <span css={{ marginTop: spacing.xsmall, marginRight: spacing.small }}>
+    {recipient && `@${recipient}`}
+  </span>
 )
 
 RecipientTag.propTypes = {

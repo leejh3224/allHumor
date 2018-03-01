@@ -8,7 +8,7 @@ const BodyTemplate = ({
   <div
     css={{
       flex: 1,
-      marginBottom: spacing.small,
+      marginBottom: spacing.medium,
     }}
   >
     {header}

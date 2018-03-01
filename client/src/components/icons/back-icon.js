@@ -1,9 +1,8 @@
 import React from 'react'
-import { string, shape, func } from 'prop-types'
 
-import { colors } from 'styles/theme'
+import { IconDefaultProps, IconPropTypes } from 'propTypes/IconPropTypes'
 
-const BackIcon = ({ color = colors.white, cssProps, onClick }) => (
+const BackIcon = ({ color, cssProps, onClick }) => (
   <svg
     id="Capa_1"
     xmlns="http://www.w3.org/2000/svg"
@@ -21,10 +20,7 @@ const BackIcon = ({ color = colors.white, cssProps, onClick }) => (
   </svg>
 )
 
-BackIcon.propTypes = {
-  color: string.isRequired,
-  cssProps: shape().isRequired,
-  onClick: func.isRequired,
-}
+BackIcon.defaultProps = IconDefaultProps
+BackIcon.propTypes = IconPropTypes
 
 export default BackIcon

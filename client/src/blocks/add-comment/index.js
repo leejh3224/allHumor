@@ -3,12 +3,12 @@ import { string, func } from 'prop-types'
 import { connect } from 'react-redux'
 
 import { TextField } from 'components'
-import * as commentDucks from 'store/modules/comment'
-import * as addReplyDucks from 'store/modules/addReply'
+import * as actions from 'store/comment/actions'
+import * as commentReducer from 'store/comment/reducer'
 import { isAuthenticated } from 'utils/auth'
 import history from 'utils/history'
+import { spacing, colors } from 'styles/theme'
 import SendMessageButton from './send-message-button'
-import formStyle from './form-style'
 import RecipientTag from './recipient-tag'
 
 class AddComment extends Component {
@@ -68,14 +68,26 @@ class AddComment extends Component {
 
   render() {
     return (
-      <form css={formStyle} onSubmit={this.handleSubmit}>
+      <form
+        css={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          width: '100%',
+          boxShadow: `0 -2px 5px ${colors.lightGrey}`,
+          padding: spacing.small,
+          backgroundColor: colors.white,
+          height: this.props.recipient ? 100 : 50,
+          transition: 'height 0.3s ease-in',
+        }}
+        onSubmit={this.handleSubmit}
+      >
         <RecipientTag recipient={this.props.recipient} />
         <TextField
           onKeyDown={this.handleOnInputStart}
           onChange={this.handleInputChange}
           value={this.state.text}
         />
-        <SendMessageButton />
+        <SendMessageButton readyToSend={this.state.text.length} />
       </form>
     )
   }
@@ -83,7 +95,7 @@ class AddComment extends Component {
 
 export default connect(
   state => ({
-    recipient: addReplyDucks.getRecipientName(state),
+    recipient: commentReducer.getRecipient(state),
   }),
-  { ...commentDucks, ...addReplyDucks },
+  actions,
 )(AddComment)

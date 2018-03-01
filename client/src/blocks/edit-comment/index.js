@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
-import { string, func } from 'prop-types'
+import { string, func, bool } from 'prop-types'
 import { connect } from 'react-redux'
 
+import * as commentReducer from 'store/comment/reducer'
 import { TextField } from 'components'
-import * as commentDucks from 'store/modules/comment'
-import * as uiDucks from 'store/modules/ui'
+import * as actions from 'store/comment/actions'
 import { isAuthenticated } from 'utils/auth'
 import history from 'utils/history'
 import formStyle from './form-style'
@@ -14,8 +14,9 @@ class EditComment extends Component {
   static propTypes = {
     oldText: string.isRequired,
     editComment: func.isRequired,
-    finishEditComment: func.isRequired,
+    finishEdit: func.isRequired,
     commentId: string.isRequired,
+    fetchingEdit: bool.isRequired,
   }
   constructor(props) {
     super(props)
@@ -57,13 +58,15 @@ class EditComment extends Component {
   }
 
   handleCancel = () => {
-    const { commentId, finishEditComment } = this.props
+    const { commentId, finishEdit } = this.props
 
-    finishEditComment(commentId)
+    finishEdit(commentId)
   }
 
   render() {
-    return (
+    return this.props.fetchingEdit ? (
+      '수정하는 중입니다...'
+    ) : (
       <form css={formStyle} onSubmit={this.handleSubmit}>
         <TextField
           tagName="textarea"
@@ -77,4 +80,9 @@ class EditComment extends Component {
   }
 }
 
-export default connect(null, { ...commentDucks, ...uiDucks })(EditComment)
+export default connect(
+  (state, { commentId }) => ({
+    fetchingEdit: commentReducer.getFetchingEdit(state, commentId),
+  }),
+  actions,
+)(EditComment)

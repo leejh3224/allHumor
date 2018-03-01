@@ -139,13 +139,10 @@ export default {
         counts: 1,
         articleId: id,
       }).save()
-      res.json({
-        success: true,
-      })
+      res.json({})
     } catch (error) {
       console.log(error)
       res.json({
-        success: false,
         error,
       })
     }
@@ -153,17 +150,16 @@ export default {
   voteArticle: async (req, res) => {
     const { id } = req.params
     const { userId } = req.body
+    const VOTE_LIMIT_PER_ARTICLE = 3
 
     try {
       const vote = await Vote.findOne({ articleId: id, userId })
 
-      if (vote.counts < 25) {
+      if (vote.counts < VOTE_LIMIT_PER_ARTICLE) {
         await Vote.update({ articleId: id, userId }, { counts: vote.counts + 1 })
       }
 
-      res.json({
-        success: true,
-      })
+      res.json({})
     } catch (error) {
       console.log(error)
       res.json({

@@ -1,8 +1,10 @@
 import React from 'react'
+import { bool } from 'prop-types'
 
+import { colors } from 'styles/theme'
 import { SendIcon } from 'components/icons'
 
-const SendMessageButton = () => (
+const SendMessageButton = ({ readyToSend }) => (
   <button
     type="submit"
     css={{
@@ -14,8 +16,12 @@ const SendMessageButton = () => (
       },
     }}
   >
-    <SendIcon />
+    <SendIcon color={readyToSend ? colors.primary : colors.grey} />
   </button>
 )
+
+SendMessageButton.propTypes = {
+  readyToSend: bool.isRequired,
+}
 
 export default SendMessageButton

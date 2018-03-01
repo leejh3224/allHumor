@@ -4,6 +4,7 @@ export { default as Timestamp } from './timestamp'
 export { default as TextField } from './text-field'
 export { default as BaseStyleLink } from './base-style-link'
 export { default as Tab } from './tab'
+export { default as SendEmail } from './send-email'
+export { default as InfiniteScroll } from './infinite-scroll'
 
-export { default as SendEmail } from './SendEmail'
 export { default as SearchForm } from './SearchForm'

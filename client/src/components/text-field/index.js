@@ -1,7 +1,7 @@
 import { createElement } from 'react'
 import { string, shape } from 'prop-types'
 
-import { fonts } from 'styles/theme'
+import { fonts, spacing } from 'styles/theme'
 
 const style = {
   flex: 1,
@@ -10,6 +10,7 @@ const style = {
   ':focus': {
     outline: 0,
   },
+  marginTop: spacing.xsmall,
 }
 
 const TextField = ({ tagName = 'input', ...props }) =>

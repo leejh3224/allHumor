@@ -8,8 +8,7 @@ import * as fetchingReducer from 'store/fetching/reducer'
 import * as previewListReducer from 'store/previewList/reducer'
 import * as actions from 'store/previewList/actions'
 import * as errorMessageReducer from 'store/errorMessage/reducer'
-import { PreviewFeed } from 'components'
-import InfiniteScroll from './infinite-scroll'
+import { PreviewFeed, InfiniteScroll } from 'components'
 
 class PreviewFeedList extends Component {
   static defaultProps = {
@@ -27,7 +26,9 @@ class PreviewFeedList extends Component {
     fetchPreviews(params.category, 1)
   }
   render() {
-    const { previewList, fetching, errorMessage } = this.props
+    const {
+      previewList, fetching, errorMessage, fetchPreviews, match: { params },
+    } = this.props
 
     if (fetching && !previewList.length) {
       return <p>loading ...</p>
@@ -44,7 +45,7 @@ class PreviewFeedList extends Component {
             ? previewList.map(preview => <PreviewFeed key={preview._id} preview={preview} />)
             : '해당 카테고리에 게시물이 없습니다.'}
         </ul>
-        <InfiniteScroll fetching={fetching} />
+        <InfiniteScroll prefix="previewList" fetchAction={fetchPreviews} params={params} />
         <div>{fetching && <p>loading ...</p>}</div>
       </div>
     )

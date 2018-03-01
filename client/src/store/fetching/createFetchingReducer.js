@@ -1,22 +1,24 @@
 import { createReducer } from 'store/utils'
 import types from 'store/actionTypes'
 
-const createFetchingReducer = prefix =>
-  createReducer(
+const createFetchingReducer = (prefix, sufix) => {
+  const getType = key => (sufix ? `${sufix.toUpperCase()}_${key}` : key)
+  return createReducer(
     types[prefix]
       ? {
-        [types[prefix].REQUEST]() {
+        [types[prefix][getType('REQUEST')]]() {
           return true
         },
-        [types[prefix].SUCCESS]() {
+        [types[prefix][getType('SUCCESS')]]() {
           return false
         },
-        [types[prefix].ERROR]() {
+        [types[prefix][getType('ERROR')]]() {
           return false
         },
       }
       : {},
     false,
   )
+}
 
 export default createFetchingReducer

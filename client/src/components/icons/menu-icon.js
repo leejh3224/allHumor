@@ -1,9 +1,8 @@
 import React from 'react'
-import { string, shape } from 'prop-types'
 
-import { colors } from 'styles/theme'
+import { IconDefaultProps, IconPropTypes } from 'propTypes/IconPropTypes'
 
-const MenuIcon = ({ color = colors.white, cssProps }) => (
+const MenuIcon = ({ color, cssProps }) => (
   <svg
     version="1"
     xmlns="http://www.w3.org/2000/svg"
@@ -29,9 +28,7 @@ const MenuIcon = ({ color = colors.white, cssProps }) => (
   </svg>
 )
 
-MenuIcon.propTypes = {
-  color: string.isRequired,
-  cssProps: shape().isRequired,
-}
+MenuIcon.defaultProps = IconDefaultProps
+MenuIcon.propTypes = IconPropTypes
 
 export default MenuIcon

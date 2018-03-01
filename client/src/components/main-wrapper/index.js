@@ -1,5 +1,5 @@
 import React from 'react'
-import { element } from 'prop-types'
+import { element, oneOfType, array } from 'prop-types'
 
 import { colors, spacing } from 'styles/theme'
 
@@ -9,7 +9,7 @@ const MainWrapper = ({ children }) => (
 )
 
 MainWrapper.propTypes = {
-  children: element.isRequired,
+  children: oneOfType([element, array]).isRequired,
 }
 
 export default MainWrapper

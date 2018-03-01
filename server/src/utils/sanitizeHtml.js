@@ -38,7 +38,7 @@ export default html =>
       'source',
     ],
     allowedAttributes: {
-      img: ['src', 'alt', 'data-original'],
+      img: ['src', 'alt', 'data-original', 'style'],
       iframe: ['src', 'allowfullscreen'],
       embed: ['src', 'autoplay'],
       video: ['controls', 'autoplay'],

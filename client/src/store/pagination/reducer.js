@@ -10,5 +10,5 @@ export default combineReducers({
   commentList,
 })
 
-export const getPageCount = ({ pagination }, prefix) => pagination.getIn([prefix, 'pageCount'])
-export const getCurrent = ({ pagination }, prefix) => pagination.getIn([prefix, 'current'])
+export const getPageCount = (state, prefix) => state.getIn(['pagination', prefix, 'pageCount'])
+export const getCurrent = (state, prefix) => state.getIn(['pagination', prefix, 'current'])

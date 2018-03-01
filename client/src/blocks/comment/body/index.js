@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
-import { shape, arrayOf } from 'prop-types'
+import { shape, arrayOf, bool, func } from 'prop-types'
+import { connect } from 'react-redux'
 
+import * as commentReducer from 'store/comment/reducer'
+import * as actions from 'store/comment/actions'
 import { EditComment } from 'blocks'
 import BodyTemplate from './template'
 import Header from './header'
@@ -11,47 +14,73 @@ import ShowReplyButton from './show-reply-button'
 class Body extends Component {
   static propTypes = {
     comment: shape().isRequired,
-    repliesList: arrayOf(shape()).isRequired,
+    replies: arrayOf(shape()).isRequired,
+    isEditing: bool.isRequired,
+    isTruncated: bool.isRequired,
+    toggleExpandText: func.isRequired,
+    fetchingRemove: bool.isRequired,
+    startAddReply: func.isRequired,
+    fetchReplies: func.isRequired,
+    toggleExpandReply: func.isRequired,
+    isExpanded: bool.isRequired,
   }
   render() {
-    const { repliesList } = this.props
     const {
-      _id,
-      author,
-      content,
-      createdAt,
-      replies,
-      isTruncated,
       isEditing,
-      isFetchingEditingComment,
-      isFetchingRemovingComment,
-      isShowingReply,
+      isTruncated,
+      isExpanded,
+      toggleExpandText,
+      fetchingRemove,
+      startAddReply,
+      fetchReplies,
+      toggleExpandReply,
+      replies,
+    } = this.props
+
+    const {
+      _id, author, content, createdAt, parent, replies: arrayOfReplyIds,
     } = this.props.comment
 
     if (isEditing) {
       return <EditComment commentId={_id} oldText={content} />
     }
 
-    if (isFetchingEditingComment) {
-      return <p>수정하는 중입니다 ...</p>
+    if (fetchingRemove) {
+      return <p>삭제하는 중입니다 ...</p>
     }
 
-    if (isFetchingRemovingComment) {
-      return <p>삭제하는 중입니다 ...</p>
+    function onClickShowReply() {
+      toggleExpandReply(_id)
+
+      if (isExpanded) {
+        return
+      }
+
+      fetchReplies(_id)
+    }
+
+    function checkIsParent() {
+      return arrayOfReplyIds // only parent has "replies" field
     }
 
     return (
       <BodyTemplate
         header={<Header author={author} createdAt={createdAt} />}
-        text={<Text commentId={_id} content={content} isTruncated={isTruncated} />}
-        addReplyButton={<AddReplyButton commentId={_id} />}
+        text={
+          <Text
+            content={content}
+            isTruncated={isTruncated}
+            onClickShowMore={() => toggleExpandText(_id)}
+          />
+        }
+        addReplyButton={<AddReplyButton onClick={() => startAddReply(author, parent || _id)} />}
         showReplyButton={
-          replies &&
-          replies.length > 0 && (
+          checkIsParent() &&
+          !!arrayOfReplyIds.length && (
             <ShowReplyButton
-              commentId={_id}
-              isShowingReply={isShowingReply}
-              replyCount={repliesList.length || replies.length}
+              onClick={onClickShowReply}
+              isShowingReply={isExpanded}
+              replyCount={replies.length || arrayOfReplyIds.length}
             />
           )
         }
@@ -60,4 +89,11 @@ class Body extends Component {
   }
 }
 
-export default Body
+export default connect(
+  (state, { comment: { _id } }) => ({
+    isTruncated: commentReducer.getIsTruncated(state, _id),
+    isExpanded: commentReducer.getIsExpanded(state, _id),
+    isEditing: commentReducer.getIsEditing(state, _id),
+  }),
+  actions,
+)(Body)

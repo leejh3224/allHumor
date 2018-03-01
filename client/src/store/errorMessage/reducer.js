@@ -1,18 +1,29 @@
 import { createReducer } from 'store/utils'
 import types from 'store/actionTypes'
 
-const errorMessage = createReducer(
-  {
-    [types.previewList.ERROR](state, { payload }) {
-      return payload
-    },
-    [types.article.ERROR](state, { payload }) {
-      return payload
-    },
-  },
-  null,
-)
+function createReducerMap(entities) {
+  return entities.reduce(
+    (obj, entity) => ({
+      ...obj,
+      [types[entity].ERROR](state, { payload }) {
+        return payload
+      },
+      [types[entity].ADD_ERROR](state, { payload }) {
+        return payload
+      },
+      [types[entity].EDIT_ERROR](state, { payload }) {
+        return payload
+      },
+      [types[entity].REMOVE_ERROR](state, { payload }) {
+        return payload
+      },
+    }),
+    {},
+  )
+}
+
+const errorMessage = createReducer(createReducerMap(['previewList', 'article', 'comment']), null)
 
 export default errorMessage
 
-export const getErrorMessage = state => state.errorMessage
+export const getErrorMessage = state => state.get('errorMessage')

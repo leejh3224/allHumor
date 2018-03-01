@@ -12,7 +12,7 @@ const Detail = () => (
       <div>
         <Article isLoggedIn={isAuthenticated()} />
         <CommentList isLoggedIn={isAuthenticated()} isAtTheBottom={isAtTheBottom} />
-        <div css={{ paddingBottom: 144 }} />
+        <div css={{ paddingBottom: 100 }} />
         <div
           css={{
             position: 'fixed',

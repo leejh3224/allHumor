@@ -2,7 +2,7 @@ import { createStore, compose, applyMiddleware } from 'redux'
 import thunk from 'redux-thunk'
 import history from 'utils/history'
 import { routerMiddleware } from 'react-router-redux'
-import rootReducer from './modules'
+import rootReducer from './rootReducer'
 
 const isDev = process.env.NODE_ENV === 'development'
 const router = routerMiddleware(history)

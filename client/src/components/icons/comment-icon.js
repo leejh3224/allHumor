@@ -1,9 +1,9 @@
 import React from 'react'
-import { string, shape } from 'prop-types'
 
 import { colors } from 'styles/theme'
+import { IconDefaultProps, IconPropTypes } from 'propTypes/IconPropTypes'
 
-const CommentIcon = ({ color = colors.grey, cssProps }) => (
+const CommentIcon = ({ color, cssProps }) => (
   <svg
     version="1"
     xmlns="http://www.w3.org/2000/svg"
@@ -33,9 +33,10 @@ const CommentIcon = ({ color = colors.grey, cssProps }) => (
   </svg>
 )
 
-CommentIcon.propTypes = {
-  color: string.isRequired,
-  cssProps: shape().isRequired,
+CommentIcon.defaultProps = {
+  ...IconDefaultProps,
+  color: colors.grey,
 }
+CommentIcon.propTypes = IconPropTypes
 
 export default CommentIcon

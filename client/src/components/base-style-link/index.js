@@ -1,5 +1,5 @@
 import React from 'react'
-import { shape } from 'prop-types'
+import { shape, oneOfType, string, element } from 'prop-types'
 import { Link } from 'react-router-dom'
 
 import { colors, fonts } from 'styles/theme'
@@ -16,9 +16,13 @@ const BaseStyleLink = ({ cssProps, children, ...props }) => (
   </Link>
 )
 
+BaseStyleLink.defaultProps = {
+  cssProps: undefined,
+}
+
 BaseStyleLink.propTypes = {
-  cssProps: shape().isRequired,
-  children: shape().isRequired,
+  cssProps: shape(),
+  children: oneOfType([string, element]).isRequired,
 }
 
 export default BaseStyleLink

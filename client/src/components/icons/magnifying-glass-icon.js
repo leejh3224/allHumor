@@ -1,9 +1,8 @@
 import React from 'react'
-import { string, shape } from 'prop-types'
 
-import { colors } from 'styles/theme'
+import { IconDefaultProps, IconPropTypes } from 'propTypes/IconPropTypes'
 
-const MagnifyingGlassIcon = ({ color = colors.white, cssProps }) => (
+const MagnifyingGlassIcon = ({ color, cssProps }) => (
   <svg
     version="1"
     xmlns="http://www.w3.org/2000/svg"
@@ -20,9 +19,7 @@ const MagnifyingGlassIcon = ({ color = colors.white, cssProps }) => (
   </svg>
 )
 
-MagnifyingGlassIcon.propTypes = {
-  color: string.isRequired,
-  cssProps: shape().isRequired,
-}
+MagnifyingGlassIcon.defaultProps = IconDefaultProps
+MagnifyingGlassIcon.propTypes = IconPropTypes
 
 export default MagnifyingGlassIcon

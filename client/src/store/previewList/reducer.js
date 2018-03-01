@@ -10,17 +10,17 @@ const byId = createReducer(
       return state.merge(payload.entities.previews)
     },
   },
-  OrderedMap(), // preserve order
+  OrderedMap(),
 )
 
 export default combineReducers({
   byId,
 })
 
-export const getPreviewList = ({ previewList }, category) =>
+export const getPreviewList = (state, category) =>
   Object.values(
-    previewList
-      .get('byId')
+    state
+      .getIn(['previewList', 'byId'])
       .filter(item => item.get('category') === category)
       .toJS(),
   )

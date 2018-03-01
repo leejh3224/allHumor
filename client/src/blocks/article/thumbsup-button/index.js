@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import { number, func } from 'prop-types'
 import { connect } from 'react-redux'
 
-import * as votingDucks from 'store/modules/voting'
+import * as actions from 'store/article/actions'
+import * as articleReducer from 'store/article/reducer'
 import { isAuthenticated } from 'utils/auth'
 import history from 'utils/history'
 import Button from './button'
@@ -44,7 +45,7 @@ class ThumbsupButton extends Component {
 
 export default connect(
   state => ({
-    voteCount: votingDucks.getVoteCount(state),
+    voteCount: articleReducer.getVoteCount(state),
   }),
-  votingDucks,
+  actions,
 )(ThumbsupButton)

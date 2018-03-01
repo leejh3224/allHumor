@@ -35,24 +35,27 @@ export function getPlural(entity) {
   return `${entity}s`
 }
 
-export const createFetchThunk = ({
+export const createFetchThunk = (dispatch, getState) => ({
   entity,
-  fetchingKey,
+  fetchingKey = entity,
   requestTypes: [REQUEST, SUCCESS, ERROR],
+  requestPayload,
   url,
   method,
-}) => (dispatch, getState) => {
+  body,
+}) => {
   const inRequest = getFetching(getState(), fetchingKey)
 
   if (inRequest) {
     return null
   }
 
-  dispatch({ type: REQUEST })
+  dispatch({ type: REQUEST, payload: requestPayload })
 
   const options = {
     url,
     method,
+    data: body,
   }
 
   return api.request(options).then(
@@ -69,6 +72,13 @@ export const createFetchThunk = ({
           meta: omit([target], data),
         })
       }
+
+      if (method === 'delete') {
+        dispatch({
+          type: SUCCESS,
+          payload: requestPayload,
+        })
+      }
     },
     error => {
       let { message } = error
@@ -79,3 +89,12 @@ export const createFetchThunk = ({
     },
   )
 }
+
+export const withNewState = (object, newState) =>
+  Object.values(object).reduce(
+    (obj, entity) => ({
+      ...obj,
+      [entity._id]: newState,
+    }),
+    {},
+  )

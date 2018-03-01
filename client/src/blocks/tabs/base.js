@@ -25,7 +25,7 @@ const Base = ({
       }}
     >
       {names.map(name => (
-        <Tab to={`/${name}`} onClick={event => onTabClick(event, name)}>
+        <Tab key={name} to={`/${name}`} onClick={event => onTabClick(event, name)}>
           {translate(name)}
         </Tab>
       ))}

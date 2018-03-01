@@ -1,9 +1,13 @@
 import React from 'react'
 import { string, func } from 'prop-types'
 import { Link } from 'react-router-dom'
-import { colors, fonts, spacing, media } from 'styles/theme'
 import ReactRouterPropTypes from 'react-router-prop-types'
+import { connect } from 'react-redux'
+
+import { colors, fonts, spacing, media } from 'styles/theme'
 import { socialLogin } from 'utils/auth'
+import * as actions from 'store/ui/actions'
+import * as uiReducer from 'store/ui/reducer'
 
 const baseButtonStyle = {
   display: 'flex',
@@ -199,4 +203,9 @@ Login.propTypes = {
   history: ReactRouterPropTypes.history.isRequired,
 }
 
-export default Login
+export default connect(
+  state => ({
+    view: uiReducer.getLoginView(state),
+  }),
+  actions,
+)(Login)

@@ -12,7 +12,6 @@ const Base = ({
   addComment,
   fetchingAddComment,
   fetchingComment,
-  getRepliesOfCommentById,
   isLoggedIn,
   ...props
 }) => (
@@ -21,18 +20,7 @@ const Base = ({
     {comments.length ? (
       <ul css={wrapperStyle}>
         {fetchingAddComment && '로딩 중입니다 ...'}
-        {comments.map(comment => {
-          const repliesList = Object.values(getRepliesOfCommentById(comment._id))
-          return (
-            <Comment
-              {...props}
-              key={comment._id}
-              comment={comment}
-              addComment={addComment}
-              repliesList={repliesList}
-            />
-          )
-        })}
+        {comments.map(comment => <Comment {...props} key={comment._id} comment={comment} />)}
       </ul>
     ) : (
       <div
@@ -73,7 +61,6 @@ Base.propTypes = {
   addComment: func.isRequired,
   fetchingAddComment: bool.isRequired,
   fetchingComment: bool.isRequired,
-  getRepliesOfCommentById: func.isRequired,
   isLoggedIn: bool.isRequired,
 }
 
