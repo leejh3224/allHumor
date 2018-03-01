@@ -17,12 +17,13 @@ const BaseStyleLink = ({ cssProps, children, ...props }) => (
 )
 
 BaseStyleLink.defaultProps = {
+  children: undefined,
   cssProps: undefined,
 }
 
 BaseStyleLink.propTypes = {
   cssProps: shape(),
-  children: oneOfType([string, element]).isRequired,
+  children: oneOfType([string, element]),
 }
 
 export default BaseStyleLink

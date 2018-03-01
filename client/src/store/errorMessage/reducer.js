@@ -17,12 +17,21 @@ function createReducerMap(entities) {
       [types[entity].REMOVE_ERROR](state, { payload }) {
         return payload
       },
+      [types[entity].ADD_REPLY_ERROR](state, { payload }) {
+        return payload
+      },
+      [types[entity].REPLY_ERROR](state, { payload }) {
+        return payload
+      },
     }),
     {},
   )
 }
 
-const errorMessage = createReducer(createReducerMap(['previewList', 'article', 'comment']), null)
+const errorMessage = createReducer(
+  createReducerMap(['previewList', 'article', 'comment', 'search', 'voting']),
+  null,
+)
 
 export default errorMessage
 

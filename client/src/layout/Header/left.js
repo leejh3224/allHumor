@@ -1,12 +1,12 @@
 import React from 'react'
-import { element, func } from 'prop-types'
+import { func } from 'prop-types'
 
 const Left = ({ icon: Icon, onClick }) => (
   <Icon cssProps={{ cursor: 'pointer' }} onClick={onClick} />
 )
 
 Left.propTypes = {
-  icon: element.isRequired,
+  icon: func.isRequired,
   onClick: func.isRequired,
 }
 

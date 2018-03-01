@@ -31,7 +31,7 @@ class CommentList extends Component {
         <Header commentCount={comments.length} />
         {fetchingAddComment && '로딩 중입니다 ...'}
         <List comments={comments} fetchingComment={fetchingComment} myUserId={myUserId} />
-        <InfiniteScroll prefix="commentList" fetchAction={fetchComments} />
+        <InfiniteScroll prefix="comment" fetchAction={fetchComments} />
       </div>
     )
   }

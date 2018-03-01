@@ -7,8 +7,8 @@ const RocketIcon = ({ color, cssProps }) => (
   <svg
     version="1"
     xmlns="http://www.w3.org/2000/svg"
-    width="200"
-    height="200"
+    width="250"
+    height="250"
     viewBox="0 0 200.000000 200.000000"
     css={cssProps}
   >

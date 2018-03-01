@@ -8,7 +8,7 @@ export const fetchArticle = id => (dispatch, getState) =>
   createFetchThunk(dispatch, getState)({
     entity: 'article',
     requestTypes: [types.article.REQUEST, types.article.SUCCESS, types.article.ERROR],
-    url: `/articles/${id}`,
+    url: `/article/${id}`,
     method: 'get',
   })
 

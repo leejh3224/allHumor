@@ -3,11 +3,11 @@ import { combineReducers } from 'redux-immutable'
 import createPaginationReducer from './createPaginationReducer'
 
 const previewList = createPaginationReducer('previewList')
-const commentList = createPaginationReducer('commentList')
+const comment = createPaginationReducer('comment')
 
 export default combineReducers({
   previewList,
-  commentList,
+  comment,
 })
 
 export const getPageCount = (state, prefix) => state.getIn(['pagination', prefix, 'pageCount'])

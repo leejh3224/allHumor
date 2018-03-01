@@ -17,10 +17,14 @@ const Logo = ({ to, onClick, text }) => (
   </BaseStyleLink>
 )
 
+Logo.defaultProps = {
+  text: undefined,
+}
+
 Logo.propTypes = {
   to: string.isRequired,
   onClick: func.isRequired,
-  text: string.isRequired,
+  text: string,
 }
 
 export default Logo

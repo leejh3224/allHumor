@@ -1,5 +1,5 @@
 import React from 'react'
-import { element } from 'prop-types'
+import { element, oneOfType, bool } from 'prop-types'
 
 import { colors, spacing } from 'styles/theme'
 
@@ -31,11 +31,15 @@ const HeaderTemplate = ({
   </header>
 )
 
+HeaderTemplate.defaultProps = {
+  bottom: null,
+}
+
 HeaderTemplate.propTypes = {
   left: element.isRequired,
   logo: element.isRequired,
-  right: element.isRequired,
-  bottom: element.isRequired,
+  right: oneOfType([element, bool]).isRequired,
+  bottom: element,
 }
 
 export default HeaderTemplate

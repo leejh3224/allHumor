@@ -1,6 +1,5 @@
 import React from 'react'
-import { Tabs } from 'blocks'
-import { SearchForm } from 'components'
+import { Tabs, SearchForm } from 'blocks'
 
 export default currentLocation => {
   const detailPageRegex = /[a-f\d]{24}$/

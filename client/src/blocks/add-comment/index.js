@@ -12,10 +12,13 @@ import SendMessageButton from './send-message-button'
 import RecipientTag from './recipient-tag'
 
 class AddComment extends Component {
+  static defaultProps = {
+    recipient: undefined,
+  }
   static propTypes = {
     addReply: func.isRequired,
     addComment: func.isRequired,
-    recipient: string.isRequired,
+    recipient: string,
     finishAddReply: func.isRequired,
   }
   state = {
@@ -89,7 +92,7 @@ class AddComment extends Component {
           onChange={this.handleInputChange}
           value={this.state.text}
         />
-        <SendMessageButton readyToSend={this.state.text.length} />
+        <SendMessageButton readyToSend={this.state.text.length > 0} />
       </form>
     )
   }

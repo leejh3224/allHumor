@@ -8,9 +8,12 @@ import * as fetchingReducer from 'store/fetching/reducer'
 import sleep from 'utils/sleep'
 
 class InfiniteScroll extends Component {
+  static defaultProps = {
+    params: undefined,
+  }
   static propTypes = {
     currentPage: number.isRequired,
-    params: shape().isRequired,
+    params: shape(),
     fetching: bool.isRequired,
     fetchAction: func.isRequired,
     lastPage: number.isRequired,

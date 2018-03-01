@@ -12,7 +12,7 @@ export default {
     let findQuery = { category }
 
     if (keyword) {
-      findQuery = Object.assign(findQuery, { $text: { $search: keyword } })
+      findQuery = { $text: { $search: keyword } }
     }
 
     // aggregation
@@ -48,15 +48,12 @@ export default {
     const limit = {
       $limit: PER_PAGE,
     }
-    const pipeline = [
-      match,
-      lookupForVotes,
-      addFieldVoteCounts,
-      sort,
-      excludeFieldVotes,
-      skip,
-      limit,
-    ].filter(pipe => pipe)
+
+    const pipeline = [match, lookupForVotes, addFieldVoteCounts, sort, excludeFieldVotes, limit]
+
+    if (page) {
+      pipeline.push(skip)
+    }
 
     try {
       const total = await Article.find(findQuery).count()

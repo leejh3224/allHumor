@@ -1,5 +1,5 @@
 import { createElement } from 'react'
-import { string, shape } from 'prop-types'
+import { string } from 'prop-types'
 
 import { fonts, spacing } from 'styles/theme'
 
@@ -13,7 +13,7 @@ const style = {
   marginTop: spacing.xsmall,
 }
 
-const TextField = ({ tagName = 'input', ...props }) =>
+const TextField = ({ tagName, ...props }) =>
   createElement(tagName, {
     type: 'text',
     placeholder: '여기에 댓글을 입력해주세요.',
@@ -21,9 +21,12 @@ const TextField = ({ tagName = 'input', ...props }) =>
     ...props,
   })
 
+TextField.defaultProps = {
+  tagName: 'input',
+}
+
 TextField.propTypes = {
-  tagName: string.isRequired,
-  cssProps: shape().isRequired,
+  tagName: string,
 }
 
 export default TextField

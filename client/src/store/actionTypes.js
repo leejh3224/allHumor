@@ -39,26 +39,13 @@ export default {
     REQUEST: 'voting/VOTING_REQUEST',
     ERROR: 'voting/VOTING_ERROR',
   },
-  // reply: {
-  //   REQUEST: 'comment/REPLY_REQUEST',
-  //   SUCCESS: 'comment/REPLY_SUCCESS',
-  //   ERROR: 'comment/REPLY_ERROR',
-  //   ADD_REQUEST: 'comment/REPLY_ADD_REQUEST',
-  //   ADD_SUCCESS: 'comment/REPLY_ADD_SUCCESS',
-  //   ADD_ERROR: 'comment/REPLY_ADD_ERROR',
-  // },
-  login: {
-    SWITCH_VIEW: 'login/SWITCH_VIEW',
-  },
   user: {
     SET_USER_PROFILE: 'user/SET_USER_PROFILE',
   },
   ui: {
     SWITCH_LOGIN_VIEW: 'ui/SWITCH_LOGIN_VIEW',
-    // TOGGLE_REPLIES: 'ui/TOGGLE_REPLIES',
   },
   search: {
-    CHANGE_INPUT: 'search/CHANGE_INPUT',
     REQUEST: 'search/SEARCH_REQUEST',
     SUCCESS: 'search/SEARCH_SUCCESS',
     ERROR: 'search/SEARCH_ERROR',

@@ -6,5 +6,3 @@ export { default as BaseStyleLink } from './base-style-link'
 export { default as Tab } from './tab'
 export { default as SendEmail } from './send-email'
 export { default as InfiniteScroll } from './infinite-scroll'
-
-export { default as SearchForm } from './SearchForm'

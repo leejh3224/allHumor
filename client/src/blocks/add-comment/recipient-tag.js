@@ -9,8 +9,12 @@ const RecipientTag = ({ recipient }) => (
   </span>
 )
 
+RecipientTag.defaultProps = {
+  recipient: undefined,
+}
+
 RecipientTag.propTypes = {
-  recipient: string.isRequired,
+  recipient: string,
 }
 
 export default RecipientTag

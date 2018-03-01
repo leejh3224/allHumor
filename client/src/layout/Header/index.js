@@ -44,7 +44,6 @@ class Header extends Component {
           if (pageName === 'detail') {
             logoLinkTo = `/${this.props.category || 'humor'}`
           }
-
           return (
             requiresHeader(currentLocation) && (
               <HeaderTemplate

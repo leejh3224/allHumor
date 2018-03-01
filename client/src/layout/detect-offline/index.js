@@ -11,6 +11,7 @@ const slideDown = keyframes`
   }
   to {
     transform: translateY(32px);
+    display: none;
   }
 `
 
@@ -21,25 +22,28 @@ const DetectOffline = () => (
       bottom: 0,
     }}
   >
-    <Online>
-      <span
-        css={{
-          display: 'block',
-          color: colors.white,
-          ...fonts.body,
-          backgroundColor: colors.success,
-          width: '100vw',
-          padding: `${spacing.xsmall}px 0`,
-          textAlign: 'center',
-
-          // animation starts 0.5s after load
-          'animation-delay': '0.5s',
-          animation: `${slideDown} 2s forwards`,
-        }}
-      >
-        연결되었습니다.
-      </span>
-    </Online>
+    <div
+      css={{
+        'animation-delay': '0.5s',
+        animation: `${slideDown} 2s forwards`,
+      }}
+    >
+      <Online>
+        <span
+          css={{
+            display: 'block',
+            color: colors.white,
+            ...fonts.body,
+            backgroundColor: colors.success,
+            width: '100vw',
+            padding: `${spacing.xsmall}px 0`,
+            textAlign: 'center',
+          }}
+        >
+          연결되었습니다.
+        </span>
+      </Online>
+    </div>
     <Offline>
       <span
         css={{
