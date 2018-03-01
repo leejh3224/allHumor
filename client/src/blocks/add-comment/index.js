@@ -60,6 +60,8 @@ class AddComment extends Component {
 
     addComment(text)
     this.reset()
+
+    window.scrollTo(0, document.body.scrollHeight)
   }
 
   reset = () => {

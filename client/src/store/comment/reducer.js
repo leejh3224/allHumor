@@ -33,11 +33,11 @@ export default combineReducers({
   repliesById,
 })
 
-export const getComments = state =>
+export const getComments = (state, articleId) =>
   Object.values(
     state
       .getIn(['comment', 'byId'])
-      .filter(truthy => truthy)
+      .filter(comment => comment.get('articleId') === articleId)
       .toJS(),
   )
 export const getIsEditing = (state, id) => state.getIn(['comment', 'editing', id, 'isEditing'])

@@ -8,7 +8,7 @@ import 'styles/globalStyle'
 import * as actions from 'store/user/actions'
 import { handleAuthentication } from 'utils/auth'
 import { MainWrapper } from 'components'
-import { Header } from 'layout'
+import { Header, DetectOffline } from 'layout'
 import Home from './Home'
 import Detail from './Detail'
 import Register from './Register'
@@ -56,6 +56,7 @@ const Routes = props => (
         />
         <Route component={NotFound} />
       </Switch>
+      <DetectOffline />
     </MainWrapper>
   </ConnectedRouter>
 )

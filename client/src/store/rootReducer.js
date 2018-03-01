@@ -9,6 +9,7 @@ import article from './article/reducer'
 import user from './user/reducer'
 import comment from './comment/reducer'
 import ui from './ui/reducer'
+import search from './search/reducer'
 
 export default combineReducers({
   router: routerReducer,
@@ -20,4 +21,5 @@ export default combineReducers({
   ui,
   previewList,
   errorMessage,
+  search,
 })

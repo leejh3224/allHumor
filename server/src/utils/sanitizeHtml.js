@@ -41,7 +41,7 @@ export default html =>
       img: ['src', 'alt', 'data-original', 'style'],
       iframe: ['src', 'allowfullscreen'],
       embed: ['src', 'autoplay'],
-      video: ['controls', 'autoplay'],
+      video: ['controls', 'autoplay', 'src'],
       source: ['src', 'type'],
     },
   })

@@ -18,7 +18,7 @@ afterAll(() => {
 
 test('video tag', async () => {
   try {
-    const link = 'http://www.dogdrip.net/155194521'
+    const link = 'http://www.dogdrip.net/155765487'
     await crawl(link)
   } catch (error) {
     console.log(error)

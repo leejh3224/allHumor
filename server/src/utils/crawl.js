@@ -80,7 +80,7 @@ export default async (link) => {
 
     // after saving gif images as mp4 format, change its extension too.
     listOfImageName = changeGifToMp4Extension(listOfImageName)
-    const embedVideos = parser.toArray(`${bodySelector} iframe,embed`) || []
+    const embedVideos = parser.toArray(`${bodySelector} iframe,embed,video`) || []
     const hasEmbededVideos = embedVideos.length
     const updatedBody = allImagesInBody.length
       ? updateImageAttributes({
