@@ -15,52 +15,49 @@ const slideDown = keyframes`
   }
 `
 
-const DetectOffline = () => (
+const DetectOffline = () => [
   <div
     css={{
+      'animation-delay': '0.5s',
+      animation: `${slideDown} 2s forwards`,
       position: 'fixed',
       bottom: 0,
     }}
   >
-    <div
-      css={{
-        'animation-delay': '0.5s',
-        animation: `${slideDown} 2s forwards`,
-      }}
-    >
-      <Online>
-        <span
-          css={{
-            display: 'block',
-            color: colors.white,
-            ...fonts.body,
-            backgroundColor: colors.success,
-            width: '100vw',
-            padding: `${spacing.xsmall}px 0`,
-            textAlign: 'center',
-          }}
-        >
-          연결되었습니다.
-        </span>
-      </Online>
-    </div>
-    <Offline>
+    <Online>
       <span
         css={{
           display: 'block',
           color: colors.white,
           ...fonts.body,
-          backgroundColor: colors.alert,
+          backgroundColor: colors.success,
           width: '100vw',
           padding: `${spacing.xsmall}px 0`,
           textAlign: 'center',
         }}
       >
-        인터넷 연결 상태를 확인해주세요.
+        연결되었습니다.
       </span>
-    </Offline>
-  </div>
-)
+    </Online>
+  </div>,
+  <Offline key="offline">
+    <span
+      css={{
+        display: 'block',
+        color: colors.white,
+        ...fonts.body,
+        backgroundColor: colors.alert,
+        width: '100vw',
+        padding: `${spacing.xsmall}px 0`,
+        textAlign: 'center',
+        position: 'fixed',
+        bottom: 0,
+      }}
+    >
+      인터넷 연결 상태를 확인해주세요.
+    </span>
+  </Offline>,
+]
 
 DetectOffline.propTypes = {}
 

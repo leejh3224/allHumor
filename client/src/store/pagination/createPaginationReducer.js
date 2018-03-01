@@ -12,8 +12,15 @@ const createPaginationReducer = prefix =>
     types[prefix]
       ? {
         [types[prefix].SUCCESS](state, { meta: { perPage, total } }) {
+          const lastPage = computePageCount(total, perPage)
+          const currentPage = state.get('current')
+          let newPage = currentPage + 1
+
+          if (currentPage === lastPage) {
+            newPage = currentPage
+          }
           const newState = fromJS({
-            current: state.get('current') + 1,
+            current: newPage,
             perPage,
             pageCount: computePageCount(total, perPage),
           })

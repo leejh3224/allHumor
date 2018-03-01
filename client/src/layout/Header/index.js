@@ -6,10 +6,11 @@ import ReactRouterPropTypes from 'react-router-prop-types'
 
 import * as articleReducer from 'store/article/reducer'
 import * as actions from 'store/previewList/actions'
-import { MenuIcon, BackIcon } from 'components/icons'
+import { LogoutIcon, BackIcon } from 'components/icons'
 import getPageName from 'utils/getPageName'
 import { rendersBottom, requiresHeader, rendersLogoText } from 'layout/utils'
 import history from 'utils/history'
+import { logout, isAuthenticated } from 'utils/auth'
 import HeaderTemplate from './template'
 import Left from './left'
 import Logo from './logo'
@@ -44,13 +45,16 @@ class Header extends Component {
           if (pageName === 'detail') {
             logoLinkTo = `/${this.props.category || 'humor'}`
           }
+
           return (
             requiresHeader(currentLocation) && (
               <HeaderTemplate
                 left={
                   <Left
-                    icon={pageName === 'home' ? MenuIcon : BackIcon}
-                    onClick={pageName === 'home' ? () => {} : history.goBack}
+                    pageName={pageName}
+                    loggedIn={isAuthenticated()}
+                    icon={pageName === 'home' ? LogoutIcon : BackIcon}
+                    onClick={pageName === 'home' ? logout : history.goBack}
                   />
                 }
                 logo={

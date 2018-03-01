@@ -36,7 +36,7 @@ class InfiniteScroll extends Component {
 
     await sleep(200)
 
-    if (currentPage < lastPage) {
+    if (currentPage <= lastPage - 1) {
       if (params.category) {
         fetchAction(params.category, currentPage + 1)
       } else {

@@ -1,3 +1,5 @@
+import { LOCATION_CHANGE } from 'react-router-redux'
+
 import { createReducer } from 'store/utils'
 import types from 'store/actionTypes'
 
@@ -22,6 +24,9 @@ function createReducerMap(entities) {
       },
       [types[entity].REPLY_ERROR](state, { payload }) {
         return payload
+      },
+      [LOCATION_CHANGE]() {
+        return null
       },
     }),
     {},

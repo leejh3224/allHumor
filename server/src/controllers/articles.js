@@ -43,17 +43,21 @@ export default {
       },
     }
     const skip = {
-      $skip: PER_PAGE * (page - 1),
+      $skip: page ? PER_PAGE * (page - 1) : 0,
     }
     const limit = {
       $limit: PER_PAGE,
     }
 
-    const pipeline = [match, lookupForVotes, addFieldVoteCounts, sort, excludeFieldVotes, limit]
-
-    if (page) {
-      pipeline.push(skip)
-    }
+    const pipeline = [
+      match,
+      skip,
+      lookupForVotes,
+      addFieldVoteCounts,
+      sort,
+      excludeFieldVotes,
+      limit,
+    ]
 
     try {
       const total = await Article.find(findQuery).count()

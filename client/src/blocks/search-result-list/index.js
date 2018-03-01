@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import * as searchReducer from 'store/search/reducer'
 import * as fetchingReducer from 'store/fetching/reducer'
 import * as errorMessageReducer from 'store/errorMessage/reducer'
-import { PreviewFeed } from 'components'
+import { PreviewFeed, Loading } from 'components'
 import { colors, spacing, fonts } from 'styles/theme'
 import NoResult from './no-result'
 
@@ -30,20 +30,7 @@ class SearchResultList extends Component {
     } = this.props
 
     if (fetching && !searchResult.length) {
-      return (
-        <div css={wrapperStyle}>
-          <p
-            css={{
-              padding: spacing.medium,
-              paddingBottom: 0,
-              color: colors.white,
-              ...fonts.body,
-            }}
-          >
-            검색결과를 가져오는 중 ...
-          </p>
-        </div>
-      )
+      return <Loading />
     }
 
     if (errorMessage && !searchResult.length) {

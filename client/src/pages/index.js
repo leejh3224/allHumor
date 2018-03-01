@@ -50,7 +50,7 @@ const Routes = props => (
             return articleIdRegex.test(routerProps.location.pathname) ? (
               <Route path="/:id" render={() => <Detail {...props} {...routerProps} />} />
             ) : (
-              <Route path="/:category" render={() => <Home {...props} {...routerProps} />} />
+              <Route path="/:category?" render={() => <Home {...props} {...routerProps} />} />
             )
           }}
         />

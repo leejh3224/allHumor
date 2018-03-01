@@ -9,6 +9,7 @@ import * as fetchingReducer from 'store/fetching/reducer'
 import * as errorMessageReducer from 'store/errorMessage/reducer'
 import * as articleReducer from 'store/article/reducer'
 import * as actions from 'store/article/actions'
+import { Loading } from 'components'
 import Base from './base'
 
 class Article extends Component {
@@ -31,7 +32,7 @@ class Article extends Component {
     const { fetching, article, errorMessage } = this.props
 
     if (fetching && isEmpty(article)) {
-      return 'loading ...'
+      return <Loading />
     }
 
     if (errorMessage && isEmpty(article)) {
