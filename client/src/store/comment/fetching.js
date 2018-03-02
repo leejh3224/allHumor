@@ -21,7 +21,7 @@ const fetching = createReducer(
       return state.setIn([id, 'remove'], false)
     },
     [types.comment.REMOVE_SUCCESS](state, { payload: id }) {
-      return state.set(id, undefined)
+      return state.has(id) ? state.set(id, undefined) : state
     },
     [types.comment.ADD_REPLY_REQUEST](state, { payload: id }) {
       return state.setIn([id, 'addReply'], true)

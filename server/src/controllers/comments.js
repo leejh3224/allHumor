@@ -4,18 +4,18 @@ export default {
   getComments: async (req, res) => {
     const { articleId, page } = req.params
     const PER_PAGE = 20
-    const loaded = PER_PAGE * page
     const notReplies = { articleId, replies: { $exists: true } }
 
     try {
       const total = await Comment.find(notReplies).count()
       const comments = await Comment.find(notReplies)
         .sort({ createdAt: -1 })
-        .skip(total < 20 ? 0 : total - loaded)
+        .skip(PER_PAGE * (page - 1))
         .limit(PER_PAGE)
 
       res.json({
         comments,
+        current: Number(page),
         total,
         perPage: PER_PAGE,
       })

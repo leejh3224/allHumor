@@ -1,4 +1,5 @@
 import React from 'react'
+import { bool } from 'prop-types'
 import { keyframes } from 'react-emotion'
 
 import { colors, spacing } from 'styles/theme'
@@ -25,24 +26,49 @@ const wrapperStyle = {
   minHeight: '100vh',
 }
 
-const Loading = () => (
-  <div css={wrapperStyle}>
-    <div
-      css={{
-        width: 60,
-        height: 60,
-        borderRadius: '50%',
-        backgroundColor: colors.white,
-        boxShadow: `0 2px 6px ${colors.grey}`,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: spacing.small,
-      }}
-    >
-      <div css={loaderStyle} />
-    </div>
+const singleSpinnerStyle = {
+  display: 'flex',
+  justifyContent: 'center',
+}
+
+const spinner = (
+  <div
+    css={{
+      width: 60,
+      height: 60,
+      borderRadius: '50%',
+      backgroundColor: colors.white,
+      boxShadow: `0 2px 6px ${colors.grey}`,
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginTop: spacing.small,
+      marginBottom: spacing.small,
+    }}
+  >
+    <div css={loaderStyle} />
   </div>
 )
 
-export default Loading
+export const Loading = ({ wrapped }) => (
+  <div css={wrapped ? wrapperStyle : singleSpinnerStyle}>{spinner}</div>
+)
+
+export const SimpleLoading = () => (
+  <div
+    css={{
+      display: 'flex',
+      justifyContent: 'center',
+    }}
+  >
+    <div css={loaderStyle} />
+  </div>
+)
+
+Loading.defaultProps = {
+  wrapped: true,
+}
+
+Loading.propTypes = {
+  wrapped: bool,
+}

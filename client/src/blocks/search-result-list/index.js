@@ -5,9 +5,10 @@ import { connect } from 'react-redux'
 import * as searchReducer from 'store/search/reducer'
 import * as fetchingReducer from 'store/fetching/reducer'
 import * as errorMessageReducer from 'store/errorMessage/reducer'
-import { PreviewFeed, Loading } from 'components'
+import { PreviewFeed, NoResult } from 'components'
+import { Loading } from 'components/loading'
 import { colors, spacing, fonts } from 'styles/theme'
-import NoResult from './no-result'
+import history from 'utils/history'
 
 class SearchResultList extends Component {
   static defaultProps = {
@@ -35,9 +36,11 @@ class SearchResultList extends Component {
 
     if (errorMessage && !searchResult.length) {
       return (
-        <div css={wrapperStyle}>
-          <p>{errorMessage}</p>
-        </div>
+        <NoResult
+          heading="이런... 검색결과가 없습니다"
+          onClick={() => history.replace('/')}
+          buttonContent="홈으로 돌아가기"
+        />
       )
     }
 
@@ -56,7 +59,14 @@ class SearchResultList extends Component {
             {searchResult.length}건의 검색 결과가 있습니다.
           </span>
         )}
-        {finished && !searchResult.length && <NoResult />}
+        {finished &&
+          !searchResult.length && (
+            <NoResult
+              heading="이런... 검색결과가 없습니다"
+              onClick={() => history.replace('/')}
+              buttonContent="홈으로 돌아가기"
+            />
+          )}
         {!!searchResult.length &&
           searchResult.map(preview => <PreviewFeed key={preview._id} preview={preview} />)}
       </div>

@@ -7,6 +7,7 @@ import { TextField } from 'components'
 import * as actions from 'store/comment/actions'
 import { isAuthenticated } from 'utils/auth'
 import history from 'utils/history'
+import { SimpleLoading } from 'components/loading'
 import formStyle from './form-style'
 import ButtonGroup from './button-group'
 
@@ -65,7 +66,13 @@ class EditComment extends Component {
 
   render() {
     return this.props.fetchingEdit ? (
-      '수정하는 중입니다...'
+      <div
+        css={{
+          minHeight: 80,
+        }}
+      >
+        <SimpleLoading />
+      </div>
     ) : (
       <form css={formStyle} onSubmit={this.handleSubmit}>
         <TextField

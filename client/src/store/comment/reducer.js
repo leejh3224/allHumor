@@ -37,7 +37,7 @@ export const getComments = (state, articleId) =>
   Object.values(
     state
       .getIn(['comment', 'byId'])
-      .filter(comment => comment.get('articleId') === articleId)
+      .filter(comment => comment && comment.get('articleId') === articleId)
       .toJS(),
   )
 export const getIsEditing = (state, id) => state.getIn(['comment', 'editing', id, 'isEditing'])

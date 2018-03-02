@@ -15,7 +15,7 @@ const editing = createReducer(
       return state.setIn([id, 'isEditing'], false)
     },
     [types.comment.REMOVE_SUCCESS](state, { payload: id }) {
-      return state.set(id, undefined)
+      return state.has(id) ? state.set(id, undefined) : state
     },
   },
   OrderedMap(),

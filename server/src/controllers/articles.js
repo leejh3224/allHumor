@@ -27,10 +27,10 @@ export default {
         as: 'votes',
       },
     }
-    const addFieldVoteCounts = {
+    const addFields = {
       $addFields: {
         voteCount: { $sum: '$votes.counts' },
-        commentCount: { $add: [{ $size: '$comments' }, { $sum: { $size: '$comments.reply' } }] },
+        commentCount: { $size: '$comments' },
       },
     }
     const sort = {
@@ -49,15 +49,7 @@ export default {
       $limit: PER_PAGE,
     }
 
-    const pipeline = [
-      match,
-      skip,
-      lookupForVotes,
-      addFieldVoteCounts,
-      sort,
-      excludeFieldVotes,
-      limit,
-    ]
+    const pipeline = [match, sort, skip, limit, lookupForVotes, addFields, excludeFieldVotes]
 
     try {
       const total = await Article.find(findQuery).count()
@@ -68,6 +60,7 @@ export default {
 
       res.json({
         previews,
+        current: Number(page),
         total,
         perPage: PER_PAGE,
       })
@@ -118,9 +111,10 @@ export default {
         as: 'comments',
       },
     }
+    const pipeline = [match, lookupForVotes, lookUpForComments, addField]
 
     try {
-      let [article] = await Article.aggregate([match, lookupForVotes, addField, lookUpForComments])
+      let [article] = await Article.aggregate(pipeline)
       article = omit(article, ['__v', 'createdAt', 'updatedAt', 'thumbnail'])
       res.json({
         article,

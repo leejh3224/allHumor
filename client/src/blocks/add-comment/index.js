@@ -75,6 +75,8 @@ class AddComment extends Component {
     return (
       <form
         css={{
+          position: 'fixed',
+          bottom: 0,
           display: 'flex',
           alignItems: 'flex-start',
           width: '100%',

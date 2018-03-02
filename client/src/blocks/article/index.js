@@ -8,8 +8,10 @@ import isEmpty from 'lodash/isEmpty'
 import * as fetchingReducer from 'store/fetching/reducer'
 import * as errorMessageReducer from 'store/errorMessage/reducer'
 import * as articleReducer from 'store/article/reducer'
-import * as actions from 'store/article/actions'
-import { Loading } from 'components'
+import * as articleActions from 'store/article/actions'
+import { NoResult } from 'components'
+import { Loading } from 'components/loading'
+import { RefreshIcon } from 'components/icons'
 import Base from './base'
 
 class Article extends Component {
@@ -29,14 +31,24 @@ class Article extends Component {
     fetchArticle(id)
   }
   render() {
-    const { fetching, article, errorMessage } = this.props
+    const {
+      fetchArticle, fetching, article, errorMessage, location: { pathname },
+    } = this.props
+    const id = pathname.replace(/\//, '')
 
     if (fetching && isEmpty(article)) {
       return <Loading />
     }
 
     if (errorMessage && isEmpty(article)) {
-      return errorMessage
+      return (
+        <NoResult
+          heading="일시적인 에러 발생!"
+          subheading="아래 버튼을 눌러 다시 시도하세요."
+          onClick={() => fetchArticle(id)}
+          buttonContent={<RefreshIcon />}
+        />
+      )
     }
 
     return !isEmpty(article) && <Base article={article} />
@@ -50,6 +62,6 @@ export default withRouter(
       fetching: fetchingReducer.getFetching(state, 'article'),
       errorMessage: errorMessageReducer.getErrorMessage(state),
     }),
-    actions,
+    articleActions,
   )(Article),
 )

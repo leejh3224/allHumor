@@ -1,18 +1,18 @@
 import types from 'store/actionTypes'
 import { createFetchThunk } from 'store/utils'
-import { getCurrent } from 'store/pagination/reducer'
 import { getId } from 'store/article/reducer'
 import { getProfile } from 'store/user/reducer'
 import { getParent } from 'store/comment/reducer'
+import { getCurrent } from 'store/pagination/reducer'
 
 export const fetchComments = () => (dispatch, getState) => {
   const articleId = getId(getState())
-  const currentPage = getCurrent(getState(), 'commentList')
+  const nextPage = getCurrent(getState(), 'comment') + 1
 
-  return createFetchThunk({
+  return createFetchThunk(dispatch, getState)({
     entity: 'comment',
     requestTypes: [types.comment.REQUEST, types.comment.SUCCESS, types.comment.ERROR],
-    url: `/comments/${articleId}/page/${currentPage}`,
+    url: `/comments/${articleId}/page/${nextPage}`,
     method: 'get',
   })
 }

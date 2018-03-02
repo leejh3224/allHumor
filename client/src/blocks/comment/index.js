@@ -6,6 +6,7 @@ import * as commentReducer from 'store/comment/reducer'
 import * as actions from 'store/comment/actions'
 import { colors } from 'styles/theme'
 import { EllipsisButton } from 'blocks'
+import { SimpleLoading } from 'components/loading'
 import CommentTemplate from './template'
 import Thumbnail from './thumbnail'
 import Body from './body'
@@ -42,7 +43,7 @@ class Comment extends Component {
     const renderRepliesList = () => {
       if (isExpanded) {
         return fetchingReply ? (
-          <p>불러오는 중 ...</p>
+          <SimpleLoading />
         ) : (
           <ul>
             {replies.map(reply => (
@@ -88,7 +89,7 @@ class Comment extends Component {
       <CommentTemplate
         thumbnail={<Thumbnail avatar={avatar} />}
         body={<Body comment={comment} fetchingRemove={fetchingRemove} replies={replies} />}
-        loadingAddReply={fetchingAddReply && <p>불러오는 중 ...</p>}
+        loadingAddReply={fetchingAddReply && <SimpleLoading />}
         renderRepliesList={renderRepliesList}
         renderEllipsisButton={renderEllipsisButton}
       />

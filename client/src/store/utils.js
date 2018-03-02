@@ -3,6 +3,7 @@ import { normalize } from 'normalizr'
 import api from 'api'
 import * as schemas from 'store/schema'
 import { getFetching } from 'store/fetching/reducer'
+import sleep from 'utils/sleep'
 
 /* eslint-disable no-prototype-builtins */
 export function createReducer(handlers, initialState) {
@@ -35,7 +36,7 @@ export function getPlural(entity) {
   return `${entity}s`
 }
 
-export const createFetchThunk = (dispatch, getState) => ({
+export const createFetchThunk = (dispatch, getState) => async ({
   entity,
   fetchingKey = entity,
   requestTypes: [REQUEST, SUCCESS, ERROR],
@@ -57,6 +58,8 @@ export const createFetchThunk = (dispatch, getState) => ({
     method,
     data: body,
   }
+
+  await sleep(1000) // for natural pagination
 
   return api.request(options).then(
     ({ data }) => {

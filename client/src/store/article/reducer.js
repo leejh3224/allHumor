@@ -1,6 +1,7 @@
 import { Map, fromJS } from 'immutable'
 import { createSelector } from 'reselect'
 import { normalize } from 'normalizr'
+import { LOCATION_CHANGE } from 'react-router-redux'
 
 import types from 'store/actionTypes'
 import { createReducer } from 'store/utils'
@@ -9,6 +10,9 @@ import { VOTE_LIMIT_PER_ARTICLE } from './constants'
 
 export default createReducer(
   {
+    [LOCATION_CHANGE]() {
+      return Map()
+    },
     [types.article.SUCCESS](state, { payload }) {
       const { article } = payload.entities
       const id = Object.keys(article)[0]

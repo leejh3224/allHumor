@@ -61,7 +61,7 @@ class Header extends Component {
                   <Logo
                     to={logoLinkTo}
                     onClick={this.loadNewFeed}
-                    text={rendersLogoText(currentLocation, this.props.category)}
+                    text={rendersLogoText(currentLocation, this.props.category) || 'All 유머'}
                   />
                 }
                 right={pageName !== 'search' && <Right />}

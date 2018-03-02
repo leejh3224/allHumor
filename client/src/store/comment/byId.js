@@ -11,12 +11,18 @@ const byId = createReducer(
       const { comments } = Object.values(payload.entities.article)[0]
       return state.merge(fromJS(normalize(comments, commentListSchema).entities.comments))
     },
+    [types.comment.SUCCESS](state, { payload }) {
+      return state.merge(fromJS(payload.entities.comments))
+    },
     [types.comment.ADD_SUCCESS](state, { payload }) {
       return state.merge(fromJS(payload.entities.comments))
     },
     [types.comment.EDIT_SUCCESS](state, { payload }) {
       const { comments } = payload.entities
       return state.merge(fromJS(comments))
+    },
+    [types.comment.REMOVE_SUCCESS](state, { payload: id }) {
+      return state.has(id) ? state.set(id, undefined) : state
     },
   },
   OrderedMap(),

@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import * as commentReducer from 'store/comment/reducer'
 import * as actions from 'store/comment/actions'
 import { EditComment } from 'blocks'
+import { SimpleLoading } from 'components/loading'
 import BodyTemplate from './template'
 import Header from './header'
 import Text from './text'
@@ -46,7 +47,15 @@ class Body extends Component {
     }
 
     if (fetchingRemove) {
-      return <p>삭제하는 중입니다 ...</p>
+      return (
+        <div
+          css={{
+            minHeight: 80,
+          }}
+        >
+          <SimpleLoading />
+        </div>
+      )
     }
 
     function onClickShowReply() {

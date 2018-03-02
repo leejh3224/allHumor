@@ -10,16 +10,17 @@ const slideDown = keyframes`
     transform: translateY(0);
   }
   to {
-    transform: translateY(32px);
+    transform: translateY(180px);
     display: none;
   }
 `
 
 const DetectOffline = () => [
   <div
+    key="onlinewrapper"
     css={{
       'animation-delay': '0.5s',
-      animation: `${slideDown} 2s forwards`,
+      animation: `${slideDown} 4s forwards`,
       position: 'fixed',
       bottom: 0,
     }}

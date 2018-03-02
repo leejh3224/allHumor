@@ -8,8 +8,9 @@ import * as fetchingReducer from 'store/fetching/reducer'
 import * as previewListReducer from 'store/previewList/reducer'
 import * as actions from 'store/previewList/actions'
 import * as errorMessageReducer from 'store/errorMessage/reducer'
-import { PreviewFeed, InfiniteScroll, Loading } from 'components'
-import NoResult from './no-result'
+import { PreviewFeed, InfiniteScroll, NoResult } from 'components'
+import { Loading } from 'components/loading'
+import { RefreshIcon } from 'components/icons'
 
 class PreviewFeedList extends Component {
   static defaultProps = {
@@ -25,10 +26,7 @@ class PreviewFeedList extends Component {
   componentDidMount() {
     const { fetchPreviews, location: { pathname } } = this.props
     const category = pathname === '/' ? 'humor' : pathname.replace(/\//, '')
-    fetchPreviews(category, 1)
-  }
-  componentWillReceiveProps(p) {
-    console.log(this.props.location.pathname, p.location.pathname)
+    fetchPreviews(category)
   }
   render() {
     const {
@@ -45,7 +43,14 @@ class PreviewFeedList extends Component {
     }
 
     if (errorMessage && !previewList.length) {
-      return <p>{errorMessage}</p>
+      return (
+        <NoResult
+          heading="일시적인 에러 발생!"
+          subheading="아래 버튼을 눌러 다시 시도하세요."
+          onClick={() => fetchPreviews(category, 1)}
+          buttonContent={<RefreshIcon />}
+        />
+      )
     }
 
     return (
@@ -58,11 +63,18 @@ class PreviewFeedList extends Component {
           {previewList.length ? (
             previewList.map(preview => <PreviewFeed key={preview._id} preview={preview} />)
           ) : (
-            <NoResult />
+            <NoResult
+              heading="일시적인 에러 발생!"
+              subheading="아래 버튼을 눌러 다시 시도하세요."
+              onClick={() => fetchPreviews(category, 1)}
+              buttonContent={<RefreshIcon />}
+            />
           )}
         </ul>
-        <InfiniteScroll prefix="previewList" fetchAction={fetchPreviews} params={{ category }} />
-        <div>{fetching && <p>loading ...</p>}</div>
+        {previewList.length > 0 && (
+          <InfiniteScroll prefix="previewList" loadMore={() => fetchPreviews(category)} />
+        )}
+        {fetching && <Loading wrapped={false} />}
       </div>
     )
   }

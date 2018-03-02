@@ -11,20 +11,30 @@ const createPaginationReducer = prefix =>
   createReducer(
     types[prefix]
       ? {
-        [types[prefix].SUCCESS](state, { meta: { perPage, total } }) {
-          const lastPage = computePageCount(total, perPage)
-          const currentPage = state.get('current')
-          let newPage = currentPage + 1
-
-          if (currentPage === lastPage) {
-            newPage = currentPage
-          }
+        [types[prefix].SUCCESS](state, { meta: { current, perPage, total } }) {
           const newState = fromJS({
-            current: newPage,
+            current,
             perPage,
             pageCount: computePageCount(total, perPage),
           })
           return state.merge(newState)
+        },
+        [types.article.SUCCESS](state, { payload }) {
+          if (prefix === 'comment') {
+            const id = [payload.result]
+            const { comments } = payload.entities.article[id]
+            const COMMENTS_PER_PAGE = 20
+            const haveMoreToLoad = comments.length >= COMMENTS_PER_PAGE
+            const newState = fromJS({
+              current: 1,
+              perPage: COMMENTS_PER_PAGE,
+              pageCount: haveMoreToLoad
+                ? 2
+                : computePageCount(comments.length, COMMENTS_PER_PAGE),
+            })
+            return state.merge(newState)
+          }
+          return state
         },
       }
       : {},
