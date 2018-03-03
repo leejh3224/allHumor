@@ -9,16 +9,16 @@ RUN mkdir -p /usr/src/app
 
 WORKDIR /usr/src/app
 
-RUN mkdir -p /client
+# client
+COPY ./client/ ./client/
 
-# copy client folder
-COPY ./client ./client
+WORKDIR /usr/src/app/client
 
-WORKDIR /client
+RUN yarn install && yarn production
 
-RUN yarn production
+COPY ./client/build/ /usr/src/app/server/build/client
 
-RUN cd .. && mkdir -p /server && cd server
+WORKDIR /usr/src/app/server
 
 COPY ./server/webpack.config.js .
 COPY ./server/package.json .
@@ -29,6 +29,6 @@ COPY ./server .
 
 RUN yarn build
 
-EXPOSE 3030
+EXPOSE 3030:3030
 
 CMD ["yarn", "prod-start"]

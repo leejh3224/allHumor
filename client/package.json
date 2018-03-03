@@ -67,8 +67,7 @@
     "start": "NODE_PATH=src NODE_ENV=development node scripts/start.js",
     "pre-build": "rm -rf ../server/build/client/*",
     "build": "NODE_PATH=src NODE_ENV=production node scripts/build.js",
-    "post-build": "cp -rf ./build/* ../server/build/client/",
-    "production": "yarn pre-build && yarn build && yarn post-build",
+    "production": "yarn pre-build && yarn build",
     "test": "NODE_PATH=src NODE_ENV=test node scripts/test.js --env=jsdom",
     "cosmos": "NODE_PATH=src cosmos"
   },
