@@ -2,13 +2,13 @@ version: '3'
 services:
   allhumor:
     container_name: allhumor
+    image: allhumor:latest
     restart: always
     build: .
-    image: 1227800d434b
     ports:
       - "3000:3000"
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=production
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules

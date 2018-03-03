@@ -12,7 +12,6 @@ let server
 
 beforeAll(async () => {
   server = app.listen(port, () => console.log(`now connected to port: ${port}`))
-  app.init()
   db.connect()
 })
 

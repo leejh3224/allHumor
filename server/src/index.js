@@ -8,5 +8,4 @@ const port = config[env].port || 3030
 
 db.connect()
 
-app.init()
 app.listen(port, () => console.log(`app is listening on ${port}`))

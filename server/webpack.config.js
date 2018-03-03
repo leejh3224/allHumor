@@ -1,4 +1,5 @@
 const path = require('path')
+const webpack = require('webpack')
 const nodeExternals = require('webpack-node-externals')
 
 module.exports = {
@@ -40,4 +41,6 @@ module.exports = {
   resolve: {
     modules: [path.resolve('./src'), path.resolve('./node_modules')],
   },
+
+  plugins: [new webpack.DefinePlugin(['NODE_ENV'])],
 }

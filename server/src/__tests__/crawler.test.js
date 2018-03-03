@@ -7,7 +7,6 @@ const { port } = config[env]
 let server
 
 beforeAll(async () => {
-  app.init()
   server = app.listen(port, () => console.log(`now connected to port: ${port}`))
 })
 

@@ -9,6 +9,7 @@ export default {
   },
   production: {
     mongoUri: 'mongodb://localhost/allhumor',
+    clientPath: './build/client',
     port: 3030,
   },
 }
