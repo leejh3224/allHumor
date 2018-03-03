@@ -5,8 +5,7 @@ import bootstrap from 'bootstrap'
 
 const app = express()
 
-bootstrap(app)
-
 app.use('/api', api)
+bootstrap(app)
 
 export default app

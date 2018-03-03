@@ -5,11 +5,11 @@ export default {
   },
   development: {
     mongoUri: 'mongodb://localhost/allhumor',
-    port: 3000,
+    port: 3030,
   },
   production: {
     mongoUri: 'mongodb://localhost/allhumor',
     clientPath: './build/client',
-    port: 3030,
+    port: 3033,
   },
 }

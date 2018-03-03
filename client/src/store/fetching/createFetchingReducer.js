@@ -1,3 +1,5 @@
+import { LOCATION_CHANGE } from 'react-router-redux'
+
 import { createReducer } from 'store/utils'
 import types from 'store/actionTypes'
 
@@ -13,6 +15,9 @@ const createFetchingReducer = (prefix, sufix) => {
           return false
         },
         [types[prefix][getType('ERROR')]]() {
+          return false
+        },
+        [LOCATION_CHANGE]() {
           return false
         },
       }

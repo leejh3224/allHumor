@@ -5,7 +5,7 @@ import Vote from 'models/Vote'
 import mongoose from 'mongoose'
 
 export default {
-  getPreviews: async (req, res) => {
+  getPreviews: async (req, res, next) => {
     const { category, page } = req.params
     const PER_PAGE = 10
     const { keyword } = req.query
@@ -59,7 +59,7 @@ export default {
         omit(article, ['__v', 'body', 'originalLink', 'updatedAt', 'articleId', 'createdAt']))
 
       if (!previews.length) {
-        throw new Error('nothing is here!')
+        next('not found')
       }
 
       res.json({
@@ -69,7 +69,7 @@ export default {
         perPage: PER_PAGE,
       })
     } catch (error) {
-      throw new Error(error)
+      console.log(error)
     }
   },
   getArticle: async (req, res) => {
