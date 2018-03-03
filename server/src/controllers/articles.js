@@ -58,6 +58,10 @@ export default {
       previews = previews.map(article =>
         omit(article, ['__v', 'body', 'originalLink', 'updatedAt', 'articleId', 'createdAt']))
 
+      if (!previews.length) {
+        throw new Error('nothing is here!')
+      }
+
       res.json({
         previews,
         current: Number(page),

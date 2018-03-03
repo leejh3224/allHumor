@@ -5,7 +5,10 @@ export default {
   },
   development: {
     mongoUri: 'mongodb://localhost/allhumor',
+    port: 3000,
+  },
+  production: {
+    mongoUri: 'mongodb://localhost/allhumor',
     port: 3030,
   },
-  production: {},
 }

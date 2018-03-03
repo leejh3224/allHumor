@@ -45,10 +45,14 @@ export const createFetchThunk = (dispatch, getState) => async ({
   method,
   body,
 }) => {
+  const { CancelToken } = api
+  const { token, cancel } = CancelToken.source()
+
   const inRequest = getFetching(getState(), fetchingKey)
 
   if (inRequest) {
-    return null
+    console.log('will cancel the requests')
+    return cancel()
   }
 
   dispatch({ type: REQUEST, payload: requestPayload })
@@ -57,6 +61,7 @@ export const createFetchThunk = (dispatch, getState) => async ({
     url,
     method,
     data: body,
+    cancelToken: token,
   }
 
   await sleep(1000) // for natural pagination
@@ -84,6 +89,9 @@ export const createFetchThunk = (dispatch, getState) => async ({
       }
     },
     error => {
+      if (api.isCancel(error)) {
+        console.log(error)
+      }
       let { message } = error
       if (error.response.status === 500) {
         message = '서버 연결 오류(500)'

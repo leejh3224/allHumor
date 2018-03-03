@@ -12,7 +12,7 @@ export const fetchComments = () => (dispatch, getState) => {
   return createFetchThunk(dispatch, getState)({
     entity: 'comment',
     requestTypes: [types.comment.REQUEST, types.comment.SUCCESS, types.comment.ERROR],
-    url: `/comments/${articleId}/page/${nextPage}`,
+    url: `/api/v1.0/comments/${articleId}/page/${nextPage}`,
     method: 'get',
   })
 }
@@ -24,7 +24,7 @@ export const addComment = content => (dispatch, getState) => {
   return createFetchThunk(dispatch, getState)({
     entity: 'comment',
     requestTypes: [types.comment.ADD_REQUEST, types.comment.ADD_SUCCESS, types.comment.ERROR],
-    url: '/comments',
+    url: '/api/v1.0/comments',
     method: 'post',
     body: {
       articleId,
@@ -60,7 +60,7 @@ export const editComment = (id, content) => (dispatch, getState) =>
       types.comment.EDIT_ERROR,
     ],
     requestPayload: id,
-    url: `/comments/${id}`,
+    url: `/api/v1.0/comments/${id}`,
     method: 'put',
     body: { content },
   })
@@ -73,7 +73,7 @@ export const removeComment = id => (dispatch, getState) =>
       types.comment.REMOVE_ERROR,
     ],
     requestPayload: id,
-    url: `/comments/${id}`,
+    url: `/api/v1.0/comments/${id}`,
     method: 'delete',
   })
 
@@ -102,7 +102,7 @@ export const addReply = content => (dispatch, getState) => {
       types.comment.ADD_REPLY_ERROR,
     ],
     requestPayload: parent,
-    url: `/comments/${parent}/replies`,
+    url: `/api/v1.0/comments/${parent}/replies`,
     method: 'post',
     body: {
       userId,
@@ -127,6 +127,6 @@ export const fetchReplies = id => (dispatch, getState) =>
       types.comment.REPLY_ERROR,
     ],
     requestPayload: id,
-    url: `/comments/${id}/replies`,
+    url: `/api/v1.0/comments/${id}/replies`,
     method: 'get',
   })

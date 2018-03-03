@@ -2,6 +2,8 @@ import { Component } from 'react'
 import { number, func, bool } from 'prop-types'
 import throttle from 'lodash/throttle'
 import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
+import ReactRouterPropTypes from 'react-router-prop-types'
 
 import * as paginationReducer from 'store/pagination/reducer'
 import * as fetchingReducer from 'store/fetching/reducer'
@@ -12,26 +14,36 @@ class InfiniteScroll extends Component {
     fetching: bool.isRequired,
     loadMore: func.isRequired,
     lastPage: number.isRequired,
+    history: ReactRouterPropTypes.history.isRequired,
   }
   componentWillMount() {
     window.addEventListener(
       'scroll',
-      throttle(this.handleScroll, 250, { trailing: true, leading: true }),
+      throttle(this.handleScroll, 50, { trailing: true, leading: true }),
     )
   }
   componentWillUnmount() {
     window.removeEventListener(
       'scroll',
-      throttle(this.handleScroll, 250, { trailing: true, leading: true }),
+      throttle(this.handleScroll, 50, { trailing: true, leading: true }),
     )
   }
   queryItems() {
     const {
-      currentPage, loadMore, fetching, lastPage,
+      currentPage,
+      loadMore,
+      fetching,
+      lastPage,
+      history: { location: { pathname } },
     } = this.props
 
+    if (fetching) {
+      return
+    }
+
+    const category = pathname === '/' ? 'humor' : pathname.replace(/\//, '')
     if (!fetching && currentPage < lastPage) {
-      loadMore()
+      loadMore(category)
     }
   }
   handleScroll = () => {
@@ -55,11 +67,13 @@ class InfiniteScroll extends Component {
   }
 }
 
-export default connect(
-  (state, { prefix }) => ({
-    currentPage: paginationReducer.getCurrent(state, prefix),
-    lastPage: paginationReducer.getPageCount(state, prefix),
-    fetching: fetchingReducer.getFetching(state, prefix),
-  }),
-  null,
-)(InfiniteScroll)
+export default withRouter(
+  connect(
+    (state, { prefix }) => ({
+      currentPage: paginationReducer.getCurrent(state, prefix),
+      lastPage: paginationReducer.getPageCount(state, prefix),
+      fetching: fetchingReducer.getFetching(state, prefix),
+    }),
+    null,
+  )(InfiniteScroll),
+)

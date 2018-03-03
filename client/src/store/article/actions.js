@@ -8,7 +8,7 @@ export const fetchArticle = id => (dispatch, getState) =>
   createFetchThunk(dispatch, getState)({
     entity: 'article',
     requestTypes: [types.article.REQUEST, types.article.SUCCESS, types.article.ERROR],
-    url: `/article/${id}`,
+    url: `/api/v1.0/article/${id}`,
     method: 'get',
   })
 
@@ -25,7 +25,7 @@ export const voteArticle = () => async (dispatch, getState) => {
   return createFetchThunk(dispatch, getState)({
     requestTypes: [types.voting.REQUEST, null, types.voting.ERROR],
     requestPayload: userId,
-    url: `/articles/${articleId}/votes`,
+    url: `/api/v1.0/articles/${articleId}/votes`,
     method: myvote ? 'put' : 'post',
     body: { userId },
   })

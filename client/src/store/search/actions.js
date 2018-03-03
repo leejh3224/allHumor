@@ -6,6 +6,6 @@ export const search = keyword => (dispatch, getState) =>
     entity: 'preview',
     fetchingKey: 'previewList',
     requestTypes: [types.search.REQUEST, types.search.SUCCESS, types.search.ERROR],
-    url: `/articles/all?keyword=${keyword}`,
+    url: `/api/v1.0/articles/all?keyword=${keyword}`,
     method: 'get',
   })

@@ -21,10 +21,10 @@ class PreviewFeedList extends Component {
     errorMessage: string,
     fetching: bool.isRequired,
     fetchPreviews: func.isRequired,
-    location: ReactRouterPropTypes.location.isRequired,
+    history: ReactRouterPropTypes.history.isRequired,
   }
   componentDidMount() {
-    const { fetchPreviews, location: { pathname } } = this.props
+    const { fetchPreviews, history: { location: { pathname } } } = this.props
     const category = pathname === '/' ? 'humor' : pathname.replace(/\//, '')
     fetchPreviews(category)
   }
@@ -34,7 +34,7 @@ class PreviewFeedList extends Component {
       fetching,
       errorMessage,
       fetchPreviews,
-      location: { pathname },
+      history: { location: { pathname } },
     } = this.props
     const category = pathname === '/' ? 'humor' : pathname.replace(/\//, '')
 
@@ -47,7 +47,7 @@ class PreviewFeedList extends Component {
         <NoResult
           heading="일시적인 에러 발생!"
           subheading="아래 버튼을 눌러 다시 시도하세요."
-          onClick={() => fetchPreviews(category, 1)}
+          onClick={() => fetchPreviews(category)}
           buttonContent={<RefreshIcon />}
         />
       )
@@ -66,14 +66,12 @@ class PreviewFeedList extends Component {
             <NoResult
               heading="일시적인 에러 발생!"
               subheading="아래 버튼을 눌러 다시 시도하세요."
-              onClick={() => fetchPreviews(category, 1)}
+              onClick={() => fetchPreviews(category)}
               buttonContent={<RefreshIcon />}
             />
           )}
         </ul>
-        {previewList.length > 0 && (
-          <InfiniteScroll prefix="previewList" loadMore={() => fetchPreviews(category)} />
-        )}
+        {previewList.length > 0 && <InfiniteScroll prefix="previewList" loadMore={fetchPreviews} />}
         {fetching && <Loading wrapped={false} />}
       </div>
     )

@@ -1,4 +1,5 @@
 import { Map, fromJS } from 'immutable'
+import { LOCATION_CHANGE } from 'react-router-redux'
 
 import { createReducer } from 'store/utils'
 import types from 'store/actionTypes'
@@ -11,7 +12,13 @@ const createPaginationReducer = prefix =>
   createReducer(
     types[prefix]
       ? {
-        [types[prefix].SUCCESS](state, { meta: { current, perPage, total } }) {
+        [types[prefix].SUCCESS](state, { payload, meta: { current, perPage, total } }) {
+          const hasNothingToPaginate = !payload.result.length
+
+          if (hasNothingToPaginate) {
+            return state
+          }
+
           const newState = fromJS({
             current,
             perPage,
@@ -35,6 +42,13 @@ const createPaginationReducer = prefix =>
             return state.merge(newState)
           }
           return state
+        },
+        [LOCATION_CHANGE]() {
+          return Map({
+            perPage: 0,
+            current: 0,
+            pageCount: 0,
+          })
         },
       }
       : {},
