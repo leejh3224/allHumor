@@ -2,8 +2,13 @@ import axios from 'axios'
 import Parser from 'modules/parser'
 
 async function getDocument(targetUrl) {
-  const { data: document } = await axios.get(targetUrl)
-  return document
+  try {
+    const { data: document } = await axios.get(targetUrl)
+    return document
+  } catch (error) {
+    console.log(error)
+    return null
+  }
 }
 
 export default async (url) => {

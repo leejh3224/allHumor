@@ -11,7 +11,11 @@ import haltOnTimeout from 'middlewares/haltOnTimeout'
 
 export default function bootstrap(app) {
   const env = process.env.NODE_ENV
-  const { clientPath = '' } = config[env]
+  const { clientPath = '' } = config.etc
+  const { mongo } = config
+  const settings = config.mongo[env]
+
+  mongo.init(settings)
 
   const common = [
     bodyParser.json(),

@@ -15,8 +15,8 @@ function checkUnsafeCharacters(url) {
   return /[가-힇\s]+/g.test(url)
 }
 
-export default ({ url, imageTags }) =>
-  imageTags
+export default ({ url, images }) =>
+  images
     .filter(isValidImg)
     .map((imgElement) => {
       const src = imgElement.attr('src')

@@ -67,21 +67,23 @@ export default async (link) => {
     const parser = await loadParser(link)
     const [body] = parser.toArray(bodySelector)
     const allImagesInBody = parser.toArray(`${bodySelector} img`)
+    const embededVideosInBody = parser.toArray(`${bodySelector} iframe,embed,video`)
 
     const tooManyImages = allImagesInBody.length > 2
     if (tooManyImages) {
       return null
     }
 
-    const listOfSrc = getSrcList({ url: link, imageTags: allImagesInBody })
+    const listOfSrc = getSrcList({ url: link, images: allImagesInBody })
     const listOfBuffer = await toListOfBuffer(listOfSrc)
+
+    // check extension from the buffer
     let listOfImageName = listOfBuffer.map(createImageName)
     await saveBunchOfImages({ buffers: listOfBuffer, imageNames: listOfImageName })
 
     // after saving gif images as mp4 format, change its extension too.
     listOfImageName = changeGifToMp4Extension(listOfImageName)
-    const embedVideos = parser.toArray(`${bodySelector} iframe,embed,video`) || []
-    const hasEmbededVideos = embedVideos.length
+
     const updatedBody = allImagesInBody.length
       ? updateImageAttributes({
         root: body,
@@ -97,7 +99,10 @@ export default async (link) => {
         additionalFields: {
           category: getCategory(link),
           comments: [],
-          thumbnail: getThumbnailPath({ imageList: listOfImageName, hasEmbededVideos }),
+          thumbnail: getThumbnailPath({
+            hasEmbededVideos: embededVideosInBody.length > 0,
+            imageList: listOfImageName,
+          }),
           votes: [],
         },
       }),

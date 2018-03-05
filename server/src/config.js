@@ -1,15 +1,21 @@
+import mongoose from 'mongoose'
+
 export default {
-  test: {
-    mongoUri: 'mongodb://localhost/test',
-    port: 3031,
+  mongo: {
+    init: ({ host, db }) => {
+      try {
+        mongoose.connect(`mongodb://${host}:27017/${db}`)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    development: {
+      host: 'localhost',
+      db: 'allhumor',
+    },
   },
-  development: {
-    mongoUri: 'mongodb://localhost/allhumor',
-    port: 3030,
-  },
-  production: {
-    mongoUri: 'mongodb://localhost/allhumor',
-    clientPath: './build/client',
-    port: 3033,
+  etc: {
+    port: '3030',
+    clientPath: '../build/client',
   },
 }
