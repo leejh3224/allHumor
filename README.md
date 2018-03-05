@@ -1,5 +1,7 @@
 # Allhumor Project
 
+[한국어 버전도 있습니다](https://github.com/leejh3224/allHumor/blob/master/README.ko.md)
+
 ## Tech Stack
 
 * express
